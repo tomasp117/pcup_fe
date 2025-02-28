@@ -9,24 +9,14 @@ export default {
 	theme: {
 	  extend: {
 		colors: {
-		  background: "hsl(var(--background))",
-		  foreground: "hsl(var(--foreground))",
-		  primary: {
-			DEFAULT: "hsl(var(--primary))",
-			foreground: "hsl(var(--primary-foreground))",
-		  },
-		  tertiary: {
-			DEFAULT: "hsl(var(--tertiary))",
-			foreground: "hsl(var(--tertiary-foreground))",
-		  },
-		  accent: {
-			DEFAULT: "hsl(var(--accent))",
-			foreground: "hsl(var(--accent-foreground))",
-		  },
-		  navbar: {
-			DEFAULT: "hsl(var(--navbar-bg))",
-			text: "hsl(var(--navbar-text))",
-		  },
+			primary: "hsl(270, 80%, 50%)", // Fialová
+			"primary-dark": "hsl(270, 80%, 40%)", // Tmavší fialová pro hover
+			secondary: "hsl(0, 0%, 8%)", // Černá
+			"secondary-dark": "hsl(0, 0%, 15%)", // Světlejší černá pro hover
+			tertiary: "hsl(24, 96%, 48%)", // Oranžová
+			"tertiary-dark": "hsl(24, 96%, 40%)", // Tmavší oranžová pro hover
+			navbar: "hsl(0, 0%, 10%)",
+			navbarText: "hsl(0, 0%, 100%)",
 		},
 	  },
 	},
