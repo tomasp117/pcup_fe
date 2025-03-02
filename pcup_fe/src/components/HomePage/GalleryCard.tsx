@@ -37,7 +37,7 @@ const images = [
   image6,
 ];
 
-export default function GalleryCard() {
+export const GalleryCard = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const breakpointColumns = {
@@ -75,13 +75,12 @@ export default function GalleryCard() {
           {images.map((img, index) => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg shadow-md transform scale-90 hover:scale-100 transition-transform duration-300 ease-in-out cursor-pointer"
+              className="gallery-item"
               onClick={() => setSelectedIndex(index)}
             >
               <img
                 src={img}
                 alt={`Gallery image ${index + 1}`}
-                className="w-full h-auto object-cover opacity-0 animate-fade-in"
                 loading="lazy"
                 onLoad={(e) => (e.currentTarget.style.opacity = "1")}
               />
@@ -96,17 +95,14 @@ export default function GalleryCard() {
         onOpenChange={() => setSelectedIndex(null)}
       >
         <DialogContentImage>
-          <div
-            className="relative flex items-center justify-center w-full h-full"
-            onClick={() => setSelectedIndex(null)}
-          >
+          <div className="dialog" onClick={() => setSelectedIndex(null)}>
             {/* Šipka pro předchozí obrázek */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handlePrev();
               }}
-              className="absolute left-4 p-2 bg-black/50 rounded-full hover:bg-black/70 transition"
+              className="button-prev"
             >
               <ChevronLeft className="w-8 h-8 text-white" />
             </button>
@@ -115,7 +111,7 @@ export default function GalleryCard() {
             <img
               src={selectedIndex !== null ? images[selectedIndex] : ""}
               alt="Zvětšený obrázek"
-              className="rounded-lg shadow-lg transition-all duration-300 max-w-[90vw] max-h-[90vh] object-contain"
+              className=""
             />
 
             {/* Šipka pro další obrázek */}
@@ -124,7 +120,7 @@ export default function GalleryCard() {
                 e.stopPropagation(); // Zabrání zavření při kliknutí na šipku
                 handleNext();
               }}
-              className="absolute right-4 p-2 bg-black/50 rounded-full hover:bg-black/70 transition"
+              className="button-next"
             >
               <ChevronRight className="w-8 h-8 text-white" />
             </button>
@@ -133,4 +129,4 @@ export default function GalleryCard() {
       </Dialog>
     </Card>
   );
-}
+};

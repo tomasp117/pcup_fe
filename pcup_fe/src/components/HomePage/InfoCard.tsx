@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Mail, Phone, FileText, Download } from "lucide-react";
 
-export default function InfoCard() {
+export const InfoCard = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Kontaktní osoba */}
@@ -48,7 +48,7 @@ export default function InfoCard() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button className="w-full bg-primary hover:bg-primary-dark text-white flex items-center gap-2">
+            <Button className="w-full  flex items-center gap-2">
               <FileText className="w-4 h-4" />
               <span>Informace pro účastníky</span>
             </Button>
@@ -67,9 +67,7 @@ export default function InfoCard() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button className="w-full bg-primary hover:bg-primary-dark  text-white">
-              Sobota 14:00
-            </Button>
+            <Button className="w-full ">Sobota 14:00</Button>
           </a>
         </CardContent>
       </Card>
@@ -85,7 +83,7 @@ export default function InfoCard() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button className="w-full bg-primary hover:bg-primary-dark text-white flex items-center gap-2">
+            <Button className="w-full  flex items-center gap-2">
               <Download className="w-4 h-4" />
               <span>Stáhnout plakát</span>
             </Button>
@@ -104,7 +102,7 @@ export default function InfoCard() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button className="w-full bg-primary hover:bg-primary-dark text-white flex items-center gap-2">
+            <Button className="w-full  flex items-center gap-2">
               <FileText className="w-4 h-4" />
               <span>Rozlosování turnaje</span>
             </Button>
@@ -113,4 +111,4 @@ export default function InfoCard() {
       </Card>
     </div>
   );
-}
+};

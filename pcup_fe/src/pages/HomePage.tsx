@@ -1,11 +1,11 @@
 import { useState } from "react";
-import TeamCard from "@/components/HomePage/TeamCard";
-import StatsCard from "@/components/HomePage/StatsCard";
-import MatchesCard from "@/components/HomePage/MatchesCard";
-import ResultsCard from "@/components/HomePage/ResultsCard";
-import GalleryCard from "@/components/HomePage/GalleryCard";
-import MapCard from "@/components/HomePage/MapCard";
-import InfoCard from "@/components/HomePage/InfoCard";
+import { TeamCard } from "@/components/HomePage/TeamCard";
+import { StatsCard } from "@/components/HomePage/StatsCard";
+import { MatchesCard } from "@/components/HomePage/MatchesCard";
+import { ResultsCard } from "@/components/HomePage/ResultsCard";
+import { GalleryCard } from "@/components/HomePage/GalleryCard";
+import { MapCard } from "@/components/HomePage/MapCard";
+import { InfoCard } from "@/components/HomePage/InfoCard";
 
 export default function HomePage() {
   // Kategorie turnaje

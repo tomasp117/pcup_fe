@@ -13,7 +13,7 @@ interface TeamCardProps {
   category: string;
 }
 
-export default function TeamCard({ category }: TeamCardProps) {
+export const TeamCard = ({ category }: TeamCardProps) => {
   // Data týmů pro různé kategorie
   const categoryTeams: Record<string, { img: string; name: string }[]> = {
     "Mini žáci 4+1": [
@@ -124,4 +124,4 @@ export default function TeamCard({ category }: TeamCardProps) {
       </CardContent>
     </Card>
   );
-}
+};

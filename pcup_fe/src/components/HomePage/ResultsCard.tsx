@@ -30,7 +30,7 @@ const resultsData: Record<
   ],
 };
 
-export default function MatchesCard({ category }: ResultsCardProps) {
+export const ResultsCard = ({ category }: ResultsCardProps) => {
   const results = resultsData[category];
   return (
     <Card>
@@ -54,4 +54,4 @@ export default function MatchesCard({ category }: ResultsCardProps) {
       </CardContent>
     </Card>
   );
-}
+};

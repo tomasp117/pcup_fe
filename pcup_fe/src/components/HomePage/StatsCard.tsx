@@ -15,7 +15,7 @@ interface StatsCardProps {
   category: string;
 }
 
-export default function StatsCard({ category }: StatsCardProps) {
+export const StatsCard = ({ category }: StatsCardProps) => {
   type Scorer = { name: string; team: string; goals: number };
   type Penalty = { name: string; team: string; penalties: number };
 
@@ -195,4 +195,4 @@ export default function StatsCard({ category }: StatsCardProps) {
       </CardContent>
     </Card>
   );
-}
+};

@@ -30,7 +30,7 @@ const matchesData: Record<
   ],
 };
 
-export default function MatchesCard({ category }: MatchesCardProps) {
+export const MatchesCard = ({ category }: MatchesCardProps) => {
   const matches = matchesData[category];
 
   return (
@@ -55,4 +55,4 @@ export default function MatchesCard({ category }: MatchesCardProps) {
       </CardContent>
     </Card>
   );
-}
+};

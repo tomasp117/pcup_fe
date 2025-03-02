@@ -6,6 +6,7 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
+import { Button } from "../ui/button";
 
 const mapContainerStyle = {
   width: "100%",
@@ -28,7 +29,7 @@ const locations = [
   { name: "Hřiště deln.2", lat: 49.77749581201945, lng: 18.16930881426432 },
 ];
 
-export default function MapCard() {
+export const MapCard = () => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [activeMarker, setActiveMarker] = useState<number | null>(null);
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -40,12 +41,9 @@ export default function MapCard() {
       </CardHeader>
       <CardContent>
         {!mapLoaded ? (
-          <button
-            className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded"
-            onClick={() => setMapLoaded(true)}
-          >
+          <Button className="" onClick={() => setMapLoaded(true)}>
             Načíst mapu
-          </button>
+          </Button>
         ) : (
           <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
             <GoogleMap
@@ -73,4 +71,4 @@ export default function MapCard() {
       </CardContent>
     </Card>
   );
-}
+};

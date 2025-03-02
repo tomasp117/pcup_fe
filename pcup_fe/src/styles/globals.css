@@ -65,13 +65,14 @@
     @apply text-black px-4 py-2 hover:bg-gray-200 rounded-md;
   }
 
+  /* Carousel */
   .carousel-item {
     @apply relative bg-gradient-to-b from-gray-100 to-gray-50 shadow-md rounded-xl overflow-hidden 
     hover:scale-105 transition-transform duration-300 h-full flex items-center justify-center;
   }
 
   .carousel-item img {
-    @apply w-full h-full object-cover; /* ✅ Objekt bude vždy vyplňovat prostor */
+    @apply w-full h-full object-cover;
   }
 
   .carousel-arrow {
@@ -93,6 +94,38 @@
   /* Footer */
   .clip-path-footer {
     clip-path: polygon(35% 0, 100% 0, 100% 100%, 20% 100%);
+  }
+
+  /* Sidebar mobile*/
+
+  .sidebar-item-hover {
+    @apply hover:hover:bg-gradient-to-b hover:from-primary/60 hover:to-transparent;
+  }
+
+  /* Gallery */
+  .gallery-item {
+    @apply relative overflow-hidden rounded-lg shadow-md transform scale-90 hover:scale-100 transition-transform duration-300 ease-in-out cursor-pointer;
+  }
+
+  .gallery-item img {
+    @apply w-full h-auto object-cover opacity-0 animate-fade-in;
+  }
+
+  /* Dialog image */
+  .dialog {
+    @apply relative flex items-center justify-center w-full h-full;
+  }
+
+  .dialog .button-prev {
+    @apply absolute left-4 p-2 bg-black/50 rounded-full hover:bg-black/70 transition;
+  }
+
+  .dialog .button-next {
+    @apply absolute right-4 p-2 bg-black/50 rounded-full hover:bg-black/70 transition;
+  }
+
+  .dialog img {
+    @apply rounded-lg shadow-lg transition-all duration-300 max-w-[90vw] max-h-[90vh] object-contain;
   }
 
   /* Homepage */

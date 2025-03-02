@@ -17,6 +17,36 @@ const Card = React.forwardRef<
 ));
 Card.displayName = "Card";
 
+const CardMatchReport = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-md border bg-card text-card-foreground shadow-lg flex flex-col h-full bg-white",
+      className
+    )}
+    {...props}
+  />
+));
+CardMatchReport.displayName = "CardMatchReport";
+
+const CardMatchReportHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "flex p-2  text-black rounded-md rounded-b-none justify-center bg-gradient-to-br from-gray-500 to-gray-200",
+      className
+    )}
+    {...props}
+  />
+));
+CardMatchReportHeader.displayName = "CardMatchReportHeader";
+
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -61,6 +91,14 @@ const CardContent = React.forwardRef<
 ));
 CardContent.displayName = "CardContent";
 
+const CardContentNoPadding = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("", className)} {...props} />
+));
+CardContentNoPadding.displayName = "CardContent";
+
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -80,4 +118,7 @@ export {
   CardTitle,
   CardDescription,
   CardContent,
+  CardMatchReport,
+  CardMatchReportHeader,
+  CardContentNoPadding,
 };
