@@ -3,19 +3,97 @@
 @tailwind utilities;
 
 :root {
-    --background: 0 0% 100%; /* Bílá */
-    --foreground: 0 0% 10%; /* Černá */
+  --background: 0 0% 100%; /* Bílá */
+  --foreground: 0 0% 10%; /* Černá */
 
-    --primary: 270 80% 50%; /* Fialová */
-    --primary-foreground: 0 0% 100%; /* Bílá na fialové */
+  --primary: 270 80% 50%; /* Fialová */
+  --primary-foreground: 0 0% 100%; /* Bílá na fialové */
 
-    --secondary: 0 0% 8%; /* Černá */
-    --secondary-foreground: 0 0% 100%; /* Bílý text na černé */
+  --secondary: 0 0% 8%; /* Černá */
+  --secondary-foreground: 0 0% 100%; /* Bílý text na černé */
 
-    --tertiary: 24 96% 48%; /* Oranžová */
-    --tertiary-foreground: 0 0% 100%; /* Bílý text na oranžové */
+  --tertiary: 24 96% 48%; /* Oranžová */
+  --tertiary-foreground: 0 0% 100%; /* Bílý text na oranžové */
 
-    --navbar-bg: var(--secondary); /* Černé pozadí navbaru */
-    --navbar-text: var(--primary-foreground); /* Bílý text v navbaru */
+  --navbar-bg: var(--secondary); /* Černé pozadí navbaru */
+  --navbar-text: var(--primary-foreground); /* Bílý text v navbaru */
 }
 
+@layer base {
+  * {
+    border: var(--border);
+    outline: var(--ring) / 50;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  /* Navbar */
+  .navbar {
+    @apply fixed top-0 left-0 w-full bg-navbar text-navbarText shadow-md z-50;
+  }
+  .navbar-container {
+    @apply flex items-center justify-between px-6 py-4;
+  }
+  .navbar-logo {
+    @apply hidden md:block text-xl font-bold;
+  }
+  .navbar-menu {
+    @apply hidden md:flex flex-1 justify-center space-x-6;
+  }
+  .navbar-link {
+    @apply text-navbarText hover:text-primary transition-colors;
+  }
+
+  /* Dropdown menu */
+  .dropdown {
+    @apply absolute bg-white shadow-lg rounded-md w-48;
+  }
+  .dropdown-item {
+    @apply block px-4 py-2 text-black hover:bg-gray-200;
+  }
+
+  /* Sidebar (mobilní menu) */
+  .sidebar {
+    @apply fixed inset-y-0 left-0 bg-white shadow-lg transform transition-transform w-3/4;
+  }
+  .sidebar-item {
+    @apply text-black px-4 py-2 hover:bg-gray-200 rounded-md;
+  }
+
+  .carousel-item {
+    @apply relative bg-gradient-to-b from-gray-100 to-gray-50 shadow-md rounded-xl overflow-hidden 
+    hover:scale-105 transition-transform duration-300 h-full flex items-center justify-center;
+  }
+
+  .carousel-item img {
+    @apply w-full h-full object-cover; /* ✅ Objekt bude vždy vyplňovat prostor */
+  }
+
+  .carousel-arrow {
+    @apply absolute bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity;
+  }
+
+  .carousel-arrow-left {
+    @apply left-2 top-1/2 transform -translate-y-1/2;
+  }
+
+  .carousel-arrow-right {
+    @apply right-2 top-1/2 transform -translate-y-1/2;
+  }
+
+  .card {
+    @apply max-w-lg mx-auto p-4 bg-white shadow-lg rounded-2xl border relative;
+  }
+
+  /* Footer */
+  .clip-path-footer {
+    clip-path: polygon(35% 0, 100% 0, 100% 100%, 20% 100%);
+  }
+
+  /* Homepage */
+}

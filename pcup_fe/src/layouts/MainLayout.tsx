@@ -1,13 +1,23 @@
-import { Outlet } from "react-router-dom";
-import { Navbar } from "@/components/NavBar";
+import { useState } from "react";
+import { Sidebar } from "@/layouts/Sidebar";
+import { Link, Outlet } from "react-router-dom";
+import { Footer } from "./Footer";
 
 export default function MainLayout() {
-    return (
-        <div className="min-h-screen bg-background text-foreground">
-            <Navbar />
-            <main className="container mx-auto p-16">
-                <Outlet />
-            </main>
-        </div>
-    );
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <div className="min-h-screen flex bg-background text-foreground transition-all">
+      {/* Sidebar s ovládáním sbalení */}
+      <Sidebar />
+
+      <div className="flex flex-col flex-1">
+        {/* Hlavní obsah */}
+        <main className={`flex-1 container mx-auto px-4 md:px-16 pt-[72px]`}>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </div>
+  );
 }
