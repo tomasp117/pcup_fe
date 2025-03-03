@@ -99,7 +99,7 @@
   /* Sidebar mobile*/
 
   .sidebar-item-hover {
-    @apply hover:hover:bg-gradient-to-b hover:from-primary/60 hover:to-transparent;
+     @apply hover:hover:bg-primary/10 hover:text-primary ;/*hover:hover:bg-gradient-to-b hover:from-primary/60 hover:to-transparent; */
   }
 
   /* Gallery */
