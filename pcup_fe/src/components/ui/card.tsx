@@ -9,7 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow flex flex-col h-full  shadow-primary/30  bg-gradient-to-b from-primary/10 to-gray-50",
+      "rounded-md border bg-card text-card-foreground shadow flex flex-col h-full  shadow-primary/30  bg-gradient-to-b from-primary/10 to-gray-50",
       className
     )}
     {...props}
@@ -24,7 +24,7 @@ const CardMatchReport = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-md border bg-card text-card-foreground shadow-lg flex flex-col h-full bg-white",
+      "rounded-md border border-solid border-black/15 shadow-md bg-card text-card-foreground flex flex-col h-full bg-white",
       className
     )}
     {...props}
@@ -39,7 +39,7 @@ const CardMatchReportHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex p-2  text-black rounded-md rounded-b-none justify-center bg-gradient-to-br from-gray-500 to-gray-200",
+      "flex p-2 rounded-md rounded-b-none justify-center bg-primary/90 text-white",
       className
     )}
     {...props}
