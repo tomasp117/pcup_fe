@@ -99,7 +99,6 @@ export interface Group {
 }
 
 export interface Event {
-  id: number;
   type: string;
   team: string | null;
   time: string;

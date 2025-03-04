@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ColorTest from "./pages/ColorTest";
 import { MainLayout } from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
-import { MatchReport } from "./components/MatchReport/MatchReport";
+import { MatchReport } from "./pages/MatchReport";
 
 function App() {
   const [count, setCount] = useState(0);

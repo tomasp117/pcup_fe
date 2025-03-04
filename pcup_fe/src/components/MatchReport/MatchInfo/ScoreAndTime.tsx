@@ -75,11 +75,17 @@ function ScoreAndTime() {
   }
 
   function getButtonIcon() {
-    return timerRunning && !timerPaused ? (
-      <Pause className="w-6 h-6" />
-    ) : (
-      <Play className="w-6 h-6" />
-    );
+    if (
+      initialCheckCompleted &&
+      startButtonClicked &&
+      (!timerRunning || timerPaused)
+    ) {
+      return <Play className="w-6 h-6" fill="white" />;
+    }
+    if (timerRunning && !timerPaused) {
+      return <Pause className="w-6 h-6" fill="white" />;
+    }
+    return null;
   }
 
   function getButtonText(): string {
@@ -111,26 +117,28 @@ function ScoreAndTime() {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 w-full">
-      <div className="flex justify-center gap-4">
-        <CardMatchReport className="w-24 ">
-          <CardContentNoPadding className="p-6 flex items-center justify-center">
-            <h2 className="text-2xl font-bold">{scoreHome}</h2>
+    <div className="flex flex-col items-center justify-between flex-1 min-w-0 max-w-[33%] sm:max-w-[20%] gap-4">
+      <div className="flex justify-between gap-2 sm:gap-4 w-full h-[30%]">
+        <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
+          <CardContentNoPadding className="flex items-center justify-center w-full">
+            <h2 className="text-md sm:text-2xl font-bold">{scoreHome}</h2>
           </CardContentNoPadding>
         </CardMatchReport>
 
-        <CardMatchReport className="w-24 ">
-          <CardContentNoPadding className="p-6 flex items-center justify-center">
-            <h2 className="text-2xl font-bold">{scoreAway}</h2>
+        <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
+          <CardContentNoPadding className="flex items-center justify-center w-full">
+            <h2 className="text-md sm:text-2xl font-bold">{scoreAway}</h2>
           </CardContentNoPadding>
         </CardMatchReport>
       </div>
 
-      <CardMatchReport className="w-52 ">
-        <CardContent className="flex flex-col items-center justify-center space-y-2 p-6">
-          <h1 className="text-4xl font-bold">{matchDetails.timePlayed}</h1>
+      <CardMatchReport className="w-full flex justify-center h-[70%] sm:p-4 p-2 flex-1">
+        <CardContent className="flex flex-col items-center w-full p-0  gap-4">
+          <h1 className="text-md sm:text-4xl font-bold">
+            {matchDetails.timePlayed}
+          </h1>
           <Button
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-xs sm:text-sm xl:text-xl  p-2 sm:p-4 xl:p-6 w-full "
             onClick={handleButtonClick}
           >
             {getButtonIcon()} {getButtonText()}
