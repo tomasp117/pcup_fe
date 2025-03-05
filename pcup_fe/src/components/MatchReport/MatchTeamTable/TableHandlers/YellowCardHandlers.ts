@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useMatchContext } from "../../../../contexts/MatchReportContext/MatchContext";
+import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
 
 function YellowCardHandlers() {
-  const { matchDetails, timerRunning, addEvent, updatePlayerStats } = useMatchContext();
+  const { matchDetails, timerRunning, addEvent, updatePlayerStats } =
+    useMatchContext();
   const [canAddYC, setCanAddYC] = useState<boolean>(true);
 
   function addYellowCard(playerId: number): void {
@@ -11,13 +12,12 @@ function YellowCardHandlers() {
     console.log("🟨 updatePlayerStats volán pro hráče:", playerId);
 
     updatePlayerStats(playerId, (player) => {
-      if (player.redCard > 0) return player;
+      if (player.redCard > 0 || player.yellowCard > 0) return player;
 
       let updatedPlayer = { ...player };
-      if(updatedPlayer.yellowCard === 1) {
+      if (updatedPlayer.yellowCard === 1) {
         updatedPlayer.yellowCard = 0;
-      }
-      else updatedPlayer.yellowCard = 1;
+      } else updatedPlayer.yellowCard = 1;
 
       let toastMessage = `🟨 Žlutá karta - ${player.firstName} ${player.lastName} #${player.number}`;
       addEvent(createCardEvent(matchDetails.timePlayed, playerId));
@@ -33,9 +33,11 @@ function YellowCardHandlers() {
   }
 
   function createCardEvent(timePlayed: string, playerId: number) {
-    const isHomeTeam = matchDetails.homeTeam.players.some((p) => p.id === playerId);
+    const isHomeTeam = matchDetails.homeTeam.players.some(
+      (p) => p.id === playerId
+    );
     return {
-      type: "Y", 
+      type: "Y",
       team: isHomeTeam ? "L" : "R",
       time: timePlayed,
       authorID: playerId,

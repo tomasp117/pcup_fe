@@ -1,7 +1,7 @@
 import {
   Player,
   useMatchContext,
-} from "../../../../contexts/MatchReportContext/MatchContext";
+} from "../../../../Contexts/MatchReportContext/MatchContext";
 import { useState } from "react";
 
 enum GoalType {
@@ -22,23 +22,23 @@ function GoalHandlers() {
     setScoreAway,
     timerRunning,
     addEvent,
-    updatePlayerStats, 
+    updatePlayerStats,
   } = useMatchContext();
   const [canAddGoal, setCanAddGoal] = useState<boolean>(true);
 
   function addGoal(playerId: number, goalType: GoalType): void {
     if (!canAddGoal) return;
     setCanAddGoal(false);
-    
+
     updatePlayerStats(playerId, (player) => {
       if (player.redCard > 0) return player;
-      
+
       console.log("🔹 updatePlayerStats volán pro hráče:", playerId);
 
-      let updatedPlayer = { ...player }; 
+      let updatedPlayer = { ...player };
 
       let toastMessage = "";
-      
+
       switch (goalType) {
         case GoalType.NormalHome:
           updatedPlayer.goalCount++;
@@ -88,8 +88,14 @@ function GoalHandlers() {
     }, 1000);
   }
 
-  function createGoalEvent(goalType: GoalType, timePlayed: string, playerId: number) {
-    const isHomeTeam = matchDetails.homeTeam.players.some((p) => p.id === playerId);
+  function createGoalEvent(
+    goalType: GoalType,
+    timePlayed: string,
+    playerId: number
+  ) {
+    const isHomeTeam = matchDetails.homeTeam.players.some(
+      (p) => p.id === playerId
+    );
     return {
       type: "G",
       team: isHomeTeam ? "L" : "R",

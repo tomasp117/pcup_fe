@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useMatchContext } from "../../../../contexts/MatchReportContext/MatchContext";
-
+import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
 
 function TwoMinuteHandlers() {
-  const { matchDetails, timerRunning, addEvent, updatePlayerStats } = useMatchContext();
+  const { matchDetails, timerRunning, addEvent, updatePlayerStats } =
+    useMatchContext();
   const [canAdd2M, setCanAdd2M] = useState<boolean>(true);
 
   function addTwoMinutes(playerId: number): void {
@@ -20,7 +20,7 @@ function TwoMinuteHandlers() {
       let toastMessage = `2 minuty - ${player.firstName} ${player.lastName} #${player.number}`;
 
       if (updatedPlayer.twoMin >= 3) {
-        updatedPlayer.redCard = 1; 
+        updatedPlayer.redCard = 1;
         toastMessage += " 🟥 Červená karta!";
       }
 
@@ -36,7 +36,9 @@ function TwoMinuteHandlers() {
   }
 
   function createPenaltyEvent(timePlayed: string, playerId: number) {
-    const isHomeTeam = matchDetails.homeTeam.players.some((p) => p.id === playerId);
+    const isHomeTeam = matchDetails.homeTeam.players.some(
+      (p) => p.id === playerId
+    );
     return {
       type: "2",
       team: isHomeTeam ? "L" : "R",
