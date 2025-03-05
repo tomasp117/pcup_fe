@@ -1,11 +1,19 @@
 import {
   Player,
-  Team,
   useMatchContext,
-} from "@/Contexts/MatchReportContext/MatchContext";
+} from "../../../../contexts/MatchReportContext/MatchContext";
 import { useState } from "react";
 
-function GoalHandlers(team: Team) {
+enum GoalType {
+  NormalHome = "L",
+  NormalAway = "R",
+  SevenHome = "L7",
+  SevenAway = "R7",
+  MissedHome = "LN",
+  MissedAway = "RN",
+}
+
+function GoalHandlers() {
   const {
     matchDetails,
     scoreHome,
@@ -14,94 +22,88 @@ function GoalHandlers(team: Team) {
     setScoreAway,
     timerRunning,
     addEvent,
+    updatePlayerStats, 
   } = useMatchContext();
   const [canAddGoal, setCanAddGoal] = useState<boolean>(true);
 
-  const isHomeTeam = team.id === matchDetails.homeTeam.id;
+  function addGoal(playerId: number, goalType: GoalType): void {
+    if (!canAddGoal) return;
+    setCanAddGoal(false);
+    
+    updatePlayerStats(playerId, (player) => {
+      if (player.redCard > 0) return player;
+      
+      console.log("🔹 updatePlayerStats volán pro hráče:", playerId);
 
-  const teamSide = isHomeTeam ? "L" : "R";
+      let updatedPlayer = { ...player }; 
 
-  function addGoal(player: Player, goalType: string): void {
-    if (canAddGoal && timerRunning) {
-      setCanAddGoal(false);
+      let toastMessage = "";
+      
+      switch (goalType) {
+        case GoalType.NormalHome:
+          updatedPlayer.goalCount++;
+          toastMessage = `Gól, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
+          setScoreHome(scoreHome + 1);
+          break;
 
-      const currentPlayer = team.players.find((p) => p === player);
+        case GoalType.NormalAway:
+          updatedPlayer.goalCount++;
+          toastMessage = `Gól, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
+          setScoreAway(scoreAway + 1);
+          break;
 
-      // Zpracování hráčů přímo z team.players
-      if (currentPlayer && !currentPlayer.redCard) {
-        let toastMessage = "";
+        case GoalType.SevenHome:
+          updatedPlayer.goalCount++;
+          updatedPlayer.sevenScored++;
+          toastMessage = `7m Gól, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
+          setScoreHome(scoreHome + 1);
+          break;
 
-        switch (goalType) {
-          case "L":
-            currentPlayer.goalCount++;
-            toastMessage = `Gól, ${
-              currentPlayer.firstName + " " + currentPlayer.lastName
-            } #${currentPlayer.number} pro domácí tým!`;
-            setScoreHome(scoreHome + 1);
-            break;
+        case GoalType.SevenAway:
+          updatedPlayer.goalCount++;
+          updatedPlayer.sevenScored++;
+          toastMessage = `7m Gól, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
+          setScoreAway(scoreAway + 1);
+          break;
 
-          case "R":
-            currentPlayer.goalCount++;
-            toastMessage = `Gól, ${
-              currentPlayer.firstName + " " + currentPlayer.lastName
-            } #${currentPlayer.number} pro hostující tým!`;
-            setScoreAway(scoreAway + 1);
-            break;
+        case GoalType.MissedHome:
+          updatedPlayer.sevenMissed++;
+          toastMessage = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
+          break;
 
-          case "L7":
-            currentPlayer.goalCount++;
-            currentPlayer.sevenScored++;
-            toastMessage = `7m Gól, ${
-              currentPlayer.firstName + " " + currentPlayer.lastName
-            } #${currentPlayer.number} pro domácí tým!`;
-            setScoreHome(scoreHome + 1);
-            break;
-
-          case "R7":
-            currentPlayer.goalCount++;
-            currentPlayer.sevenScored++;
-            toastMessage = `7m Gól, ${
-              currentPlayer.firstName + " " + currentPlayer.lastName
-            } #${currentPlayer.number} pro hostující tým!`;
-            setScoreAway(scoreAway + 1);
-            break;
-
-          case "LN":
-            currentPlayer.sevenMissed++;
-            toastMessage = `7m hod neproměněn, ${
-              currentPlayer.firstName + " " + currentPlayer.lastName
-            } #${currentPlayer.number} pro domácí tým!`;
-            break;
-
-          case "RN":
-            currentPlayer.sevenMissed++;
-            toastMessage = `7m hod neproměněn, ${
-              currentPlayer.firstName + " " + currentPlayer.lastName
-            } #${currentPlayer.number} pro hostující tým!`;
-            break;
-        }
-
-        // Přidání události do logu
-        addEvent({
-          type: "G",
-          team: isHomeTeam ? "L" : "R",
-          time: matchDetails.timePlayed,
-          authorID: currentPlayer.id,
-        });
-
-        showToast(toastMessage + ` - Celkem gólů: ${currentPlayer.goalCount}`);
+        case GoalType.MissedAway:
+          updatedPlayer.sevenMissed++;
+          toastMessage = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
+          break;
       }
-      setTimeout(() => {
-        setCanAddGoal(true);
-      }, 1000);
-    }
+
+      addEvent(createGoalEvent(goalType, matchDetails.timePlayed, playerId));
+      showToast(toastMessage + ` - Celkem gólů: ${updatedPlayer.goalCount}`);
+
+      return updatedPlayer;
+    });
+
+    setTimeout(() => {
+      setCanAddGoal(true);
+    }, 1000);
+  }
+
+  function createGoalEvent(goalType: GoalType, timePlayed: string, playerId: number) {
+    const isHomeTeam = matchDetails.homeTeam.players.some((p) => p.id === playerId);
+    return {
+      type: "G",
+      team: isHomeTeam ? "L" : "R",
+      time: timePlayed,
+      authorID: playerId,
+      goalType,
+    };
   }
 
   const showToast = (message: string) => {
     console.log(message);
   };
 
-  return { addGoal, teamSide };
+  return { addGoal, GoalType };
 }
 
 export default GoalHandlers;

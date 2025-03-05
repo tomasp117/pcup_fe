@@ -1,54 +1,52 @@
-import { useMatchContext } from "../../../Contexts/MatchContext";
-import Team from "../../../Objects/Team";
-import Player from "../../../Objects/Player";
+import { useState } from "react";
+import { useMatchContext } from "../../../../contexts/MatchReportContext/MatchContext";
 
-function YellowCardHandlers(team: Team) {
-    const { matchDetails, timerRunning, setTeamHome, setTeamAway } =
-        useMatchContext();
+function YellowCardHandlers() {
+  const { matchDetails, timerRunning, addEvent, updatePlayerStats } = useMatchContext();
+  const [canAddYC, setCanAddYC] = useState<boolean>(true);
 
-    const isHomeTeam = team.key === matchDetails.home.key;
+  function addYellowCard(playerId: number): void {
+    if (!canAddYC) return;
+    setCanAddYC(false);
+    console.log("🟨 updatePlayerStats volán pro hráče:", playerId);
 
-    function addYellowCard(player: Player): void {
-        if (timerRunning) {
-            const updatedPlayers = team.players.map((currentPlayer) => {
-                if (currentPlayer.id === player.id) {
-                    if (!currentPlayer.redCard) {
-                        currentPlayer.yellowCard = true; // Update yellow card status
+    updatePlayerStats(playerId, (player) => {
+      if (player.redCard > 0) return player;
 
-                        if (isHomeTeam) {
-                            console.log(
-                                "Zluta karta pro domaci, pro hrace: " +
-                                    player.firstName +
-                                    " " +
-                                    player.lastName +
-                                    " pocet golu: " +
-                                    player.goalCnt
-                            );
-                        } else {
-                            console.log(
-                                "Zluta karta pro hostujici, pro hrace: " +
-                                    player.firstName +
-                                    " " +
-                                    player.lastName +
-                                    " pocet golu: " +
-                                    player.goalCnt
-                            );
-                        }
-                    }
-                }
-                return currentPlayer;
-            });
+      let updatedPlayer = { ...player };
+      if(updatedPlayer.yellowCard === 1) {
+        updatedPlayer.yellowCard = 0;
+      }
+      else updatedPlayer.yellowCard = 1;
 
-            // Use the context to update the state
-            if (isHomeTeam) {
-                setTeamHome({ ...team, players: updatedPlayers });
-            } else {
-                setTeamAway({ ...team, players: updatedPlayers });
-            }
-        }
-    }
+      let toastMessage = `🟨 Žlutá karta - ${player.firstName} ${player.lastName} #${player.number}`;
+      addEvent(createCardEvent(matchDetails.timePlayed, playerId));
 
-    return { addYellowCard };
+      showToast(toastMessage);
+
+      return updatedPlayer;
+    });
+
+    setTimeout(() => {
+      setCanAddYC(true);
+    }, 1000);
+  }
+
+  function createCardEvent(timePlayed: string, playerId: number) {
+    const isHomeTeam = matchDetails.homeTeam.players.some((p) => p.id === playerId);
+    return {
+      type: "Y", 
+      team: isHomeTeam ? "L" : "R",
+      time: timePlayed,
+      authorID: playerId,
+    };
+  }
+
+  const showToast = (message: string) => {
+    console.log(message);
+  };
+
+  return { addYellowCard };
 }
 
 export default YellowCardHandlers;

@@ -1,54 +1,50 @@
-import { useMatchContext } from "../../../Contexts/MatchContext";
-import Team from "../../../Objects/Team";
-import Player from "../../../Objects/Player";
+import { useState } from "react";
+import { useMatchContext } from "../../../../contexts/MatchReportContext/MatchContext";
 
-function RedCardHandlers(team: Team) {
-    const { matchDetails, timerRunning, setTeamHome, setTeamAway } =
-        useMatchContext();
+function RedCardHandlers() {
+  const { matchDetails, timerRunning, addEvent, updatePlayerStats } = useMatchContext();
+  const [canAddRC, setCanAddRC] = useState<boolean>(true);
 
-    const isHomeTeam = team.key === matchDetails.home.key;
+  function addRedCard(playerId: number): void {
+    if (!canAddRC) return;
+    setCanAddRC(false);
+    console.log("🟨 updatePlayerStats volán pro hráče:", playerId);
 
-    function addRedCard(player: Player): void {
-        if (timerRunning) {
-            const updatedPlayers = team.players.map((currentPlayer) => {
-                if (currentPlayer.id === player.id) {
-                    //if (!currentPlayer.redCard && !currentPlayer.yellowCard) {
-                    currentPlayer.redCard = true; // Update yellow card status
+    updatePlayerStats(playerId, (player) => {
+      let updatedPlayer = { ...player };
+      if(updatedPlayer.redCard === 1) {
+        updatedPlayer.redCard = 0;
+      }
+      else updatedPlayer.redCard = 1;
 
-                    if (isHomeTeam) {
-                        console.log(
-                            "Cervena karta pro domaci, pro hrace: " +
-                                player.firstName +
-                                " " +
-                                player.lastName +
-                                " pocet golu: " +
-                                player.goalCnt
-                        );
-                    } else {
-                        console.log(
-                            "Cervena karta pro hostujici, pro hrace: " +
-                                player.firstName +
-                                " " +
-                                player.lastName +
-                                " pocet golu: " +
-                                player.goalCnt
-                        );
-                    }
-                    //}
-                }
-                return currentPlayer;
-            });
+      let toastMessage = `Cervena karta - ${player.firstName} ${player.lastName} #${player.number}`;
+      addEvent(createCardEvent(matchDetails.timePlayed, playerId));
 
-            // Use the context to update the state
-            if (isHomeTeam) {
-                setTeamHome({ ...team, players: updatedPlayers });
-            } else {
-                setTeamAway({ ...team, players: updatedPlayers });
-            }
-        }
-    }
+      showToast(toastMessage);
 
-    return { addRedCard };
+      return updatedPlayer;
+    });
+
+    setTimeout(() => {
+      setCanAddRC(true);
+    }, 1000);
+  }
+
+  function createCardEvent(timePlayed: string, playerId: number) {
+    const isHomeTeam = matchDetails.homeTeam.players.some((p) => p.id === playerId);
+    return {
+      type: "R", 
+      team: isHomeTeam ? "L" : "R",
+      time: timePlayed,
+      authorID: playerId,
+    };
+  }
+
+  const showToast = (message: string) => {
+    console.log(message);
+  };
+
+  return { addRedCard };
 }
 
 export default RedCardHandlers;
