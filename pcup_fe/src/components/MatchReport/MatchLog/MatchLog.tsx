@@ -26,6 +26,7 @@ export const MatchLog = () => {
         Y: "Žlutá karta",
         R: "Červená karta",
         "2": "2 minuty",
+        I: "Info",
     };
 
     return (
