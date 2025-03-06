@@ -127,6 +127,7 @@ interface MatchContextProps {
     setScoreHome: React.Dispatch<React.SetStateAction<number>>;
     setScoreAway: React.Dispatch<React.SetStateAction<number>>;
     addEvent: (event: Event) => void;
+    setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
     updatePlayerStats: (
         playerId: number,
         updateFn: (player: Player) => Player
@@ -221,6 +222,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
                 setScoreHome,
                 setScoreAway,
                 addEvent,
+                setEvents,
                 updatePlayerStats,
             }}
         >

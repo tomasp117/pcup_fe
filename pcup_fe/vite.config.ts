@@ -9,16 +9,16 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     cors: true, // Povolit CORS
-    origin: "https://9cc6-109-81-120-179.ngrok-free.app",
+    origin: "https://3c7d-2001-718-1001-110-89dd-41b2-8fe0-e86.ngrok-free.app",
     hmr: {
       protocol: "wss",
-      host: "9cc6-109-81-120-179.ngrok-free.app", // BEZ HTTPS!!!
+      host: "3c7d-2001-718-1001-110-89dd-41b2-8fe0-e86.ngrok-free.app", // BEZ HTTPS!!!
       clientPort: 443,
     },
     allowedHosts: [
       "localhost",
       "127.0.0.1",
-      "9cc6-109-81-120-179.ngrok-free.app", // Aktuální NGROK doména
+      "3c7d-2001-718-1001-110-89dd-41b2-8fe0-e86.ngrok-free.app", // Aktuální NGROK doména
     ],
   },
   resolve: {
