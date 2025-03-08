@@ -38,17 +38,20 @@ function GoalHandlers() {
       let updatedPlayer = { ...player };
 
       let toastMessage = "";
+      let message = "";
 
       switch (goalType) {
         case GoalType.NormalHome:
           updatedPlayer.goalCount++;
           toastMessage = `Gól, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
+          message = `⚽ Gól, ${player.firstName} ${player.lastName} #${player.number}`;
           setScoreHome(scoreHome + 1);
           break;
 
         case GoalType.NormalAway:
           updatedPlayer.goalCount++;
           toastMessage = `Gól, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
+          message = `⚽ Gól, ${player.firstName} ${player.lastName} #${player.number}`;
           setScoreAway(scoreAway + 1);
           break;
 
@@ -56,6 +59,7 @@ function GoalHandlers() {
           updatedPlayer.goalCount++;
           updatedPlayer.sevenScored++;
           toastMessage = `7m Gól, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
+          message = `⚽ 7m Gól, ${player.firstName} ${player.lastName} #${player.number}`;
           setScoreHome(scoreHome + 1);
           break;
 
@@ -63,21 +67,32 @@ function GoalHandlers() {
           updatedPlayer.goalCount++;
           updatedPlayer.sevenScored++;
           toastMessage = `7m Gól, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
+          message = `⚽ 7m Gól, ${player.firstName} ${player.lastName} #${player.number}`;
           setScoreAway(scoreAway + 1);
           break;
 
         case GoalType.MissedHome:
           updatedPlayer.sevenMissed++;
           toastMessage = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
+          message = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number}`;
           break;
 
         case GoalType.MissedAway:
           updatedPlayer.sevenMissed++;
           toastMessage = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
+          message = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number}`;
           break;
       }
 
-      addEvent(createGoalEvent(goalType, matchDetails.timePlayed, playerId));
+      addEvent({
+        type: "G",
+        team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
+          ? "L"
+          : "R",
+        time: matchDetails.timePlayed,
+        authorID: playerId,
+        message,
+      });
       showToast(toastMessage + ` - Celkem gólů: ${updatedPlayer.goalCount}`);
 
       return updatedPlayer;
@@ -86,23 +101,6 @@ function GoalHandlers() {
     setTimeout(() => {
       setCanAddGoal(true);
     }, 1000);
-  }
-
-  function createGoalEvent(
-    goalType: GoalType,
-    timePlayed: string,
-    playerId: number
-  ) {
-    const isHomeTeam = matchDetails.homeTeam.players.some(
-      (p) => p.id === playerId
-    );
-    return {
-      type: "G",
-      team: isHomeTeam ? "L" : "R",
-      time: timePlayed,
-      authorID: playerId,
-      goalType,
-    };
   }
 
   const showToast = (message: string) => {

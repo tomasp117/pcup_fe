@@ -18,13 +18,23 @@ function TwoMinuteHandlers() {
       updatedPlayer.twoMin++;
 
       let toastMessage = `2 minuty - ${player.firstName} ${player.lastName} #${player.number}`;
+      let message = `🕑2 minuty - ${player.firstName} ${player.lastName} #${player.number}`;
 
       if (updatedPlayer.twoMin >= 3) {
         updatedPlayer.redCard = 1;
         toastMessage += " 🟥 Červená karta!";
       }
 
-      addEvent(createPenaltyEvent(matchDetails.timePlayed, playerId));
+      addEvent({
+        type: "2",
+        team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
+          ? "L"
+          : "R",
+        time: matchDetails.timePlayed,
+        authorID: playerId,
+        message,
+      });
+
       showToast(toastMessage);
 
       return updatedPlayer;

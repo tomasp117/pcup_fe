@@ -17,7 +17,16 @@ function RedCardHandlers() {
       updatedPlayer.redCard = 1;
 
       let toastMessage = `Cervena karta - ${player.firstName} ${player.lastName} #${player.number}`;
-      addEvent(createCardEvent(matchDetails.timePlayed, playerId));
+      let message = `🟥 Červená karta - ${player.firstName} ${player.lastName} #${player.number}`;
+      addEvent({
+        type: "R",
+        team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
+          ? "L"
+          : "R",
+        time: matchDetails.timePlayed,
+        authorID: playerId,
+        message,
+      });
 
       showToast(toastMessage);
 

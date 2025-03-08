@@ -20,7 +20,16 @@ function YellowCardHandlers() {
       } else updatedPlayer.yellowCard = 1;
 
       let toastMessage = `🟨 Žlutá karta - ${player.firstName} ${player.lastName} #${player.number}`;
-      addEvent(createCardEvent(matchDetails.timePlayed, playerId));
+      let message = `🟨 Žlutá karta - ${player.firstName} ${player.lastName} #${player.number}`;
+      addEvent({
+        type: "Y",
+        team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
+          ? "L"
+          : "R",
+        time: matchDetails.timePlayed,
+        authorID: playerId,
+        message,
+      });
 
       showToast(toastMessage);
 

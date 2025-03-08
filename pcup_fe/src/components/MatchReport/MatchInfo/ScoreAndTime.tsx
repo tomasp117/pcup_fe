@@ -105,11 +105,11 @@ function ScoreAndTime() {
       setStartButtonClicked(true);
       setTimerRunning(true);
       addEvent({
-        id: 0,
         type: "I",
         team: null,
         time: "Začátek 1. poločasu",
         authorID: null,
+        message: "Začátek 1. poločasu",
       });
       return;
     }
