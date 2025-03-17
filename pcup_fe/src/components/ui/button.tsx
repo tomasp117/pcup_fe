@@ -12,13 +12,12 @@ const buttonVariants = cva(
         default: "bg-primary hover:bg-primary-dark text-white shadow",
         goalInfo: "bg-primary-10 hover:bg-primary/20 text-primary-dark shadow",
         eventDelete: "bg-primary text-white shadow hover:bg-red-500",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        destructive: "bg-red-500 text-white shadow-sm hover:bg-red-600",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:text-primary transition-all",
         link: "text-primary underline-offset-4 hover:underline",
         scored7m: "bg-green-100 text-green-700 hover:bg-green-200",
         missed7m: "bg-red-100 text-red-700 hover:bg-red-200",

@@ -26,6 +26,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LoginDialog } from "@/components/Login/LoginDialog";
+import { useUser } from "@/Contexts/UserContext";
+import { Button } from "@/components/ui/button";
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -43,7 +46,7 @@ export const Sidebar = () => {
   const menuItems = [
     { name: "Domů", path: "/", icon: <Home /> },
     { name: "Rozpis utkání", path: "/match_report", icon: <Trophy /> },
-    { name: "Týmy", path: "/teams", icon: <Users /> },
+    { name: "Draws", path: "/draws", icon: <Users /> },
     { name: "Výsledky", path: "/vysledky", icon: <Trophy /> },
     {
       name: "Kategorie",
@@ -58,6 +61,8 @@ export const Sidebar = () => {
       ],
     },
   ];
+
+  const { user, logout } = useUser();
 
   return (
     <div className="flex">
@@ -112,13 +117,25 @@ export const Sidebar = () => {
 
             {/* Login Button ZAROVNANÝ DOLŮ */}
             <div className="p-4 border-t flex items-center justify-center">
-              <Link
-                to="/login"
-                className="flex items-center space-x-2  hover:text-primary transition-all"
-              >
-                <UserCircle size={32} />
-                <span>Přihlášení</span>
-              </Link>
+              {user ? (
+                <div className="flex flex-col items-center space-y-2 w-full">
+                  <div className="flex items-center space-x-2">
+                    <UserCircle size={36} />
+                    <div>
+                      <p className="font-semibold">{user.username}</p>
+                      <p className="text-sm text-gray-500">{user.role}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="text-red-500 w-full text-center py-2 rounded-md hover:bg-red-100"
+                  >
+                    Odhlásit se
+                  </button>
+                </div>
+              ) : (
+                <LoginDialog isCollapsed={false} />
+              )}
             </div>
           </SheetContentNoClose>
         </Sheet>
@@ -246,7 +263,7 @@ export const Sidebar = () => {
             </ul>
 
             {/* Login Button */}
-            <div className="p-4 border-t flex items-center justify-center">
+            {/* <div className="p-4 border-t flex items-center justify-center">
               <Link
                 to="/login"
                 className="flex items-center space-x-2  hover:text-primary transition-all"
@@ -254,6 +271,32 @@ export const Sidebar = () => {
                 <UserCircle size={32} />
                 {!isCollapsed && <span>Přihlášení</span>}
               </Link>
+            </div> */}
+            <div className="border-t flex items-center justify-center p-4">
+              {user ? (
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <UserCircle size={32} />
+                    {!isCollapsed && (
+                      <div>
+                        <p className="font-semibold">{user.username}</p>
+                        <p className="text-sm text-gray-500">{user.role}</p>
+                      </div>
+                    )}
+                  </div>
+                  {!isCollapsed && (
+                    <Button
+                      variant="ghost"
+                      onClick={logout}
+                      className="text-red-500 mt-1 text-sm hover:bg-red-100 hover:text-red-500"
+                    >
+                      Odhlásit se
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <LoginDialog isCollapsed={isCollapsed} />
+              )}
             </div>
           </div>
         )}

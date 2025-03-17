@@ -11,6 +11,8 @@ import { MainLayout } from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import { MatchReport } from "./pages/MatchReport";
 import { MatchProvider } from "./Contexts/MatchReportContext/MatchContext";
+import { UserProvider } from "./Contexts/UserContext";
+import { Draws } from "./pages/Draws";
 
 const MatchLayout = () => (
   <MatchProvider>
@@ -23,16 +25,19 @@ function App() {
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/match_report" element={<MatchLayout />}>
-              <Route index element={<MatchReport />} />
+      <UserProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/draws" element={<Draws />} />
+              <Route path="/match_report" element={<MatchLayout />}>
+                <Route index element={<MatchReport />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </UserProvider>
     </>
   );
 }
