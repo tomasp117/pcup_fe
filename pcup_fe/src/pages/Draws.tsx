@@ -15,6 +15,15 @@ import { DraggableTeam } from "../components/MatchDraws/DraggableTeam";
 import { DroppableGroup } from "../components/MatchDraws/DroppableGroup";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
+import { toast } from "react-toastify";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,7 +42,7 @@ export interface TeamDraw {
 }
 
 export interface Group {
-  id: number;
+  id?: number;
   name: string;
   teams: TeamDraw[];
 }
@@ -47,6 +56,17 @@ export interface GroupVariant {
 
 export const Draws = () => {
   const [category, setCategory] = useState(1);
+  const [categoryData, setCategoryData] = useState<
+    Record<
+      number,
+      {
+        teams: TeamDraw[];
+        groups: Group[];
+        selectedVariant: GroupVariant | null;
+        groupVariants: GroupVariant[];
+      }
+    >
+  >({});
   const [teamDraws, setTeamDraws] = useState<TeamDraw[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,23 +75,113 @@ export const Draws = () => {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const getTeams = async () => {
+  const [expandedVariant, setExpandedVariant] = useState<number | null>(null);
+  const [groupVariants, setGroupVariants] = useState<GroupVariant[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<GroupVariant | null>(
+    null
+  );
+
+  const hasTeamsInGroups = groups.some((group) => group.teams.length > 0);
+
+  const handleCategoryChange = (newCategory: number) => {
+    setCategoryData((prev) => ({
+      ...prev,
+      [category]: {
+        teams: teamDraws,
+        groups: groups,
+        selectedVariant,
+        groupVariants,
+      },
+    }));
+
+    setCategory(newCategory);
+
+    const newData = categoryData[newCategory] || {
+      teams: [],
+      groups: Array.from({ length: 4 }, (_, index) => ({
+        id: index + 1,
+        name: `Skupina ${String.fromCharCode(65 + index)}`,
+        teams: [],
+      })),
+      selectedVariant: null,
+      groupVariants: [],
+    };
+
+    setTeamDraws(newData.teams);
+    setGroups(newData.groups);
+    setSelectedVariant(newData.selectedVariant);
+    setGroupVariants(newData.groupVariants);
+  };
+
+  const getTeamsAndGroups = async () => {
     setIsLoading(true);
-    setErrorMessage(null); // Reset chyby před načtením
+    setErrorMessage(null);
+
+    if (categoryData[category]?.teams.length) {
+      setTeamDraws(categoryData[category].teams);
+      setGroups(categoryData[category].groups);
+      setSelectedVariant(categoryData[category].selectedVariant);
+      setGroupVariants(categoryData[category].groupVariants);
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch(`${API_URL}/teams?category=${category}`);
+      const groupsResponse = await fetch(
+        `${API_URL}/groups?categoryId=${category}`
+      );
 
-      if (!response.ok) {
-        throw new Error(`Chyba: ${response.status} ${response.statusText}`);
+      let newGroups: Group[] = [];
+      let remainingTeams: TeamDraw[] = [];
+
+      if (groupsResponse.ok) {
+        const groups: Group[] = await groupsResponse.json();
+        newGroups = groups.map((group) => ({
+          ...group,
+          teams: group.teams.map((team) => ({
+            ...team,
+            strength: team.strength ?? 1,
+            isGirls: team.isGirls ?? false,
+          })),
+        }));
+      } else if (groupsResponse.status === 404) {
+        const teamsResponse = await fetch(
+          `${API_URL}/teams?category=${category}`
+        );
+
+        if (!teamsResponse.ok) {
+          throw new Error(
+            `Chyba: ${teamsResponse.status} ${teamsResponse.statusText}`
+          );
+        }
+
+        remainingTeams = await teamsResponse.json();
+
+        newGroups = Array.from({ length: 4 }, (_, index) => ({
+          id: undefined,
+          name: `Skupina ${String.fromCharCode(65 + index)}`,
+          teams: [],
+        }));
+      } else {
+        throw new Error(
+          `Chyba: ${groupsResponse.status} ${groupsResponse.statusText}`
+        );
       }
 
-      const data: TeamDraw[] = await response.json();
-      const formattedData: TeamDraw[] = data.map((team) => ({
-        ...team,
+      setCategoryData((prev) => ({
+        ...prev,
+        [category]: {
+          teams: remainingTeams,
+          groups: newGroups,
+          selectedVariant: prev[category]?.selectedVariant || null,
+          groupVariants: prev[category]?.groupVariants || [],
+        },
       }));
 
-      setTeamDraws(formattedData);
+      setTeamDraws(remainingTeams);
+      setGroups(newGroups);
+      setSelectedVariant(categoryData[category]?.selectedVariant || null);
+      setGroupVariants(categoryData[category]?.groupVariants || []);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -82,14 +192,6 @@ export const Draws = () => {
       setIsLoading(false);
     }
   };
-
-  const [expandedVariant, setExpandedVariant] = useState<number | null>(null);
-  const [groupVariants, setGroupVariants] = useState<GroupVariant[]>([]);
-  const [selectedVariant, setSelectedVariant] = useState<GroupVariant | null>(
-    null
-  );
-
-  const hasTeamsInGroups = groups.some((group) => group.teams.length > 0);
 
   const autoAssignTeams = async () => {
     setErrorMessage(null);
@@ -108,19 +210,17 @@ export const Draws = () => {
 
       const data: GroupVariant[] = await response.json();
 
-      const enrichedData = data.map((variant) => ({
-        ...variant,
-        groups: variant.groups.map((group) => ({
-          ...group,
-          teams: group.teams.map((team) => ({
-            ...team,
-            strength: teamDraws.find((t) => t.id === team.id)?.strength ?? 1,
-            isGirls: teamDraws.find((t) => t.id === team.id)?.isGirls ?? false,
-          })),
-        })),
-      }));
+      setGroupVariants(data);
 
-      setGroupVariants(enrichedData);
+      // 🔹 Uložit varianty do paměti
+      setCategoryData((prev) => ({
+        ...prev,
+        [category]: {
+          ...prev[category],
+          groupVariants: data,
+          selectedVariant: null,
+        },
+      }));
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Chyba při rozdělování týmů."
@@ -142,21 +242,33 @@ export const Draws = () => {
       }))
     );
 
-    const assignedTeamIds = variant.groups.flatMap((group) =>
-      group.teams.map((team) => team.id)
-    );
     setTeamDraws((prevTeams) =>
-      prevTeams.filter((team) => !assignedTeamIds.includes(team.id))
+      prevTeams.filter(
+        (team) =>
+          !variant.groups.flatMap((g) => g.teams).some((t) => t.id === team.id)
+      )
     );
+
+    setCategoryData((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        selectedVariant: variant,
+      },
+    }));
   };
 
   useEffect(() => {
-    getTeams();
+    const timeout = setTimeout(() => {
+      getTeamsAndGroups();
+    }, 300);
+
+    return () => clearTimeout(timeout);
   }, [category]);
 
   const resetVariantSelection = () => {
-    resetTeams();
     setSelectedVariant(null);
+    resetTeams();
     //setGroupVariants([]);
 
     //setGroups(groups.map((group) => ({ ...group, teams: [] })));
@@ -259,7 +371,7 @@ export const Draws = () => {
     }
 
     const newGroups = Array.from({ length: newCount }, (_, index) => ({
-      id: index + 1,
+      id: groups[index]?.id,
       name: `Skupina ${String.fromCharCode(65 + index)}`,
       teams: groups[index]?.teams || [],
     }));
@@ -277,31 +389,69 @@ export const Draws = () => {
     setGroups(groups.map((group) => ({ ...group, teams: [] })));
   };
 
+  const saveGroups = async () => {
+    setErrorMessage(null);
+    const validGroups = groups.filter((group) => group.teams.length > 0);
+
+    if (validGroups.length === 0) {
+      toast.error("Nelze uložit – všechny skupiny jsou prázdné.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_URL}/groups/save?categoryId=${category}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(validGroups),
+        }
+      );
+
+      if (!response.ok) throw new Error(`Chyba: ${response.status}`);
+
+      toast.success("Skupiny byly úspěšně uloženy.");
+    } catch (error) {
+      toast.error("Chyba při ukládání skupin.");
+    }
+  };
   return (
-    <DndProvider backend={HTML5Backend}>
-      <h2 className="text-xl font-bold">Rozdělování týmů do skupin</h2>
-      <div className="flex gap-4 my-4">
-        <select
-          value={category}
-          onChange={(e) => setCategory(Number(e.target.value))}
-        >
-          <option value="1">Mladší žáci</option>
-          <option value="2">Starší žáci</option>
-          <option value="3">Mini žáci 4+1</option>
-        </select>
-        <button onClick={getTeams} className="bg-primary text-white px-4 py-2">
-          Načíst týmy
-        </button>
-      </div>
-      <div className="flex gap-8">
+    <DndProvider
+      backend={HTML5Backend}
+      key={selectedVariant ? "variant" : "manual"}
+    >
+      <Card className="shadow-lg p-4 h-min">
+        <CardHeader>
+          <h2 className="text-xl font-bold">Rozdělování týmů do skupin</h2>
+        </CardHeader>
+        <CardContent className="flex gap-4 items-center">
+          <span className="font-medium">Vyber kategorii:</span>
+          <Select
+            onValueChange={(value) => handleCategoryChange(Number(value))}
+            value={category.toString()}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Vyber kategorii" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">Mini 4+1</SelectItem>
+              <SelectItem value="2">Mini 6+1</SelectItem>
+              <SelectItem value="3">Mladší žáci</SelectItem>
+              <SelectItem value="4">Starší žáci</SelectItem>
+              <SelectItem value="5">Mladší dorostenci</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+      <div className="flex_col sm:flex gap-8">
         {/*LEVÁ STRANA - Seznam týmů */}
-        <div className="w-1/2 shadow-lg p-4">
+        <div className="w-full sm:w-1/2 shadow-lg p-4 flex flex-col gap-4 ">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Seznam týmů</h2>
             {groupVariants.length === 0 ? (
               <Button
                 onClick={autoAssignTeams}
-                className="bg-blue-500 text-white px-4 py-2"
+                className="bg-blue-500 text-white px-4 py-2 whitespace-normal"
                 disabled={selectedVariant !== null || hasTeamsInGroups}
               >
                 {hasTeamsInGroups
@@ -343,7 +493,9 @@ export const Draws = () => {
                     key={team.id}
                     team={team}
                     handleChange={handleChange}
-                    isDraggable={groupVariants.length === 0 ? true : false}
+                    isDraggable={
+                      groupVariants.length === 0 || selectedVariant !== null
+                    }
                   />
                 ))}
               </TableBody>
@@ -352,7 +504,7 @@ export const Draws = () => {
         </div>
 
         {/* 🟢 PRAVÁ STRANA - Skupiny */}
-        <div className="w-1/2 flex flex-col gap-4 shadow-lg p-4">
+        <div className="w-full sm:w-1/2 flex flex-col gap-4 shadow-lg p-4">
           {groupVariants.length === 0 ? (
             <>
               {/* Skupiny */}
@@ -368,9 +520,9 @@ export const Draws = () => {
                   </Button>
                 </div>
               </div>
-              {groups.map((group) => (
+              {groups.map((group, index) => (
                 <DroppableGroup
-                  key={group.id}
+                  key={group.id ?? `new-group-${index}`}
                   group={group}
                   moveTeam={moveTeamToGroup}
                   moveBack={moveTeamBack}
@@ -384,6 +536,16 @@ export const Draws = () => {
                   className="p-2"
                 >
                   <Minus />
+                </Button>
+                <Button
+                  className="mt-4"
+                  onClick={saveGroups}
+                  disabled={
+                    groups.length === 0 ||
+                    groups.every((g) => g.teams.length === 0)
+                  }
+                >
+                  Uložit skupiny
                 </Button>
                 <Input
                   type="number"
@@ -414,19 +576,30 @@ export const Draws = () => {
                     {selectedVariant.minMatchesPerTeam} na tým)
                   </p>
 
-                  {groups.map((group) => (
+                  {groups.map((group, index) => (
                     <DroppableGroup
-                      key={group.id}
+                      key={group.id ?? `new-group-${index}`}
                       group={group}
                       moveTeam={moveTeamToGroup}
                       moveBack={moveTeamBack}
                       removeTeamFromGroup={removeTeamFromGroup}
                     />
                   ))}
-
-                  <Button className="mt-4" onClick={resetVariantSelection}>
-                    Zpět k výběru variant
-                  </Button>
+                  <div className="flex justify-between items-center">
+                    <Button className="mt-4" onClick={resetVariantSelection}>
+                      Zpět k výběru variant
+                    </Button>
+                    <Button
+                      className="mt-4"
+                      onClick={saveGroups}
+                      disabled={
+                        groups.length === 0 ||
+                        groups.every((g) => g.teams.length === 0)
+                      }
+                    >
+                      Uložit skupiny
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 groupVariants.map((variant, index) => (
@@ -445,7 +618,7 @@ export const Draws = () => {
                     {expandedVariant === index &&
                       variant.groups.map((group) => (
                         <DroppableGroup
-                          key={group.id}
+                          key={group.id ?? `new-group-${index}`}
                           group={group}
                           moveTeam={undefined}
                           moveBack={undefined}

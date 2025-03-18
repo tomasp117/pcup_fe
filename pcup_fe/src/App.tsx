@@ -13,6 +13,9 @@ import { MatchReport } from "./pages/MatchReport";
 import { MatchProvider } from "./Contexts/MatchReportContext/MatchContext";
 import { UserProvider } from "./Contexts/UserContext";
 import { Draws } from "./pages/Draws";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { TimeTable } from "./pages/TimeTable";
 
 const MatchLayout = () => (
   <MatchProvider>
@@ -26,11 +29,13 @@ function App() {
   return (
     <>
       <UserProvider>
+        <ToastContainer position="top-right" autoClose={3000} />
         <Router>
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/draws" element={<Draws />} />
+              <Route path="/time-table" element={<TimeTable />} />
               <Route path="/match_report" element={<MatchLayout />}>
                 <Route index element={<MatchReport />} />
               </Route>

@@ -47,7 +47,7 @@ export const Sidebar = () => {
     { name: "Domů", path: "/", icon: <Home /> },
     { name: "Rozpis utkání", path: "/match_report", icon: <Trophy /> },
     { name: "Draws", path: "/draws", icon: <Users /> },
-    { name: "Výsledky", path: "/vysledky", icon: <Trophy /> },
+    { name: "Výsledky", path: "/time-table", icon: <Trophy /> },
     {
       name: "Kategorie",
       path: "/kategorie",
