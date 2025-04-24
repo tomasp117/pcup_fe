@@ -53,8 +53,8 @@ export const DraggableTeam = ({
   return (
     <TableRow
       ref={rowRef}
-      className={`border-b ${isDragging ? "opacity-50" : ""}  ${
-        isDraggable ? "hover:bg-primary/10" : "opacity-50 cursor-not-allowed"
+      className={`border-b transition-all duration-200 ${
+        isDragging ? "opacity-50 scale-[0.98]" : ""
       }`}
     >
       <TableCell className="p-2">
