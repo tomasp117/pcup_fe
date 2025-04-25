@@ -61,14 +61,16 @@ export const PlayoffBracketEditor = () => {
   };
 
   const addTeamToGroup = (rowIndex: number, groupIndex: number) => {
+    console.log("Adding team to group", rowIndex, groupIndex);
     setBracket((prev) => {
       const updated = [...prev];
+      const existing = updated[rowIndex].groups[groupIndex].teams;
+
       const group = updated[rowIndex].groups[groupIndex];
 
       const newTeamNumber = group.teams.length + 1;
       const newTeamName = `Tým ${newTeamNumber}`;
 
-      // Zamezíme duplicitnímu přidání stejného týmu
       const alreadyExists = group.teams.some((t) => t.name === newTeamName);
       if (alreadyExists) return prev;
 

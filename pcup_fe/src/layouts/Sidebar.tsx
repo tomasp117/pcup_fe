@@ -9,6 +9,15 @@ import {
   X,
   ChevronDown,
   UserCircle,
+  BookOpen,
+  BookOpenText,
+  PenBox,
+  ListIcon,
+  ArrowDownNarrowWide,
+  TablePropertiesIcon,
+  CalendarRange,
+  Split,
+  LayoutDashboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -45,9 +54,6 @@ export const Sidebar = () => {
 
   const menuItems = [
     { name: "Domů", path: "/", icon: <Home /> },
-    { name: "Rozpis utkání", path: "/match_report", icon: <Trophy /> },
-    { name: "Draws", path: "/draws", icon: <Users /> },
-    { name: "Výsledky", path: "/time-table", icon: <Trophy /> },
     {
       name: "Kategorie",
       path: "/kategorie",
@@ -60,13 +66,29 @@ export const Sidebar = () => {
         { name: "Mladší dorost", path: "/kategorie/mladsidorost" },
       ],
     },
+    {
+      name: "Rozpis utkání",
+      path: "/time-table",
+      icon: <CalendarRange />,
+    },
+    { name: "Zápis utkání", path: "/match-report", icon: <PenBox /> },
+    {
+      name: "Rozdělení skupin - editor",
+      path: "/draws-editor",
+      icon: <Split />,
+    },
+    {
+      name: "Rozpis utkání - editor",
+      path: "/time-table-editor",
+      icon: <LayoutDashboard />,
+    },
   ];
 
   const { user, logout } = useUser();
 
   return (
     <div className="flex">
-      {/* Mobilní Sidebar - ShadCN Sheet */}
+      {/* Mobilní Sidebar */}
       {isMobile && (
         <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
           <SheetTrigger asChild>
