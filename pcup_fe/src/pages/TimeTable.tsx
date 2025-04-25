@@ -11,67 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Category } from "@/interfaces/CategorySelect/ICategory";
+import { GroupDetailDTO } from "@/interfaces/Timetable/GroupDetailDTO";
+import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
+import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-export interface TeamDTO {
-  id: number;
-  name: string;
-  clubId: number;
-  clubName: string;
-  categoryId: number;
-  tournamentInstanceId: number;
-  tournamentInstanceNum: number;
-  groupId?: number;
-  groupName?: string;
-}
-
-export interface UnassignedMatch {
-  homeTeamId: number;
-  homeTeamName: string;
-  awayTeamId: number;
-  awayTeamName: string;
-  groupId: number;
-  groupName: string;
-}
-
-export interface MatchDTO {
-  id: number;
-  time: string;
-  timePlayed: string;
-  playground: string;
-  score: string;
-  state: string;
-  homeTeam: TeamDTO | null;
-  awayTeam: TeamDTO | null;
-  group: GroupDTO;
-}
-
-export interface GroupDTO {
-  id: number;
-  name: string;
-  categoryId: number;
-  categoryName: string;
-}
-
-export interface GroupDetailDTO extends GroupDTO {
-  teams: TeamDTO[];
-  matches: MatchDTO[];
-}
-
-export interface Category {
-  id: number;
-  name: string;
-}
-
-/* export interface Slot {
-  id: number;
-  time: string; 
-  playground: string;
-  match: MatchDTO | null;
-} */
 
 export const TimeTable = () => {
   const [categoryId, setCategoryId] = useState<number | null>(null);

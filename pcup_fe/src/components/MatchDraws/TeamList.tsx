@@ -8,7 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DraggableTeam } from "./DraggableTeam";
-import { GroupVariant, TeamDraw } from "@/pages/Draws";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
+import { GroupVariant } from "@/interfaces/Draws/GroupVariant";
 
 interface TeamListProps {
   teams: TeamDraw[];

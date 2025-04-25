@@ -7,10 +7,7 @@ import {
   SelectValue,
 } from "./ui/select";
 
-type Category = {
-  id: number;
-  name: string;
-};
+import { Category } from "@/interfaces/CategorySelect/ICategory";
 
 interface CategorySelectProps {
   value: number | null;

@@ -12,16 +12,16 @@ function TwoMinuteHandlers() {
     console.log("🟡 updatePlayerStats volán pro hráče:", playerId);
 
     updatePlayerStats(playerId, (player) => {
-      if (player.redCard > 0) return player;
+      if (player.redCardCount > 0) return player;
 
       let updatedPlayer = { ...player };
-      updatedPlayer.twoMin++;
+      updatedPlayer.twoMinPenaltyCount++;
 
-      let toastMessage = `2 minuty - ${player.firstName} ${player.lastName} #${player.number}`;
-      let message = `🕑2 minuty - ${player.firstName} ${player.lastName} #${player.number}`;
+      let toastMessage = `2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      let message = `🕑2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
 
-      if (updatedPlayer.twoMin >= 3) {
-        updatedPlayer.redCard = 1;
+      if (updatedPlayer.twoMinPenaltyCount >= 3) {
+        updatedPlayer.redCardCount = 1;
         toastMessage += " 🟥 Červená karta!";
       }
 

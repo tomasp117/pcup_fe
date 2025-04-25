@@ -1,4 +1,4 @@
-import { GroupVariant } from "@/pages/Draws";
+import { GroupVariant } from "@/interfaces/Draws/GroupVariant";
 
 export function useAutoAssign(
   API_URL: string,

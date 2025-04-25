@@ -98,7 +98,7 @@ function ScoreAndTime() {
   function handleButtonClick(): void {
     if (!initialCheckCompleted) {
       setInitialCheckCompleted(true);
-      setMatchState("msPending");
+      setMatchState("Pending");
       return;
     }
     if (!startButtonClicked) {

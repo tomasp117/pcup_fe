@@ -7,12 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Event,
-  useMatchContext,
-} from "@/Contexts/MatchReportContext/MatchContext";
+import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+
+import { Event } from "@/interfaces/MatchReport/Event";
 
 export const MatchLog = () => {
   const {
@@ -70,15 +69,15 @@ export const MatchLog = () => {
           const isSevenMeter = message.includes("7m Gól");
 
           if (isSevenMeterMissed) {
-            updatedPlayer.sevenMissed = Math.max(
-              updatedPlayer.sevenMissed - 1,
+            updatedPlayer.sevenMeterMissCount = Math.max(
+              updatedPlayer.sevenMeterMissCount - 1,
               0
             );
 
             return updatedPlayer;
           } else if (isSevenMeter) {
-            updatedPlayer.sevenScored = Math.max(
-              updatedPlayer.sevenScored - 1,
+            updatedPlayer.sevenMeterGoalCount = Math.max(
+              updatedPlayer.sevenMeterGoalCount - 1,
               0
             );
           } else {
@@ -93,14 +92,20 @@ export const MatchLog = () => {
         }
 
         if (type === "2") {
-          updatedPlayer.twoMin = Math.max(updatedPlayer.twoMin - 1, 0);
-          if (updatedPlayer.redCard && updatedPlayer.twoMin < 3) {
-            updatedPlayer.redCard = 0;
+          updatedPlayer.twoMinPenaltyCount = Math.max(
+            updatedPlayer.twoMinPenaltyCount - 1,
+            0
+          );
+          if (
+            updatedPlayer.redCardCount &&
+            updatedPlayer.twoMinPenaltyCount < 3
+          ) {
+            updatedPlayer.redCardCount = 0;
           }
         }
 
-        if (type === "Y") updatedPlayer.yellowCard = 0;
-        if (type === "R") updatedPlayer.redCard = 0;
+        if (type === "Y") updatedPlayer.yellowCardCount = 0;
+        if (type === "R") updatedPlayer.redCardCount = 0;
 
         return updatedPlayer;
       });
@@ -157,11 +162,11 @@ export const MatchLog = () => {
               // Nastavení varianty tlačítka podle události
               const buttonVariant =
                 event.type === "Y"
-                  ? "yellowCard"
+                  ? "yellowCardCount"
                   : event.type === "R"
-                  ? "redCard"
+                  ? "redCardCount"
                   : event.type === "2"
-                  ? "twoMinute"
+                  ? "twoMinPenaltyCountute"
                   : "goalInfo";
 
               return (

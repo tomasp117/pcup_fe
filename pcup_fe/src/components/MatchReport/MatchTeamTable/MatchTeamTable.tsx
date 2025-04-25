@@ -7,10 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Team,
-  useMatchContext,
-} from "../../../Contexts/MatchReportContext/MatchContext";
+import { useMatchContext } from "../../../Contexts/MatchReportContext/MatchContext";
 import { Check, X } from "lucide-react";
 import GoalHandlers from "./TableHandlers/GoalHandlers";
 import { match } from "assert";
@@ -18,6 +15,7 @@ import { useEffect } from "react";
 import TwoMinuteHandlers from "./TableHandlers/TwoMinuteHandlers";
 import YellowCardHandlers from "./TableHandlers/YellowCardHandlers";
 import RedCardHandlers from "./TableHandlers/RedCardHandlers";
+import { Team } from "@/interfaces/MatchReport/Team";
 
 interface MatchTeamTableProps {
   team: Team;
@@ -60,13 +58,13 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
             >
               <TableCell className="font-medium">{player.number}</TableCell>
               <TableCell className="font-medium">
-                {player.firstName} {player.lastName}
+                {player.person.firstName} {player.person.lastName}
               </TableCell>
               <TableCell className="text-center">
                 <div className="flex items-center gap-1 justify-center">
                   <Button
                     className=""
-                    disabled={player.redCard > 0 || !timerRunning}
+                    disabled={player.redCardCount > 0 || !timerRunning}
                     onClick={() =>
                       addGoal(
                         player.id,
@@ -81,7 +79,7 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                     <Button
                       variant={"scored7m"}
                       className="px-1 py-0 text-xs h-auto"
-                      disabled={player.redCard > 0 || !timerRunning}
+                      disabled={player.redCardCount > 0 || !timerRunning}
                       onClick={() =>
                         addGoal(
                           player.id,
@@ -94,7 +92,7 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                     <Button
                       variant={"missed7m"}
                       className="px-1 py-0 text-xs h-auto"
-                      disabled={player.redCard > 0 || !timerRunning}
+                      disabled={player.redCardCount > 0 || !timerRunning}
                       onClick={() =>
                         addGoal(
                           player.id,
@@ -111,20 +109,22 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                 <input
                   type="checkbox"
                   className="w-4 h-4"
-                  checked={player.yellowCard > 0}
+                  checked={player.yellowCardCount > 0}
                   onChange={() => addYellowCard(player.id)}
                   disabled={
-                    player.redCard > 0 || !timerRunning || player.yellowCard > 0
+                    player.redCardCount > 0 ||
+                    !timerRunning ||
+                    player.yellowCardCount > 0
                   }
                 />
               </TableCell>
               <TableCell className="text-center">
                 <Button
                   className=""
-                  disabled={player.redCard > 0 || !timerRunning}
+                  disabled={player.redCardCount > 0 || !timerRunning}
                   onClick={() => addTwoMinutes(player.id)}
                 >
-                  {player.twoMin}
+                  {player.twoMinPenaltyCount}
                 </Button>
               </TableCell>
               <TableCell className="text-center">
@@ -132,8 +132,8 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                   type="checkbox"
                   className="w-4 h-4"
                   onChange={() => addRedCard(player.id)}
-                  checked={player.redCard > 0}
-                  disabled={!timerRunning || player.redCard > 0}
+                  checked={player.redCardCount > 0}
+                  disabled={!timerRunning || player.redCardCount > 0}
                 />
               </TableCell>
             </TableRow>

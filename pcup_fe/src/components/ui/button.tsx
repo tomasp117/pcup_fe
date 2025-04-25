@@ -21,11 +21,11 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         scored7m: "bg-green-100 text-green-700 hover:bg-green-200",
         missed7m: "bg-red-100 text-red-700 hover:bg-red-200",
-        yellowCard:
+        yellowCardCount:
           "border border-yellow-500 bg-yellow-100 text-yellow-800 shadow hover:bg-yellow-200",
-        redCard:
+        redCardCount:
           "border border-red-500 bg-red-100 text-red-800 shadow hover:bg-red-200",
-        twoMinute:
+        twoMinPenaltyCountute:
           "border border-blue-500 bg-blue-100 text-blue-800 shadow hover:bg-blue-200",
       },
       size: {

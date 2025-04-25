@@ -1,110 +1,10 @@
+import { Match } from "@/interfaces/MatchReport/Match";
+import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
+import { Team } from "@/interfaces/MatchReport/Team";
+import { Event } from "@/interfaces/MatchReport/Event";
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 
 // TypeScript Entities
-export interface Tournament {
-  id: number;
-  name: string;
-  editions: TournamentInstance[];
-}
-
-export interface TournamentInstance {
-  id: number;
-  editionNumber: number;
-  startDate: Date;
-  endDate: Date;
-  categories: Category[];
-  teams: Team[];
-}
-
-export interface Category {
-  id: number;
-  name: string;
-  votingOpen: boolean;
-  groups: Group[];
-  matches: Match[];
-  stats: Player[];
-}
-
-export interface Club {
-  id: number;
-  name: string;
-  logo: string;
-  email: string;
-  teams: Team[];
-}
-
-export interface Team {
-  id: number;
-  name: string;
-  players: Player[];
-  coaches: Coach[];
-  matches: Match[];
-}
-
-export interface Player {
-  id: number;
-  number: number;
-  firstName: string;
-  lastName: string;
-  goalCount: number;
-  twoMin: number;
-  sevenScored: number;
-  sevenMissed: number;
-  yellowCard: number;
-  redCard: number;
-}
-
-export interface Person {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: number;
-  username: string;
-  password: string;
-}
-
-export interface Coach extends Person {
-  playerVote: Player | null;
-  goalKeeperVote: Player | null;
-  license: string;
-}
-
-export interface Referee extends Person {
-  license: string;
-}
-
-export interface Recorder extends Person {}
-
-export interface Admin extends Person {}
-
-export interface Match {
-  id: number;
-  time: string;
-  timePlayed: string;
-  playground: string;
-  homeTeam: Team;
-  awayTeam: Team;
-  score: string;
-  state: "msNone" | "msPending" | "msDone";
-  events: Event[];
-  referees: Referee[];
-}
-
-export interface Group {
-  id: number;
-  name: string;
-  teams: Team[];
-  matches: Match[];
-}
-
-export interface Event {
-  type: string;
-  team: string | null;
-  time: string;
-  authorID: number | null;
-  message: string;
-}
 
 // Match Context
 interface MatchContextProps {
@@ -113,7 +13,7 @@ interface MatchContextProps {
   teamAway: Team;
   players: Player[];
   timerRunning: boolean;
-  matchState: "msNone" | "msPending" | "msDone";
+  matchState: "None" | "Generated" | "Pending" | "Done";
   scoreHome: number;
   scoreAway: number;
   events: Event[];
@@ -123,7 +23,7 @@ interface MatchContextProps {
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   setTimerRunning: React.Dispatch<React.SetStateAction<boolean>>;
   setMatchState: React.Dispatch<
-    React.SetStateAction<"msNone" | "msPending" | "msDone">
+    React.SetStateAction<"None" | "Generated" | "Pending" | "Done">
   >;
   setScoreHome: React.Dispatch<React.SetStateAction<number>>;
   setScoreAway: React.Dispatch<React.SetStateAction<number>>;
@@ -162,15 +62,15 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
     homeTeam: teamHome,
     awayTeam: teamAway,
     score: "0:0",
-    state: "msNone",
+    state: "None",
     events: [],
     referees: [],
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
   const [matchState, setMatchState] = useState<
-    "msNone" | "msPending" | "msDone"
-  >("msNone");
+    "None" | "Generated" | "Pending" | "Done"
+  >("None");
   const [scoreHome, setScoreHome] = useState<number>(0);
   const [scoreAway, setScoreAway] = useState<number>(0);
   const [events, setEvents] = useState<Event[]>([]);

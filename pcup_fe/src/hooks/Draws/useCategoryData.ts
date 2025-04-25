@@ -1,12 +1,8 @@
-import { Group, GroupVariant, TeamDraw } from "@/pages/Draws";
+import { CategoryData } from "@/interfaces/CategoryData/CategoryData";
+import { Group } from "@/interfaces/Draws/Group";
+import { GroupVariant } from "@/interfaces/Draws/GroupVariant";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 import { useEffect, useState } from "react";
-
-interface CategoryData {
-  teams: TeamDraw[];
-  groups: Group[];
-  selectedVariant: GroupVariant | null;
-  groupVariants: GroupVariant[];
-}
 
 export function useCategoryData(API_URL: string) {
   const [categories, setCategories] = useState<any[]>([]);
@@ -68,6 +64,14 @@ export function useCategoryData(API_URL: string) {
       return;
     }
 
+    if (category === null) {
+      setTeamDraws([]);
+      setGroups([]);
+      setSelectedVariant(null);
+      setGroupVariants([]);
+      setIsLoading(false);
+      return;
+    }
     try {
       const groupsResponse = await fetch(
         `${API_URL}/groups?category=${category}`

@@ -2,9 +2,10 @@ import { useDrag } from "react-dnd";
 import { useEffect, useRef } from "react";
 import { Slider } from "@/components/ui/slider";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { TeamDraw } from "../../pages/Draws";
+
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 
 export const DraggableTeam = ({
   team,

@@ -1,7 +1,4 @@
-import {
-  Player,
-  useMatchContext,
-} from "../../../../Contexts/MatchReportContext/MatchContext";
+import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
 import { useState } from "react";
 
 enum GoalType {
@@ -31,7 +28,7 @@ function GoalHandlers() {
     setCanAddGoal(false);
 
     updatePlayerStats(playerId, (player) => {
-      if (player.redCard > 0) return player;
+      if (player.redCardCount > 0) return player;
 
       console.log("🔹 updatePlayerStats volán pro hráče:", playerId);
 
@@ -43,44 +40,44 @@ function GoalHandlers() {
       switch (goalType) {
         case GoalType.NormalHome:
           updatedPlayer.goalCount++;
-          toastMessage = `Gól, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
-          message = `⚽ Gól, ${player.firstName} ${player.lastName} #${player.number}`;
+          toastMessage = `Gól, ${player.person.firstName} ${player.person.lastName} #${player.number} pro domácí tým!`;
+          message = `⚽ Gól, ${player.person.firstName} ${player.person.lastName} #${player.number}`;
           setScoreHome(scoreHome + 1);
           break;
 
         case GoalType.NormalAway:
           updatedPlayer.goalCount++;
-          toastMessage = `Gól, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
-          message = `⚽ Gól, ${player.firstName} ${player.lastName} #${player.number}`;
+          toastMessage = `Gól, ${player.person.firstName} ${player.person.lastName} #${player.number} pro hostující tým!`;
+          message = `⚽ Gól, ${player.person.firstName} ${player.person.lastName} #${player.number}`;
           setScoreAway(scoreAway + 1);
           break;
 
         case GoalType.SevenHome:
           updatedPlayer.goalCount++;
-          updatedPlayer.sevenScored++;
-          toastMessage = `7m Gól, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
-          message = `⚽ 7m Gól, ${player.firstName} ${player.lastName} #${player.number}`;
+          updatedPlayer.sevenMeterGoalCount++;
+          toastMessage = `7m Gól, ${player.person.firstName} ${player.person.lastName} #${player.number} pro domácí tým!`;
+          message = `⚽ 7m Gól, ${player.person.firstName} ${player.person.lastName} #${player.number}`;
           setScoreHome(scoreHome + 1);
           break;
 
         case GoalType.SevenAway:
           updatedPlayer.goalCount++;
-          updatedPlayer.sevenScored++;
-          toastMessage = `7m Gól, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
-          message = `⚽ 7m Gól, ${player.firstName} ${player.lastName} #${player.number}`;
+          updatedPlayer.sevenMeterGoalCount++;
+          toastMessage = `7m Gól, ${player.person.firstName} ${player.person.lastName} #${player.number} pro hostující tým!`;
+          message = `⚽ 7m Gól, ${player.person.firstName} ${player.person.lastName} #${player.number}`;
           setScoreAway(scoreAway + 1);
           break;
 
         case GoalType.MissedHome:
-          updatedPlayer.sevenMissed++;
-          toastMessage = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number} pro domácí tým!`;
-          message = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number}`;
+          updatedPlayer.sevenMeterMissCount++;
+          toastMessage = `7m hod neproměněn, ${player.person.firstName} ${player.person.lastName} #${player.number} pro domácí tým!`;
+          message = `7m hod neproměněn, ${player.person.firstName} ${player.person.lastName} #${player.number}`;
           break;
 
         case GoalType.MissedAway:
-          updatedPlayer.sevenMissed++;
-          toastMessage = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number} pro hostující tým!`;
-          message = `7m hod neproměněn, ${player.firstName} ${player.lastName} #${player.number}`;
+          updatedPlayer.sevenMeterMissCount++;
+          toastMessage = `7m hod neproměněn, ${player.person.firstName} ${player.person.lastName} #${player.number} pro hostující tým!`;
+          message = `7m hod neproměněn, ${player.person.firstName} ${player.person.lastName} #${player.number}`;
           break;
       }
 

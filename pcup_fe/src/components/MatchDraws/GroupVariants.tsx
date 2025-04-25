@@ -1,7 +1,9 @@
 // components/MatchDraws/GroupVariants.tsx
 import { Button } from "@/components/ui/button";
 import { DroppableGroup } from "./DroppableGroup";
-import { Group, GroupVariant, TeamDraw } from "@/pages/Draws";
+import { Group } from "@/interfaces/Draws/Group";
+import { GroupVariant } from "@/interfaces/Draws/GroupVariant";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 
 interface GroupVariantsProps {
   groups: Group[];

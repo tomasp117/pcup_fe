@@ -1,6 +1,6 @@
 import { useDrop } from "react-dnd";
 import { useEffect, useRef } from "react";
-import { TeamDraw, Group } from "../../pages/Draws";
+
 import { DraggableTeam } from "./DraggableTeam";
 import {
   Table,
@@ -11,6 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import { Group } from "@/interfaces/Draws/Group";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 
 export const DroppableGroup = ({
   group,

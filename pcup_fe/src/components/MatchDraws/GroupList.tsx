@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Minus, Plus } from "lucide-react";
 import { DroppableGroup } from "./DroppableGroup";
-import { Group, TeamDraw } from "@/pages/Draws";
+import { Group } from "@/interfaces/Draws/Group";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 
 interface GroupListProps {
   groups: Group[];

@@ -5,6 +5,7 @@ import {
   Routes,
   Route,
   Outlet,
+  RouterProvider,
 } from "react-router-dom";
 import ColorTest from "./pages/ColorTest";
 import { MainLayout } from "./layouts/MainLayout";
@@ -16,33 +17,22 @@ import { Draws } from "./pages/Draws";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TimeTable } from "./pages/TimeTable";
+import { router } from "./routes";
 
-const MatchLayout = () => (
-  <MatchProvider>
-    <Outlet />
-  </MatchProvider>
-);
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+const queryClient = new QueryClient();
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <UserProvider>
-        <ToastContainer position="top-right" autoClose={3000} />
-        <Router>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/draws" element={<Draws />} />
-              <Route path="/time-table" element={<TimeTable />} />
-              <Route path="/match_report" element={<MatchLayout />}>
-                <Route index element={<MatchReport />} />
-              </Route>
-            </Route>
-          </Routes>
-        </Router>
-      </UserProvider>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <ToastContainer position="top-right" autoClose={3000} />
+          <RouterProvider router={router} />
+        </UserProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </>
   );
 }

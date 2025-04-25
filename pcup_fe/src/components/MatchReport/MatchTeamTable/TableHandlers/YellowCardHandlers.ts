@@ -12,15 +12,15 @@ function YellowCardHandlers() {
     console.log("🟨 updatePlayerStats volán pro hráče:", playerId);
 
     updatePlayerStats(playerId, (player) => {
-      if (player.redCard > 0 || player.yellowCard > 0) return player;
+      if (player.redCardCount > 0 || player.yellowCardCount > 0) return player;
 
       let updatedPlayer = { ...player };
-      if (updatedPlayer.yellowCard === 1) {
-        updatedPlayer.yellowCard = 0;
-      } else updatedPlayer.yellowCard = 1;
+      if (updatedPlayer.yellowCardCount === 1) {
+        updatedPlayer.yellowCardCount = 0;
+      } else updatedPlayer.yellowCardCount = 1;
 
-      let toastMessage = `🟨 Žlutá karta - ${player.firstName} ${player.lastName} #${player.number}`;
-      let message = `🟨 Žlutá karta - ${player.firstName} ${player.lastName} #${player.number}`;
+      let toastMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      let message = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
       addEvent({
         type: "Y",
         team: matchDetails.homeTeam.players.some((p) => p.id === playerId)

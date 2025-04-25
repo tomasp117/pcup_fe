@@ -4,20 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
-
-interface Team {
-  name: string;
-}
-
-interface Group {
-  name: string;
-  teams: Team[];
-}
-
-interface BracketRow {
-  name: string;
-  groups: Group[];
-}
+import { BracketRow } from "@/interfaces/BracketEditor/IBracketRow";
 
 export const PlayoffBracketEditor = () => {
   const [bracket, setBracket] = useState<BracketRow[]>([]);
@@ -30,22 +17,28 @@ export const PlayoffBracketEditor = () => {
   };
 
   const addGroupToRow = (rowIndex: number) => {
-    setBracket((prev) => {
-      const updated = [...prev];
-      updated[rowIndex].groups.push({
-        name: `Skupina ${updated[rowIndex].groups.length + 1}`,
-        teams: [],
-      });
-      return updated;
-    });
+    setBracket((prev) =>
+      prev.map((row, i) =>
+        i === rowIndex
+          ? {
+              ...row,
+              groups: [
+                ...row.groups,
+                {
+                  name: `Skupina ${row.groups.length + 1}`,
+                  teams: [],
+                },
+              ],
+            }
+          : row
+      )
+    );
   };
 
   const updateRowName = (index: number, name: string) => {
-    setBracket((prev) => {
-      const updated = [...prev];
-      updated[index].name = name;
-      return updated;
-    });
+    setBracket((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, name } : row))
+    );
   };
 
   const updateGroupName = (
@@ -53,30 +46,45 @@ export const PlayoffBracketEditor = () => {
     groupIndex: number,
     name: string
   ) => {
-    setBracket((prev) => {
-      const updated = [...prev];
-      updated[rowIndex].groups[groupIndex].name = name;
-      return updated;
-    });
+    setBracket((prev) =>
+      prev.map((row, i) =>
+        i === rowIndex
+          ? {
+              ...row,
+              groups: row.groups.map((group, j) =>
+                j === groupIndex ? { ...group, name } : group
+              ),
+            }
+          : row
+      )
+    );
   };
 
   const addTeamToGroup = (rowIndex: number, groupIndex: number) => {
-    console.log("Adding team to group", rowIndex, groupIndex);
-    setBracket((prev) => {
-      const updated = [...prev];
-      const existing = updated[rowIndex].groups[groupIndex].teams;
-
-      const group = updated[rowIndex].groups[groupIndex];
-
-      const newTeamNumber = group.teams.length + 1;
-      const newTeamName = `Tým ${newTeamNumber}`;
-
-      const alreadyExists = group.teams.some((t) => t.name === newTeamName);
-      if (alreadyExists) return prev;
-
-      group.teams.push({ name: newTeamName });
-      return updated;
-    });
+    setBracket((prev) =>
+      prev.map((row, i) =>
+        i === rowIndex
+          ? {
+              ...row,
+              groups: row.groups.map((group, j) =>
+                j === groupIndex
+                  ? {
+                      ...group,
+                      teams: group.teams.some(
+                        (t) => t.name === `Tým ${group.teams.length + 1}`
+                      )
+                        ? group.teams
+                        : [
+                            ...group.teams,
+                            { name: `Tým ${group.teams.length + 1}` },
+                          ],
+                    }
+                  : group
+              ),
+            }
+          : row
+      )
+    );
   };
 
   const updateTeamName = (
@@ -85,11 +93,25 @@ export const PlayoffBracketEditor = () => {
     teamIndex: number,
     name: string
   ) => {
-    setBracket((prev) => {
-      const updated = [...prev];
-      updated[rowIndex].groups[groupIndex].teams[teamIndex].name = name;
-      return updated;
-    });
+    setBracket((prev) =>
+      prev.map((row, i) =>
+        i === rowIndex
+          ? {
+              ...row,
+              groups: row.groups.map((group, j) =>
+                j === groupIndex
+                  ? {
+                      ...group,
+                      teams: group.teams.map((team, k) =>
+                        k === teamIndex ? { ...team, name } : team
+                      ),
+                    }
+                  : group
+              ),
+            }
+          : row
+      )
+    );
   };
 
   return (
@@ -144,20 +166,20 @@ export const PlayoffBracketEditor = () => {
                       onClick={() => addTeamToGroup(rowIndex, groupIndex)}
                       className="mt-2 text-xs w-fit"
                     >
-                      <Plus className="" />
+                      <Plus />
                     </Button>
                   </CardContent>
                 </Card>
               ))}
               <Button onClick={() => addGroupToRow(rowIndex)}>
-                Přidat skupinu <Plus className="" />
+                Přidat skupinu <Plus />
               </Button>
             </div>
           </div>
         ))}
       </div>
       <Button onClick={addRow} className="w-fit">
-        Přidat fázi <Plus className="" />
+        Přidat fázi <Plus />
       </Button>
     </div>
   );

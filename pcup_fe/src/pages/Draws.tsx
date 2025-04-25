@@ -1,63 +1,20 @@
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { Slider } from "@/components/ui/slider";
+
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { DraggableTeam } from "../components/MatchDraws/DraggableTeam";
-import { DroppableGroup } from "../components/MatchDraws/DroppableGroup";
-import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+
 import { toast } from "react-toastify";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { CategorySelect } from "@/components/CategorySelect";
 import { TeamList } from "@/components/MatchDraws/TeamList";
 import { GroupVariants } from "@/components/MatchDraws/GroupVariants";
 import { GroupList } from "@/components/MatchDraws/GroupList";
 import { useCategoryData } from "@/hooks/Draws/useCategoryData";
 import { useAutoAssign } from "@/hooks/Draws/useAutoAssign";
+import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-export interface TeamDraw {
-  id: number;
-  name: string;
-  categoryId: number;
-  strength: number;
-  isGirls: boolean;
-}
-
-export interface Group {
-  id: number;
-  name: string;
-  teams: TeamDraw[];
-}
-
-export interface GroupVariant {
-  groupCount: number;
-  totalMatches: number;
-  minMatchesPerTeam: number;
-  groups: Group[];
-}
-
-export interface Category {
-  id: number;
-  name: string;
-}
 
 export const Draws = () => {
   const {

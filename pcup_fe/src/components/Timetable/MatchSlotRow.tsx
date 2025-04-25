@@ -1,4 +1,3 @@
-import { MatchDTO, UnassignedMatch } from "@/pages/TimeTable";
 import { TableRow, TableCell } from "@/components/ui/table";
 import {
   Select,
@@ -8,6 +7,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { use, useEffect } from "react";
+import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
+import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 
 interface MatchSlotRowProps {
   match: MatchDTO;
