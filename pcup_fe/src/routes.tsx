@@ -8,6 +8,8 @@ import { MatchProvider } from "./Contexts/MatchReportContext/MatchContext";
 import { PlayoffBracketEditor } from "./components/Timetable/PlayoffBracketEditor";
 import { ErrorPage } from "./pages/ErrorPage";
 import { MyTeam } from "./pages/MyTeam";
+import { CategoryPage } from "./pages/CategoryPage";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -16,23 +18,44 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "draws-editor", element: <Draws /> },
+      {
+        path: "draws-editor",
+        element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <Draws />
+          </ProtectedRoute>
+        ),
+      },
       { path: "time-table", element: <TimeTable /> },
       {
         path: "match-report",
         element: (
-          <MatchProvider>
-            <MatchReport />
-          </MatchProvider>
+          <ProtectedRoute allowedRoles={["Recorder", "Admin"]}>
+            <MatchProvider>
+              <MatchReport />
+            </MatchProvider>
+          </ProtectedRoute>
         ),
       },
       {
         path: "time-table-editor",
-        element: <PlayoffBracketEditor />,
+        element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <TimeTable />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "my-team",
-        element: <MyTeam />,
+        element: (
+          <ProtectedRoute allowedRoles={["Coach", "Admin"]}>
+            <MyTeam />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "kategorie/:id",
+        element: <CategoryPage />,
       },
     ],
   },

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
+import { showToast } from "../../../ui/showToast";
 
 function YellowCardHandlers() {
   const { matchDetails, timerRunning, addEvent, updatePlayerStats } =
@@ -15,12 +16,16 @@ function YellowCardHandlers() {
       if (player.redCardCount > 0 || player.yellowCardCount > 0) return player;
 
       let updatedPlayer = { ...player };
+
       if (updatedPlayer.yellowCardCount === 1) {
         updatedPlayer.yellowCardCount = 0;
-      } else updatedPlayer.yellowCardCount = 1;
+      } else {
+        updatedPlayer.yellowCardCount = 1;
+      }
 
-      let toastMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-      let message = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      const toastMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      const message = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+
       addEvent({
         type: "Y",
         team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
@@ -31,7 +36,7 @@ function YellowCardHandlers() {
         message,
       });
 
-      showToast(toastMessage);
+      showToast(toastMessage, "info");
 
       return updatedPlayer;
     });
@@ -40,22 +45,6 @@ function YellowCardHandlers() {
       setCanAddYC(true);
     }, 1000);
   }
-
-  function createCardEvent(timePlayed: string, playerId: number) {
-    const isHomeTeam = matchDetails.homeTeam.players.some(
-      (p) => p.id === playerId
-    );
-    return {
-      type: "Y",
-      team: isHomeTeam ? "L" : "R",
-      time: timePlayed,
-      authorID: playerId,
-    };
-  }
-
-  const showToast = (message: string) => {
-    console.log(message);
-  };
 
   return { addYellowCard };
 }

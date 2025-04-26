@@ -5,9 +5,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { BracketRow } from "@/interfaces/BracketEditor/IBracketRow";
+import { useTeamsByCategory } from "@/hooks/useTeams";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useSaveBracket } from "@/hooks/useGroups";
 
-export const PlayoffBracketEditor = () => {
+interface PlayoffBracketEditorProps {
+  categoryId: number | null;
+}
+
+export const PlayoffBracketEditor = ({
+  categoryId,
+}: PlayoffBracketEditorProps) => {
   const [bracket, setBracket] = useState<BracketRow[]>([]);
+
+  const { data: teams, isLoading } = useTeamsByCategory(categoryId || 0);
+
+  const { mutate: saveBracket, isPending: isSaving } = useSaveBracket();
 
   const addRow = () => {
     setBracket((prev) => [
@@ -24,10 +43,7 @@ export const PlayoffBracketEditor = () => {
               ...row,
               groups: [
                 ...row.groups,
-                {
-                  name: `Skupina ${row.groups.length + 1}`,
-                  teams: [],
-                },
+                { name: `Skupina ${row.groups.length + 1}`, teams: [] },
               ],
             }
           : row
@@ -70,14 +86,7 @@ export const PlayoffBracketEditor = () => {
                 j === groupIndex
                   ? {
                       ...group,
-                      teams: group.teams.some(
-                        (t) => t.name === `Tým ${group.teams.length + 1}`
-                      )
-                        ? group.teams
-                        : [
-                            ...group.teams,
-                            { name: `Tým ${group.teams.length + 1}` },
-                          ],
+                      teams: [...group.teams, { id: null, name: "" }],
                     }
                   : group
               ),
@@ -87,12 +96,15 @@ export const PlayoffBracketEditor = () => {
     );
   };
 
-  const updateTeamName = (
+  const updateTeamInGroup = (
     rowIndex: number,
     groupIndex: number,
     teamIndex: number,
-    name: string
+    selectedTeamId: string
   ) => {
+    const selectedTeam = teams?.find((t) => t.id.toString() === selectedTeamId);
+    if (!selectedTeam) return;
+
     setBracket((prev) =>
       prev.map((row, i) =>
         i === rowIndex
@@ -103,7 +115,9 @@ export const PlayoffBracketEditor = () => {
                   ? {
                       ...group,
                       teams: group.teams.map((team, k) =>
-                        k === teamIndex ? { ...team, name } : team
+                        k === teamIndex
+                          ? { id: selectedTeam.id, name: selectedTeam.name }
+                          : team
                       ),
                     }
                   : group
@@ -147,26 +161,38 @@ export const PlayoffBracketEditor = () => {
                   </CardHeader>
                   <CardContent className="flex flex-col gap-2">
                     {group.teams.map((team, teamIndex) => (
-                      <Input
+                      <Select
                         key={teamIndex}
-                        value={team.name}
-                        onChange={(e) =>
-                          updateTeamName(
+                        value={team.id?.toString() || ""}
+                        onValueChange={(value) =>
+                          updateTeamInGroup(
                             rowIndex,
                             groupIndex,
                             teamIndex,
-                            e.target.value
+                            value
                           )
                         }
-                        placeholder={`Tým ${teamIndex + 1}`}
-                        className="text-sm"
-                      />
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vyber tým" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teams?.map((team) => (
+                            <SelectItem
+                              key={team.id}
+                              value={team.id.toString()}
+                            >
+                              {team.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     ))}
                     <Button
                       onClick={() => addTeamToGroup(rowIndex, groupIndex)}
                       className="mt-2 text-xs w-fit"
                     >
-                      <Plus />
+                      Přidat tým <Plus />
                     </Button>
                   </CardContent>
                 </Card>
@@ -180,6 +206,13 @@ export const PlayoffBracketEditor = () => {
       </div>
       <Button onClick={addRow} className="w-fit">
         Přidat fázi <Plus />
+      </Button>
+      <Button
+        onClick={() => saveBracket(bracket)}
+        disabled={isSaving}
+        className="mt-4 w-fit bg-green-500 hover:bg-green-600 "
+      >
+        Uložit pavouka
       </Button>
     </div>
   );

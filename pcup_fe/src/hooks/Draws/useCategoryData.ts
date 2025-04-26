@@ -92,7 +92,7 @@ export function useCategoryData(API_URL: string) {
         }));
       } else if (groupsResponse.status === 404) {
         const teamsResponse = await fetch(
-          `${API_URL}/teams?category=${category}`
+          `${API_URL}/teams/group-assign?category=${category}`
         );
         if (!teamsResponse.ok) {
           throw new Error(

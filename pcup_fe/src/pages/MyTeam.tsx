@@ -52,9 +52,18 @@ export const MyTeam = () => {
     if (!currentPlayer) return;
 
     updatePlayer({
-      id: playerId,
+      id: currentPlayer.id,
       number: editedPlayer.number,
+      goalCount: currentPlayer.goalCount,
+      sevenMeterGoalCount: currentPlayer.sevenMeterGoalCount,
+      sevenMeterMissCount: currentPlayer.sevenMeterMissCount,
+      twoMinPenaltyCount: currentPlayer.twoMinPenaltyCount,
+      yellowCardCount: currentPlayer.yellowCardCount,
+      redCardCount: currentPlayer.redCardCount,
+      teamId: currentPlayer.teamId,
+      categoryId: currentPlayer.categoryId,
       person: {
+        id: currentPlayer.person.id,
         firstName: editedPlayer.firstName,
         lastName: editedPlayer.lastName,
         email: currentPlayer.person.email,
@@ -62,14 +71,6 @@ export const MyTeam = () => {
         address: currentPlayer.person.address,
         dateOfBirth: currentPlayer.person.dateOfBirth,
       },
-      goalCount: currentPlayer.goalCount,
-      twoMinPenaltyCount: currentPlayer.twoMinPenaltyCount,
-      sevenMeterGoalCount: currentPlayer.sevenMeterGoalCount,
-      sevenMeterMissCount: currentPlayer.sevenMeterMissCount,
-      yellowCardCount: currentPlayer.yellowCardCount,
-      redCardCount: currentPlayer.redCardCount,
-      teamId: currentPlayer.teamId,
-      categoryId: currentPlayer.categoryId,
     });
 
     setEditPlayerId(null);
@@ -100,7 +101,7 @@ export const MyTeam = () => {
     addPlayer({
       number: newPlayer.number,
       goalCount: 0,
-      sevenMeterGoalCount: 0, // správné názvy
+      sevenMeterGoalCount: 0,
       sevenMeterMissCount: 0,
       twoMinPenaltyCount: 0,
       yellowCardCount: 0,
@@ -108,12 +109,13 @@ export const MyTeam = () => {
       teamId: team.id,
       categoryId: team.categoryId,
       person: {
+        id: null,
         firstName: newPlayer.firstName,
         lastName: newPlayer.lastName,
         email: "",
         phoneNumber: "0",
         address: "",
-        dateOfBirth: "2000-01-01T00:00:00", // musí být platné datum!
+        dateOfBirth: "2000-01-01T00:00:00",
       },
     });
 
@@ -165,6 +167,12 @@ export const MyTeam = () => {
                 <TableHead>Dres</TableHead>
                 <TableHead>Jméno</TableHead>
                 <TableHead>Příjmení</TableHead>
+                <TableHead>Góly</TableHead>
+                <TableHead>7m Góly</TableHead>
+                <TableHead>7m Minely</TableHead>
+                <TableHead>2min</TableHead>
+                <TableHead>ŽK</TableHead>
+                <TableHead>ČK</TableHead>
                 <TableHead className="text-right">Akce</TableHead>
               </TableRow>
             </TableHeader>
@@ -228,6 +236,12 @@ export const MyTeam = () => {
                       <TableCell>{player.number}</TableCell>
                       <TableCell>{player.person.firstName}</TableCell>
                       <TableCell>{player.person.lastName}</TableCell>
+                      <TableCell>{player.goalCount}</TableCell>
+                      <TableCell>{player.sevenMeterGoalCount}</TableCell>
+                      <TableCell>{player.sevenMeterMissCount}</TableCell>
+                      <TableCell>{player.twoMinPenaltyCount}</TableCell>
+                      <TableCell>{player.yellowCardCount}</TableCell>
+                      <TableCell>{player.redCardCount}</TableCell>
                       <TableCell className="flex justify-end gap-2">
                         <Button
                           size="sm"

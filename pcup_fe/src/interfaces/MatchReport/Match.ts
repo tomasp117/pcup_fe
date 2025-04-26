@@ -1,5 +1,7 @@
 import { Referee } from "./Person/Roles/Referee";
 import { Team } from "./Team";
+import { Event } from "./Event";
+import { Category } from "./Category";
 
 export interface Match {
   id: number;
@@ -12,4 +14,5 @@ export interface Match {
   state: "None" | "Generated" | "Pending" | "Done";
   events: Event[];
   referees: Referee[];
+  category: Category;
 }

@@ -70,10 +70,10 @@ export const useUpdatePlayer = () => {
         throw new Error("Nepodařilo se upravit hráče.");
       }
 
-      return res.json();
+      return;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-team"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["my-team"] });
     },
   });
 };

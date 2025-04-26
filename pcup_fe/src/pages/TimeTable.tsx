@@ -371,13 +371,13 @@ export const TimeTable = () => {
             </Button>
             <Button
               onClick={handleAssignMatches}
-              disabled={!categoryId || isLoading}
+              disabled={!categoryId || isLoading || matches.length === 0}
             >
               Přiřadit zápasy kategorie do slotů
             </Button>
             <Button
               onClick={handleAssignAllMatches}
-              disabled={!categoryId || isLoading}
+              disabled={!categoryId || isLoading || matches.length === 0}
             >
               Přiřadit všechny zápasy do slotů
             </Button>
@@ -470,11 +470,15 @@ export const TimeTable = () => {
           </TableBody>
         </Table>
       </div>
-      <Button className="w-fit" onClick={handleSaveAssignments}>
+      <Button
+        className="w-fit"
+        onClick={handleSaveAssignments}
+        disabled={matches.length === 0}
+      >
         Uložit přiřazení
       </Button>
 
-      <PlayoffBracketEditor />
+      {matches.length > 0 && <PlayoffBracketEditor categoryId={categoryId} />}
     </div>
   );
 };

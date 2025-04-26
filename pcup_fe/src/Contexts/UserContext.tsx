@@ -35,6 +35,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     setUser(null);
     localStorage.removeItem("token");
+    window.location.href = "/";
   };
 
   return (

@@ -6,9 +6,15 @@ import {
   CardMatchReportHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import MatchTeamCard from "./MatchTeamCard";
+import { MatchTeamCard } from "./MatchTeamCard";
+import { Team } from "@/interfaces/MatchReport/Team";
 
-export const MatchInfo = () => {
+export interface MatchInfoProps {
+  teamHome: Team;
+  teamAway: Team;
+}
+
+export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
   return (
     <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">
       {/* Header - Kategorie */}
@@ -17,13 +23,15 @@ export const MatchInfo = () => {
       </CardMatchReportHeader>
 
       {/* Flexbox pro layout */}
-      <CardContent className="flex justify-between gap-1 sm:gap-4 w-full overflow-hidden p-1 sm:p-4">
+      <CardContent className="flex flex-col sm:flex-row justify-between gap-4 w-full overflow-hidden p-4">
         {/* 🔹 Domácí tým */}
-        <MatchTeamCard />
+        <MatchTeamCard team={teamHome} side="home" />
+
         {/* 🔹 Skóre a časomíra */}
         <ScoreAndTime />
+
         {/* 🔹 Hostující tým */}
-        <MatchTeamCard />
+        <MatchTeamCard team={teamAway} side="away" />
       </CardContent>
     </CardMatchReport>
   );

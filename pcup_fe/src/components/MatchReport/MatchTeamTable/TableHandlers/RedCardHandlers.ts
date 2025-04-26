@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
+import { showToast } from "../../../ui/showToast";
 
 function RedCardHandlers() {
   const { matchDetails, timerRunning, addEvent, updatePlayerStats } =
@@ -9,15 +10,17 @@ function RedCardHandlers() {
   function addRedCard(playerId: number): void {
     if (!canAddRC) return;
     setCanAddRC(false);
-    console.log("🟨 updatePlayerStats volán pro hráče:", playerId);
+    console.log("🟥 updatePlayerStats volán pro hráče:", playerId);
 
     updatePlayerStats(playerId, (player) => {
       if (player.redCardCount > 0) return player;
+
       let updatedPlayer = { ...player };
       updatedPlayer.redCardCount = 1;
 
-      let toastMessage = `Cervena karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      let toastMessage = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
       let message = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+
       addEvent({
         type: "R",
         team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
@@ -28,7 +31,7 @@ function RedCardHandlers() {
         message,
       });
 
-      showToast(toastMessage);
+      showToast(toastMessage, "error");
 
       return updatedPlayer;
     });
@@ -37,22 +40,6 @@ function RedCardHandlers() {
       setCanAddRC(true);
     }, 1000);
   }
-
-  function createCardEvent(timePlayed: string, playerId: number) {
-    const isHomeTeam = matchDetails.homeTeam.players.some(
-      (p) => p.id === playerId
-    );
-    return {
-      type: "R",
-      team: isHomeTeam ? "L" : "R",
-      time: timePlayed,
-      authorID: playerId,
-    };
-  }
-
-  const showToast = (message: string) => {
-    console.log(message);
-  };
 
   return { addRedCard };
 }

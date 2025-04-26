@@ -18,6 +18,7 @@ import {
   CalendarRange,
   Split,
   LayoutDashboard,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -38,6 +39,8 @@ import {
 import { LoginDialog } from "@/components/Login/LoginDialog";
 import { useUser } from "@/Contexts/UserContext";
 import { Button } from "@/components/ui/button";
+import { useCategories } from "@/hooks/useCategories";
+import { Category } from "@/interfaces/MatchReport/Category";
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -46,41 +49,53 @@ export const Sidebar = () => {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  const { data: categories, isLoading } = useCategories();
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const menuItems = [
+  type MenuItem = {
+    name: string;
+    path: string;
+    icon: React.ReactElement;
+    children?: { name: string; path: string }[];
+    dynamicChildren?: boolean;
+    roles?: string[];
+  };
+
+  const menuItems: MenuItem[] = [
     { name: "Domů", path: "/", icon: <Home /> },
     {
       name: "Kategorie",
-      path: "/kategorie",
+      path: `/kategorie/${categories?.[0]?.id}`,
       icon: <Trophy />,
-      children: [
-        { name: "Mini žáci 4+1", path: "/kategorie/mini4" },
-        { name: "Mini žáci 6+1", path: "/kategorie/mini6" },
-        { name: "Mladší žáci", path: "/kategorie/mladsi" },
-        { name: "Starší žáci", path: "/kategorie/starsi" },
-        { name: "Mladší dorost", path: "/kategorie/mladsidorost" },
-      ],
+      dynamicChildren: true,
     },
     {
       name: "Rozpis utkání",
       path: "/time-table",
       icon: <CalendarRange />,
     },
-    { name: "Zápis utkání", path: "/match-report", icon: <PenBox /> },
+    {
+      name: "Zápis utkání",
+      path: "/match-report",
+      icon: <PenBox />,
+      roles: ["Admin", "Recorder"],
+    },
     {
       name: "Rozdělení skupin - editor",
       path: "/draws-editor",
       icon: <Split />,
+      roles: ["Admin"],
     },
     {
       name: "Rozpis utkání - editor",
       path: "/time-table-editor",
       icon: <LayoutDashboard />,
+      roles: ["Admin"],
     },
   ];
 
@@ -118,22 +133,27 @@ export const Sidebar = () => {
 
             <div className="flex-1 overflow-auto">
               <ul className="mt-6 flex flex-col space-y-2">
-                {menuItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.path || "#"}
-                    className={cn(
-                      "flex items-center px-4 py-2 rounded-lg transition-all",
-                      location.pathname === item.path
-                        ? "bg-primary text-white"
-                        : " hover:bg-primary/10"
-                    )}
-                    onClick={() => setIsMobileOpen(false)}
-                  >
-                    {item.icon}
-                    <span className="ml-3">{item.name}</span>
-                  </Link>
-                ))}
+                {menuItems
+                  .filter((item) => {
+                    if (!item.roles) return true;
+                    return user && item.roles.includes(user.role);
+                  })
+                  .map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.path || "#"}
+                      className={cn(
+                        "flex items-center px-4 py-2 rounded-lg transition-all",
+                        location.pathname === item.path
+                          ? "bg-primary text-white"
+                          : " hover:bg-primary/10"
+                      )}
+                      onClick={() => setIsMobileOpen(false)}
+                    >
+                      {item.icon}
+                      <span className="ml-3">{item.name}</span>
+                    </Link>
+                  ))}
               </ul>
             </div>
 
@@ -189,17 +209,100 @@ export const Sidebar = () => {
 
             {/* Navigace */}
             <ul className="mt-2 flex flex-col flex-1">
-              {menuItems.map((item) => (
-                <div key={item.name}>
-                  {item.children ? (
-                    <div>
+              {menuItems
+                .filter((item) => {
+                  if (!item.roles) return true;
+                  return user && item.roles.includes(user.role);
+                })
+                .map((item) => (
+                  <div key={item.name}>
+                    {item.dynamicChildren ? (
+                      <div>
+                        <Link
+                          to={isCollapsed ? item.path : "#"}
+                          onClick={() =>
+                            !isCollapsed &&
+                            setIsCategoriesOpen(!isCategoriesOpen)
+                          }
+                          className={cn(
+                            "flex items-center w-full px-4 py-2 sidebar-item-hover transition-all",
+                            isCollapsed ? "justify-center" : "justify-start"
+                          )}
+                        >
+                          {isCollapsed ? (
+                            // 🛠 Tooltip pro sbalený sidebar
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="flex items-center justify-center w-full">
+                                  {item.icon}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="right">
+                                {item.name}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <>
+                              {item.icon}
+                              <span className="ml-3">{item.name}</span>
+                              <ChevronDown
+                                className={cn(
+                                  "ml-auto transition-transform",
+                                  isCategoriesOpen ? "rotate-180" : ""
+                                )}
+                              />
+                            </>
+                          )}
+                        </Link>
+                        {!isCollapsed && (
+                          <ul
+                            className={cn(
+                              "ml-6 border-l border-primary/10 pl-3 transition-all",
+                              isCategoriesOpen
+                                ? "max-h-60 opacity-100"
+                                : "max-h-0 opacity-0 overflow-hidden"
+                            )}
+                          >
+                            {item.dynamicChildren ? (
+                              isLoading ? (
+                                <div className="px-4 py-2 text-sm text-muted-foreground">
+                                  Načítám...
+                                </div>
+                              ) : (
+                                categories?.map((category: Category) => (
+                                  <Link
+                                    key={category.id}
+                                    to={`/kategorie/${category.id}`}
+                                    className="block px-4 py-1 rounded-lg sidebar-item-hover"
+                                  >
+                                    {category.name}
+                                  </Link>
+                                ))
+                              )
+                            ) : (
+                              item.children?.map(
+                                (child: { name: string; path: string }) => (
+                                  <Link
+                                    key={child.name}
+                                    to={child.path}
+                                    className="block px-4 py-1 rounded-lg sidebar-item-hover"
+                                  >
+                                    {child.name}
+                                  </Link>
+                                )
+                              )
+                            )}
+                          </ul>
+                        )}
+                      </div>
+                    ) : (
                       <Link
-                        to={isCollapsed ? item.path : "#"}
-                        onClick={() =>
-                          !isCollapsed && setIsCategoriesOpen(!isCategoriesOpen)
-                        }
+                        to={item.path}
                         className={cn(
-                          "flex items-center w-full px-4 py-2 sidebar-item-hover transition-all",
+                          "flex items-center px-4 py-3 transition-all",
+                          location.pathname === item.path
+                            ? "bg-primary text-white"
+                            : " sidebar-item-hover",
                           isCollapsed ? "justify-center" : "justify-start"
                         )}
                       >
@@ -219,69 +322,12 @@ export const Sidebar = () => {
                           <>
                             {item.icon}
                             <span className="ml-3">{item.name}</span>
-                            <ChevronDown
-                              className={cn(
-                                "ml-auto transition-transform",
-                                isCategoriesOpen ? "rotate-180" : ""
-                              )}
-                            />
                           </>
                         )}
                       </Link>
-                      {!isCollapsed && (
-                        <ul
-                          className={cn(
-                            "ml-6 border-l border-primary/10 pl-3 transition-all",
-                            isCategoriesOpen
-                              ? "max-h-40 opacity-100"
-                              : "max-h-0 opacity-0"
-                          )}
-                        >
-                          {item.children.map((child) => (
-                            <Link
-                              key={child.name}
-                              to={child.path}
-                              className="block px-4 py-1 rounded-lg sidebar-item-hover"
-                            >
-                              {child.name}
-                            </Link>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ) : (
-                    <Link
-                      to={item.path}
-                      className={cn(
-                        "flex items-center px-4 py-3 transition-all",
-                        location.pathname === item.path
-                          ? "bg-primary text-white"
-                          : " sidebar-item-hover",
-                        isCollapsed ? "justify-center" : "justify-start"
-                      )}
-                    >
-                      {isCollapsed ? (
-                        // 🛠 Tooltip pro sbalený sidebar
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="flex items-center justify-center w-full">
-                              {item.icon}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            {item.name}
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        <>
-                          {item.icon}
-                          <span className="ml-3">{item.name}</span>
-                        </>
-                      )}
-                    </Link>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                ))}
             </ul>
 
             {/* Login Button */}
@@ -294,28 +340,72 @@ export const Sidebar = () => {
                 {!isCollapsed && <span>Přihlášení</span>}
               </Link>
             </div> */}
-            <div className="border-t flex items-center justify-center p-4">
+            <div className="border-t flex flex-col items-center p-4 space-y-2">
               {user ? (
-                <div className="flex flex-col items-center space-y-2">
+                <>
                   <div className="flex items-center space-x-2">
-                    <UserCircle size={32} />
                     {!isCollapsed && (
                       <div>
+                        <UserCircle size={32} />
                         <p className="font-semibold">{user.username}</p>
                         <p className="text-sm text-gray-500">{user.role}</p>
                       </div>
                     )}
                   </div>
-                  {!isCollapsed && (
-                    <Button
-                      variant="ghost"
-                      onClick={logout}
-                      className="text-red-500 mt-1 text-sm hover:bg-red-100 hover:text-red-500"
-                    >
-                      Odhlásit se
-                    </Button>
+
+                  {/* Sekce tlačítek */}
+                  {isCollapsed ? (
+                    <div className="flex flex-col items-center space-y-2">
+                      {user.role === "Coach" && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link to="/my-team">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-blue-100"
+                              >
+                                <Users size={20} />
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">My Team</TooltipContent>
+                        </Tooltip>
+                      )}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={logout}
+                            className="hover:bg-red-100"
+                          >
+                            <LogOut className="text-red-500" size={20} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="bg-red-500">
+                          Odhlásit se
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col space-y-2 items-center">
+                      <Link to="/my-team">
+                        <Button className="w-full">
+                          <Users className="mr-2" size={18} /> Můj tým
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        onClick={logout}
+                        className="text-red-500 mt-1 text-sm hover:bg-red-100 hover:text-red-500"
+                      >
+                        Odhlásit se{" "}
+                        <LogOut className="text-red-500" size={20} />
+                      </Button>
+                    </div>
                   )}
-                </div>
+                </>
               ) : (
                 <LoginDialog isCollapsed={isCollapsed} />
               )}

@@ -9,7 +9,7 @@ import {
 
 import { Play, Pause } from "lucide-react";
 
-function ScoreAndTime() {
+export default function ScoreAndTime() {
   const {
     timerRunning,
     setTimerRunning,
@@ -26,43 +26,6 @@ function ScoreAndTime() {
   const [timerPaused, setTimerPaused] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(0);
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (timerRunning && !timerPaused) {
-      // Pokud už běží, neaktivuj nový interval
-      if (!intervalRef.current) {
-        intervalRef.current = setInterval(() => {
-          setTotalSeconds((prev) => prev + 1);
-        }, 1000);
-      }
-    } else {
-      // Když se timer pauzne nebo zastaví, interval se vyčistí
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [timerRunning, timerPaused]);
-
-  useEffect(() => {
-    setMatchDetails((prev) => ({
-      ...prev,
-      timePlayed: formatTime(totalSeconds),
-    }));
-  }, [totalSeconds, setMatchDetails]);
-
-  function formatTime(seconds: number): string {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
-      2,
-      "0"
-    )}`;
-  }
 
   function toggleTimer(): void {
     if (timerPaused) {
@@ -148,5 +111,3 @@ function ScoreAndTime() {
     </div>
   );
 }
-
-export default ScoreAndTime;

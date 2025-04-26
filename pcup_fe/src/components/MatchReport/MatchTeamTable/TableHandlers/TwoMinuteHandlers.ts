@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
+import { showToast } from "../../../ui/showToast";
 
 function TwoMinuteHandlers() {
   const { matchDetails, timerRunning, addEvent, updatePlayerStats } =
@@ -9,7 +10,7 @@ function TwoMinuteHandlers() {
   function addTwoMinutes(playerId: number): void {
     if (!canAdd2M) return;
     setCanAdd2M(false);
-    console.log("🟡 updatePlayerStats volán pro hráče:", playerId);
+    console.log("🕑 updatePlayerStats volán pro hráče:", playerId);
 
     updatePlayerStats(playerId, (player) => {
       if (player.redCardCount > 0) return player;
@@ -17,8 +18,8 @@ function TwoMinuteHandlers() {
       let updatedPlayer = { ...player };
       updatedPlayer.twoMinPenaltyCount++;
 
-      let toastMessage = `2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-      let message = `🕑2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      let toastMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+      let message = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
 
       if (updatedPlayer.twoMinPenaltyCount >= 3) {
         updatedPlayer.redCardCount = 1;
@@ -35,7 +36,11 @@ function TwoMinuteHandlers() {
         message,
       });
 
-      showToast(toastMessage);
+      if (updatedPlayer.redCardCount) {
+        showToast(toastMessage, "error");
+      } else {
+        showToast(toastMessage, "info");
+      }
 
       return updatedPlayer;
     });
@@ -44,22 +49,6 @@ function TwoMinuteHandlers() {
       setCanAdd2M(true);
     }, 1000);
   }
-
-  function createPenaltyEvent(timePlayed: string, playerId: number) {
-    const isHomeTeam = matchDetails.homeTeam.players.some(
-      (p) => p.id === playerId
-    );
-    return {
-      type: "2",
-      team: isHomeTeam ? "L" : "R",
-      time: timePlayed,
-      authorID: playerId,
-    };
-  }
-
-  const showToast = (message: string) => {
-    console.log(message);
-  };
 
   return { addTwoMinutes };
 }

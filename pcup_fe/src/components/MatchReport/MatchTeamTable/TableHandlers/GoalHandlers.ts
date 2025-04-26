@@ -1,5 +1,6 @@
 import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
 import { useState } from "react";
+import { showToast } from "../../../ui/showToast";
 
 enum GoalType {
   NormalHome = "L",
@@ -90,7 +91,7 @@ function GoalHandlers() {
         authorID: playerId,
         message,
       });
-      showToast(toastMessage + ` - Celkem gólů: ${updatedPlayer.goalCount}`);
+      showToast(toastMessage, "success");
 
       return updatedPlayer;
     });
@@ -99,10 +100,6 @@ function GoalHandlers() {
       setCanAddGoal(true);
     }, 1000);
   }
-
-  const showToast = (message: string) => {
-    console.log(message);
-  };
 
   return { addGoal, GoalType };
 }

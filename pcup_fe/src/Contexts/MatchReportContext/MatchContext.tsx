@@ -4,7 +4,8 @@ import { Team } from "@/interfaces/MatchReport/Team";
 import { Event } from "@/interfaces/MatchReport/Event";
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 
-// TypeScript Entities
+type MatchState = "None" | "Generated" | "Pending" | "Done";
+type MatchPhase = "firstHalf" | "secondHalf" | "finished";
 
 // Match Context
 interface MatchContextProps {
@@ -13,18 +14,17 @@ interface MatchContextProps {
   teamAway: Team;
   players: Player[];
   timerRunning: boolean;
-  matchState: "None" | "Generated" | "Pending" | "Done";
+  matchState: MatchState;
   scoreHome: number;
   scoreAway: number;
   events: Event[];
+  matchPhase: MatchPhase;
   setMatchDetails: React.Dispatch<React.SetStateAction<Match>>;
   setTeamHome: React.Dispatch<React.SetStateAction<Team>>;
   setTeamAway: React.Dispatch<React.SetStateAction<Team>>;
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   setTimerRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  setMatchState: React.Dispatch<
-    React.SetStateAction<"None" | "Generated" | "Pending" | "Done">
-  >;
+  setMatchState: React.Dispatch<React.SetStateAction<MatchState>>;
   setScoreHome: React.Dispatch<React.SetStateAction<number>>;
   setScoreAway: React.Dispatch<React.SetStateAction<number>>;
   addEvent: (event: Event) => void;
@@ -33,6 +33,7 @@ interface MatchContextProps {
     playerId: number,
     updateFn: (player: Player) => Player
   ) => void;
+  setMatchPhase: React.Dispatch<React.SetStateAction<MatchPhase>>;
 }
 
 const MatchContext = createContext<MatchContextProps | undefined>(undefined);
@@ -65,19 +66,24 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
     state: "None",
     events: [],
     referees: [],
+    category: {
+      id: 0,
+      name: "",
+      groups: [],
+      matches: [],
+      voiting: [],
+      stats: [],
+      votingOpen: false,
+    },
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
-  const [matchState, setMatchState] = useState<
-    "None" | "Generated" | "Pending" | "Done"
-  >("None");
+  const [matchState, setMatchState] = useState<MatchState>("None");
   const [scoreHome, setScoreHome] = useState<number>(0);
   const [scoreAway, setScoreAway] = useState<number>(0);
   const [events, setEvents] = useState<Event[]>([]);
 
-  const [matchPhase, setMatchPhase] = useState<
-    "firstHalf" | "secondHalf" | "finished"
-  >("firstHalf");
+  const [matchPhase, setMatchPhase] = useState<MatchPhase>("firstHalf");
 
   const addEvent = (event: Event) => {
     setEvents((prevEvents) => [...prevEvents, event]);
@@ -118,6 +124,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
         scoreHome,
         scoreAway,
         events,
+        matchPhase,
         setMatchDetails,
         setTeamHome,
         setTeamAway,
@@ -129,6 +136,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
         addEvent,
         setEvents,
         updatePlayerStats,
+        setMatchPhase,
       }}
     >
       {children}
