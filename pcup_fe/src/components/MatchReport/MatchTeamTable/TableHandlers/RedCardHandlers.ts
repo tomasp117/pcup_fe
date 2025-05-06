@@ -1,40 +1,56 @@
 import { useState } from "react";
 import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchContext";
 import { showToast } from "../../../ui/showToast";
+import { useReliableAddEvent } from "@/hooks/MatchReport/useEvent";
 
-function RedCardHandlers() {
-  const { matchDetails, timerRunning, addEvent, updatePlayerStats } =
+export const RedCardHandlers = () => {
+  const { matchDetails, addEvent, updatePlayerStats, players } =
     useMatchContext();
   const [canAddRC, setCanAddRC] = useState<boolean>(true);
+  const addEventMutation = useReliableAddEvent(matchDetails.id);
 
   function addRedCard(playerId: number): void {
     if (!canAddRC) return;
     setCanAddRC(false);
-    console.log("🟥 updatePlayerStats volán pro hráče:", playerId);
+
+    const player = players.find((p) => p.id === playerId);
+    if (!player) {
+      setCanAddRC(true);
+      return;
+    }
+
+    const toastMessage = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    const eventMessage = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    const isHome = matchDetails.homeTeam.players.some((p) => p.id === playerId);
 
     updatePlayerStats(playerId, (player) => {
       if (player.redCardCount > 0) return player;
 
-      let updatedPlayer = { ...player };
+      const updatedPlayer = { ...player };
       updatedPlayer.redCardCount = 1;
-
-      let toastMessage = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-      let message = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-
-      addEvent({
-        type: "R",
-        team: matchDetails.homeTeam.players.some((p) => p.id === playerId)
-          ? "L"
-          : "R",
-        time: matchDetails.timePlayed,
-        authorID: playerId,
-        message,
-      });
-
-      showToast(toastMessage, "error");
-
       return updatedPlayer;
     });
+
+    const newEvent = {
+      type: "R",
+      team: isHome ? "L" : "R",
+      time: matchDetails.timePlayed,
+      authorId: playerId,
+      matchId: matchDetails.id,
+      message: eventMessage,
+    };
+
+    // Add event to log
+    addEvent(newEvent);
+
+    // Add event to database
+    addEventMutation.mutate(newEvent, {
+      onError: (error) => {
+        console.error("Error adding event:", error);
+      },
+    });
+
+    showToast(toastMessage, "error");
 
     setTimeout(() => {
       setCanAddRC(true);
@@ -42,6 +58,4 @@ function RedCardHandlers() {
   }
 
   return { addRedCard };
-}
-
-export default RedCardHandlers;
+};

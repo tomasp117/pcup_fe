@@ -12,16 +12,22 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Event } from "@/interfaces/MatchReport/Event";
+import {
+  useDeleteLastEvent,
+  useMatchEvents,
+} from "@/hooks/MatchReport/useEvent";
 
 export const MatchLog = () => {
   const {
     matchDetails,
     events,
+    matchState,
     setEvents,
     setScoreHome,
     setScoreAway,
     updatePlayerStats,
     timerRunning,
+    matchStarted,
   } = useMatchContext();
 
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null); // Stav pro sledování hoveru na posledním eventu
@@ -32,87 +38,84 @@ export const MatchLog = () => {
 
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const removeLastEvent = () => {
-    if (events.length === 0 || isUpdating) return;
+  const { data: loadedEvents } = useMatchEvents(matchDetails.id);
 
-    setIsUpdating(true);
-
-    const lastNonInfoIndex = [...events]
-      .reverse()
-      .findIndex((event) => event.type !== "I");
-
-    if (lastNonInfoIndex === -1) return;
-
-    const eventToRemove = events[events.length - 1 - lastNonInfoIndex];
-
-    setEvents((prevEvents) =>
-      prevEvents.filter(
-        (_, idx) => idx !== events.length - 1 - lastNonInfoIndex
-      )
-    );
-
-    setPendingPlayerUpdate(eventToRemove);
-  };
+  const deleteEventMutation = useDeleteLastEvent();
 
   useEffect(() => {
-    if (!pendingPlayerUpdate) return;
+    if (loadedEvents) {
+      setEvents(loadedEvents);
+    }
+  }, [loadedEvents]);
 
-    const { authorID, type, team, message } = pendingPlayerUpdate;
+  const removeLastEvent = () => {
+    if (events.length === 0 || isUpdating) return;
+    setIsUpdating(true);
 
-    if (authorID !== null) {
-      updatePlayerStats(authorID, (player) => {
-        let updatedPlayer = { ...player };
+    deleteEventMutation.mutate(matchDetails.id, {
+      onSuccess: (deletedEvent) => {
+        if (!deletedEvent) return;
 
-        if (type === "G") {
-          const isHomeTeam = team === "L";
-          const isSevenMeterMissed = message.includes("7m hod neproměněn");
-          const isSevenMeter = message.includes("7m Gól");
+        setEvents((prev) => prev.filter((e) => e.id !== deletedEvent.id));
 
-          if (isSevenMeterMissed) {
-            updatedPlayer.sevenMeterMissCount = Math.max(
-              updatedPlayer.sevenMeterMissCount - 1,
-              0
-            );
+        const { authorId, type, team, message } = deletedEvent;
+
+        if (authorId !== null) {
+          updatePlayerStats(authorId, (player) => {
+            let updatedPlayer = { ...player };
+
+            if (type === "G") {
+              const isHomeTeam = team === "L";
+              const isSevenMeterMissed = message.includes("7m hod neproměněn");
+              const isSevenMeter = message.includes("7m Gól");
+
+              if (isSevenMeterMissed) {
+                updatedPlayer.sevenMeterMissCount = Math.max(
+                  updatedPlayer.sevenMeterMissCount - 1,
+                  0
+                );
+                return updatedPlayer;
+              } else if (isSevenMeter) {
+                updatedPlayer.sevenMeterGoalCount = Math.max(
+                  updatedPlayer.sevenMeterGoalCount - 1,
+                  0
+                );
+              } else {
+                updatedPlayer.goalCount = Math.max(
+                  updatedPlayer.goalCount - 1,
+                  0
+                );
+              }
+
+              if (isHomeTeam) setScoreHome((prev) => Math.max(prev - 1, 0));
+              else setScoreAway((prev) => Math.max(prev - 1, 0));
+            }
+
+            if (type === "2") {
+              updatedPlayer.twoMinPenaltyCount = Math.max(
+                updatedPlayer.twoMinPenaltyCount - 1,
+                0
+              );
+              if (
+                updatedPlayer.redCardCount &&
+                updatedPlayer.twoMinPenaltyCount < 3
+              ) {
+                updatedPlayer.redCardCount = 0;
+              }
+            }
+
+            if (type === "Y") updatedPlayer.yellowCardCount = 0;
+            if (type === "R") updatedPlayer.redCardCount = 0;
 
             return updatedPlayer;
-          } else if (isSevenMeter) {
-            updatedPlayer.sevenMeterGoalCount = Math.max(
-              updatedPlayer.sevenMeterGoalCount - 1,
-              0
-            );
-          } else {
-            updatedPlayer.goalCount = Math.max(updatedPlayer.goalCount - 1, 0);
-          }
-
-          if (isHomeTeam) {
-            setScoreHome((prev) => Math.max(prev - 1, 0));
-          } else {
-            setScoreAway((prev) => Math.max(prev - 1, 0));
-          }
+          });
         }
 
-        if (type === "2") {
-          updatedPlayer.twoMinPenaltyCount = Math.max(
-            updatedPlayer.twoMinPenaltyCount - 1,
-            0
-          );
-          if (
-            updatedPlayer.redCardCount &&
-            updatedPlayer.twoMinPenaltyCount < 3
-          ) {
-            updatedPlayer.redCardCount = 0;
-          }
-        }
-
-        if (type === "Y") updatedPlayer.yellowCardCount = 0;
-        if (type === "R") updatedPlayer.redCardCount = 0;
-
-        return updatedPlayer;
-      });
-    }
-    setPendingPlayerUpdate(null);
-    setIsUpdating(false);
-  }, [pendingPlayerUpdate]);
+        setIsUpdating(false);
+      },
+      onError: () => setIsUpdating(false),
+    });
+  };
 
   const eventTypes: Record<string, string> = {
     G: "Gól",
@@ -128,18 +131,18 @@ export const MatchLog = () => {
         <TableHeader className="bg-primary/10">
           <TableRow>
             <TableHead className="text-primary text-center w-[40%]">
-              {matchDetails.homeTeam.name}
+              {matchDetails?.homeTeam?.name ?? "Domácí"}
             </TableHead>
             <TableHead className="text-primary text-center w-[20%]">
               Čas
             </TableHead>
             <TableHead className="text-primary text-center w-[40%]">
-              {matchDetails.awayTeam.name}
+              {matchDetails?.awayTeam?.name ?? "Hosté"}
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {!timerRunning ? (
+          {!matchStarted ? (
             <TableRow>
               <TableCell colSpan={3} className="text-center w-full">
                 <Button variant="goalInfo">Zápas nezačal</Button>
@@ -147,7 +150,6 @@ export const MatchLog = () => {
             </TableRow>
           ) : (
             [...events].reverse().map((event, reversedIdx) => {
-              // Najdeme index posledního ne-info eventu v původním seznamu
               const lastNonInfoIndex = events.lastIndexOf(
                 events
                   .slice()
@@ -155,11 +157,9 @@ export const MatchLog = () => {
                   .find((event) => event.type !== "I")!
               );
 
-              // Přepočítáme původní index, protože jsme otočili pole
               const originalIdx = events.length - 1 - reversedIdx;
               const isLast = originalIdx === lastNonInfoIndex;
 
-              // Nastavení varianty tlačítka podle události
               const buttonVariant =
                 event.type === "Y"
                   ? "yellowCardCount"

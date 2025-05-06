@@ -19,6 +19,7 @@ interface MatchContextProps {
   scoreAway: number;
   events: Event[];
   matchPhase: MatchPhase;
+  matchStarted: boolean;
   setMatchDetails: React.Dispatch<React.SetStateAction<Match>>;
   setTeamHome: React.Dispatch<React.SetStateAction<Team>>;
   setTeamAway: React.Dispatch<React.SetStateAction<Team>>;
@@ -34,54 +35,65 @@ interface MatchContextProps {
     updateFn: (player: Player) => Player
   ) => void;
   setMatchPhase: React.Dispatch<React.SetStateAction<MatchPhase>>;
+  setMatchStarted: React.Dispatch<React.SetStateAction<boolean>>;
+  resetMatch: () => void;
 }
 
 const MatchContext = createContext<MatchContextProps | undefined>(undefined);
 
-export const MatchProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [teamHome, setTeamHome] = useState<Team>({
-    id: 0,
-    name: "",
-    players: [],
-    coaches: [],
-    matches: [],
-  });
-  const [teamAway, setTeamAway] = useState<Team>({
-    id: 0,
-    name: "",
-    players: [],
-    coaches: [],
-    matches: [],
-  });
-  const [matchDetails, setMatchDetails] = useState<Match>({
-    id: 0,
-    time: "",
-    timePlayed: "00:00",
-    playground: "",
-    homeTeam: teamHome,
-    awayTeam: teamAway,
-    score: "0:0",
-    state: "None",
-    events: [],
-    referees: [],
-    category: {
-      id: 0,
-      name: "",
-      groups: [],
-      matches: [],
-      voiting: [],
-      stats: [],
-      votingOpen: false,
-    },
-  });
+export const MatchProvider: React.FC<{
+  children: ReactNode;
+  match: Match;
+}> = ({ children, match }) => {
+  //const match = useLoaderData() as Match;
+
+  // const [teamHome, setTeamHome] = useState<Team>({
+  //   id: 0,
+  //   name: "",
+  //   players: [],
+  //   coaches: [],
+  //   matches: [],
+  // });
+  // const [teamAway, setTeamAway] = useState<Team>({
+  //   id: 0,
+  //   name: "",
+  //   players: [],
+  //   coaches: [],
+  //   matches: [],
+  // });
+  // const [matchDetails, setMatchDetails] = useState<Match>({
+  //   id: 0,
+  //   time: "",
+  //   timePlayed: "00:00",
+  //   playground: "",
+  //   homeTeam: teamHome,
+  //   awayTeam: teamAway,
+  //   score: "0:0",
+  //   state: "None",
+  //   events: [],
+  //   referees: [],
+  //   category: {
+  //     id: 0,
+  //     name: "",
+  //     groups: [],
+  //     matches: [],
+  //     voiting: [],
+  //     stats: [],
+  //     votingOpen: false,
+  //   },
+  // });
+
+  const [matchDetails, setMatchDetails] = useState<Match>(match);
+  const [teamHome, setTeamHome] = useState<Team>(match.homeTeam);
+  const [teamAway, setTeamAway] = useState<Team>(match.awayTeam);
+
   const [players, setPlayers] = useState<Player[]>([]);
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
   const [matchState, setMatchState] = useState<MatchState>("None");
   const [scoreHome, setScoreHome] = useState<number>(0);
   const [scoreAway, setScoreAway] = useState<number>(0);
   const [events, setEvents] = useState<Event[]>([]);
+  const [matchStarted, setMatchStarted] = useState<boolean>(false);
 
   const [matchPhase, setMatchPhase] = useState<MatchPhase>("firstHalf");
 
@@ -112,6 +124,76 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
     }));
   }, [teamHome, teamAway]);
 
+  useEffect(() => {
+    const allPlayers = [
+      ...(match.homeTeam?.players ?? []),
+      ...(match.awayTeam?.players ?? []),
+    ];
+    setPlayers(allPlayers);
+  }, [match]);
+
+  useEffect(() => {
+    // if (match.score) {
+    //   const [home, away] = match.score.split(":").map((v) => parseInt(v));
+    //   setScoreHome(home);
+    //   setScoreAway(away);
+    // }
+
+    if (match.state) {
+      setMatchState(match.state as MatchState);
+    }
+
+    if (match.timePlayed) {
+      setMatchDetails((prev) => ({
+        ...prev,
+        timePlayed: match.timePlayed,
+      }));
+    }
+
+    if (match.homeTeam) {
+      setTeamHome(match.homeTeam);
+    }
+
+    if (match.awayTeam) {
+      setTeamAway(match.awayTeam);
+    }
+
+    if (match.state === "Pending") {
+      setMatchStarted(true);
+    }
+  }, [match]);
+
+  const resetMatch = () => {
+    setScoreHome(0);
+    setScoreAway(0);
+    setEvents([]);
+    setTimerRunning(false);
+    setMatchState("None");
+    setMatchStarted(false);
+
+    setMatchPhase("firstHalf");
+
+    setMatchDetails((prev) => ({
+      ...prev,
+      timePlayed: "00:00",
+      state: "None",
+      score: "0:0",
+    }));
+
+    // Reset hráčských statistik
+    setPlayers((prev) =>
+      prev.map((p) => ({
+        ...p,
+        goalCount: 0,
+        sevenMeterGoalCount: 0,
+        sevenMeterMissCount: 0,
+        yellowCardCount: 0,
+        redCardCount: 0,
+        twoMinPenaltyCount: 0,
+      }))
+    );
+  };
+
   return (
     <MatchContext.Provider
       value={{
@@ -125,6 +207,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
         scoreAway,
         events,
         matchPhase,
+        matchStarted,
         setMatchDetails,
         setTeamHome,
         setTeamAway,
@@ -137,6 +220,8 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({
         setEvents,
         updatePlayerStats,
         setMatchPhase,
+        setMatchStarted,
+        resetMatch,
       }}
     >
       {children}

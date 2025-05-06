@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Match } from "@/interfaces/MatchReport/Match";
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -23,7 +24,7 @@ export const useMatches = () => {
   });
 };
 
-export const useSelectMatch = () => {
+/* export const useSelectMatch = () => {
   const {
     setMatchDetails,
     setTeamHome,
@@ -63,4 +64,43 @@ export const useSelectMatch = () => {
   };
 
   return { handleSelectMatch };
+}; */
+
+export const useSelectMatch = () => {
+  const navigate = useNavigate();
+
+  const handleSelectMatch = (match: Match) => {
+    navigate(`/match-report/${match.id}`);
+  };
+
+  return { handleSelectMatch };
+};
+
+export const useUpdateMatch = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      id: number;
+      timePlayed: string;
+      score: string;
+      state: string;
+    }) => {
+      const res = await fetch(`${API_URL}/matches/${data.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          timePlayed: data.timePlayed,
+          score: data.score,
+          state: data.state,
+        }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Nepodařilo se aktualizovat zápas: ${text}`);
+      }
+    },
+  });
 };

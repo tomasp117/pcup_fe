@@ -1,7 +1,9 @@
 export interface Event {
+  id?: number;
   type: string;
   team: string | null;
   time: string;
-  authorID: number | null;
-  message: string; // only frontend
+  authorId: number | null;
+  matchId: number | null;
+  message: string;
 }

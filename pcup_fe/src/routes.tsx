@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import { Draws } from "./pages/Draws";
-import { MatchReport } from "./pages/MatchReport";
 import { TimeTable } from "./pages/TimeTable";
 import { MatchProvider } from "./Contexts/MatchReportContext/MatchContext";
 import { PlayoffBracketEditor } from "./components/Timetable/PlayoffBracketEditor";
@@ -10,6 +9,11 @@ import { ErrorPage } from "./pages/ErrorPage";
 import { MyTeam } from "./pages/MyTeam";
 import { CategoryPage } from "./pages/CategoryPage";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { MatchSelectorPage } from "./pages/MatchSelectorPage";
+import { MatchReport } from "./pages/MatchReport";
+import { MatchReportPage } from "./pages/MatchReportPage";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const router = createBrowserRouter([
   {
@@ -27,16 +31,16 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "time-table", element: <TimeTable /> },
-      {
-        path: "match-report",
-        element: (
-          <ProtectedRoute allowedRoles={["Recorder", "Admin"]}>
-            <MatchProvider>
-              <MatchReport />
-            </MatchProvider>
-          </ProtectedRoute>
-        ),
-      },
+      // {
+      //   path: "match-report",
+      //   element: (
+      //     <ProtectedRoute allowedRoles={["Recorder", "Admin"]}>
+      //       <MatchProvider>
+      //         <MatchReport />
+      //       </MatchProvider>
+      //     </ProtectedRoute>
+      //   ),
+      // },
       {
         path: "time-table-editor",
         element: (
@@ -56,6 +60,31 @@ export const router = createBrowserRouter([
       {
         path: "kategorie/:id",
         element: <CategoryPage />,
+      },
+      {
+        path: "match-report",
+        element: (
+          <ProtectedRoute allowedRoles={["Recorder", "Admin"]}>
+            {/* <MatchProvider> */}
+            <MatchSelectorPage />
+            {/* </MatchProvider> */}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "match-report/:id",
+        loader: async ({ params }) => {
+          const res = await fetch(`${API_URL}/matches/${params.id}`);
+          if (!res.ok) throw new Response("Match not found", { status: 404 });
+          return res.json();
+        },
+        element: (
+          <ProtectedRoute allowedRoles={["Recorder", "Admin"]}>
+            {/* <MatchProvider> */}
+            <MatchReportPage />
+            {/* </MatchProvider> */}
+          </ProtectedRoute>
+        ),
       },
     ],
   },
