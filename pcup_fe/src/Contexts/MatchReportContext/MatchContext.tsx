@@ -5,7 +5,13 @@ import { Event } from "@/interfaces/MatchReport/Event";
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 
 type MatchState = "None" | "Generated" | "Pending" | "Done";
-type MatchPhase = "firstHalf" | "secondHalf" | "finished";
+type MatchPhase =
+  | "notStarted"
+  | "firstHalf"
+  | "halftime"
+  | "secondHalf"
+  | "finished"
+  | "postMatchConfirm";
 
 // Match Context
 interface MatchContextProps {

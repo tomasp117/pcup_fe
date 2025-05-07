@@ -22,12 +22,15 @@ interface MatchTeamTableProps {
 }
 
 export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
-  const { matchDetails, players, setPlayers, matchStarted } = useMatchContext();
+  const { matchDetails, players, setPlayers, matchStarted, matchState } =
+    useMatchContext();
 
   const { addGoal, GoalType } = GoalHandlers();
   const { addTwoMinutes } = TwoMinuteHandlers();
   const { addYellowCard } = YellowCardHandlers();
   const { addRedCard } = RedCardHandlers();
+
+  const isLocked = matchState === "Done";
 
   const isHomeTeam = team === matchDetails.homeTeam;
 
@@ -64,7 +67,9 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                 <div className="flex items-center gap-1 justify-center">
                   <Button
                     className=""
-                    disabled={player.redCardCount > 0 || !matchStarted}
+                    disabled={
+                      player.redCardCount > 0 || !matchStarted || isLocked
+                    }
                     onClick={() =>
                       addGoal(
                         player.id,
@@ -79,7 +84,9 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                     <Button
                       variant={"scored7m"}
                       className="px-1 py-0 text-xs h-auto"
-                      disabled={player.redCardCount > 0 || !matchStarted}
+                      disabled={
+                        player.redCardCount > 0 || !matchStarted || isLocked
+                      }
                       onClick={() =>
                         addGoal(
                           player.id,
@@ -92,7 +99,9 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                     <Button
                       variant={"missed7m"}
                       className="px-1 py-0 text-xs h-auto"
-                      disabled={player.redCardCount > 0 || !matchStarted}
+                      disabled={
+                        player.redCardCount > 0 || !matchStarted || isLocked
+                      }
                       onClick={() =>
                         addGoal(
                           player.id,
@@ -114,14 +123,17 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                   disabled={
                     player.redCardCount > 0 ||
                     !matchStarted ||
-                    player.yellowCardCount > 0
+                    player.yellowCardCount > 0 ||
+                    isLocked
                   }
                 />
               </TableCell>
               <TableCell className="text-center">
                 <Button
                   className=""
-                  disabled={player.redCardCount > 0 || !matchStarted}
+                  disabled={
+                    player.redCardCount > 0 || !matchStarted || isLocked
+                  }
                   onClick={() => addTwoMinutes(player.id)}
                 >
                   {player.twoMinPenaltyCount}
@@ -133,7 +145,9 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                   className="w-4 h-4"
                   onChange={() => addRedCard(player.id)}
                   checked={player.redCardCount > 0}
-                  disabled={!matchStarted || player.redCardCount > 0}
+                  disabled={
+                    !matchStarted || player.redCardCount > 0 || isLocked
+                  }
                 />
               </TableCell>
             </TableRow>

@@ -36,6 +36,8 @@ export const MatchLog = () => {
     null
   );
 
+  const isLocked = matchState === "Done";
+
   const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: loadedEvents } = useMatchEvents(matchDetails.id);
@@ -117,14 +119,6 @@ export const MatchLog = () => {
     });
   };
 
-  const eventTypes: Record<string, string> = {
-    G: "Gól",
-    Y: "Žlutá karta",
-    R: "Červená karta",
-    "2": "2 minuty",
-    I: "Info",
-  };
-
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">
       <Table className="min-w-full border border-gray-200 rounded-lg overflow-hidden table-fixed">
@@ -192,16 +186,23 @@ export const MatchLog = () => {
                       {/* Střední část (čas + mazání posledního eventu) */}
                       <TableCell className="text-center max-w-[20%] whitespace-normal break-words">
                         <Button
-                          variant={isLast ? "eventDelete" : "goalInfo"}
+                          variant={
+                            !isLocked && isLast ? "eventDelete" : "goalInfo"
+                          }
                           className="whitespace-normal break-words h-full max-w-full sm:min-w-[9ch]"
                           title={isLast ? "Smazat poslední událost" : ""}
-                          onClick={isLast ? removeLastEvent : undefined}
+                          onClick={
+                            !isLocked && isLast ? removeLastEvent : undefined
+                          }
+                          //disabled={isLocked}
                           onMouseEnter={() =>
-                            isLast && setHoveredEvent(originalIdx) && {}
+                            isLast && setHoveredEvent(originalIdx)
                           }
                           onMouseLeave={() => isLast && setHoveredEvent(null)}
                         >
-                          {isLast && hoveredEvent === originalIdx ? (
+                          {!isLocked &&
+                          isLast &&
+                          hoveredEvent === originalIdx ? (
                             <X size={24} />
                           ) : (
                             event.time

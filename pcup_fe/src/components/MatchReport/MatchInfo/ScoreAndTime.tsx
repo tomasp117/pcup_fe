@@ -5,6 +5,7 @@ import {
   CardContentNoPadding,
 } from "@/components/ui/card";
 import { useMatchTimer } from "@/hooks/useMatchTimer";
+
 import { Play, Pause } from "lucide-react";
 
 export default function ScoreAndTime() {
@@ -15,12 +16,15 @@ export default function ScoreAndTime() {
     handleControl,
     timerRunning,
     timerPaused,
+    matchPhase,
     initialCheckCompleted,
     startButtonClicked,
     resetMatch,
   } = useMatchTimer();
 
   function getButtonIcon() {
+    if (matchPhase === "finished" || matchPhase === "postMatchConfirm")
+      return null;
     if (
       initialCheckCompleted &&
       startButtonClicked &&
@@ -37,6 +41,14 @@ export default function ScoreAndTime() {
   function getButtonText(): string {
     if (!initialCheckCompleted) return "Kontrola";
     if (!startButtonClicked) return "Start";
+    if (matchPhase === "halftime" && !timerRunning && timerPaused)
+      return "Start 2. poločasu";
+    if (matchPhase === "finished") {
+      return "Ptrvrdit zápis";
+    }
+    if (matchPhase === "postMatchConfirm") {
+      return "Zápis potvrzen";
+    }
     if (timerPaused) return "Resume";
     return "Pause";
   }

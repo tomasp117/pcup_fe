@@ -15,8 +15,10 @@ export const useMatchTimer = () => {
     scoreAway,
     matchDetails,
     matchState,
+    matchPhase,
     setMatchStarted,
     setMatchDetails,
+    setMatchPhase,
     setScoreHome,
     setScoreAway,
     addEvent,
@@ -59,7 +61,7 @@ export const useMatchTimer = () => {
   useEffect(() => {
     if (
       !initializedRef.current &&
-      matchDetails.state === "Pending" &&
+      (matchDetails.state === "Pending" || matchDetails.state === "Done") &&
       matchDetails.timePlayed &&
       matchDetails.score
     ) {
@@ -78,6 +80,17 @@ export const useMatchTimer = () => {
       // ⏱ Nastav přesný čas startu tak, aby odpovídal aktuálnímu stavu
       elapsedBeforePause.current = total * 1000;
       lastStartTime.current = Date.now() - elapsedBeforePause.current;
+
+      if (matchDetails.state === "Done") {
+        setInitialCheckCompleted(true);
+        setStartButtonClicked(true);
+        setMatchStarted(true);
+        setTimerRunning(false);
+        setTimerPaused(false);
+        setMatchState("Done");
+        setMatchPhase("postMatchConfirm");
+        return;
+      }
 
       setInitialCheckCompleted(true);
       setStartButtonClicked(true);
@@ -158,17 +171,76 @@ export const useMatchTimer = () => {
     }
   }, [totalSeconds, timerRunning, timerPaused]);
 
+  useEffect(() => {
+    if (matchPhase === "firstHalf" && totalSeconds >= 10 && timerRunning) {
+      setTimerRunning(false);
+      setTimerPaused(true);
+      setMatchPhase("halftime");
+
+      const newEvent = {
+        type: "I",
+        team: null,
+        time: timeRef.current,
+        authorId: null,
+        matchId: matchDetails.id,
+        message: "Konec 1. poločasu",
+      };
+
+      addEvent(newEvent);
+      addEventMutation.mutate(newEvent);
+
+      updateMatchMutation.mutate({
+        id: matchDetails.id,
+        timePlayed: timeRef.current,
+        score: scoreRef.current,
+        state: "Pending",
+      });
+    }
+
+    if (matchPhase === "secondHalf" && totalSeconds >= 10 && timerRunning) {
+      setTimerRunning(false);
+      setTimerPaused(false);
+      setMatchPhase("finished");
+      //setMatchState("Done");
+
+      const newEvent = {
+        type: "I",
+        team: null,
+        time: timeRef.current,
+        authorId: null,
+        matchId: matchDetails.id,
+        message: "Konec zápasu",
+      };
+
+      addEvent(newEvent);
+      addEventMutation.mutate(newEvent);
+
+      updateMatchMutation.mutate({
+        id: matchDetails.id,
+        timePlayed: timeRef.current,
+        score: scoreRef.current,
+        state: "Pending",
+      });
+    }
+  }, [totalSeconds, timerRunning, matchPhase]);
+
   const handleControl = () => {
+    if (matchPhase === "postMatchConfirm") {
+      alert("Zápis byl potvrzen. Není možné pokračovat.");
+      return;
+    }
     if (!initialCheckCompleted) {
       setInitialCheckCompleted(true);
       setMatchState("Pending");
       return;
     }
 
+    // Start 1. poločasu
     if (!startButtonClicked) {
       setStartButtonClicked(true);
       setMatchStarted(true);
       setTimerRunning(true);
+      setMatchPhase("firstHalf");
 
       const newEvent = {
         type: "I",
@@ -181,6 +253,55 @@ export const useMatchTimer = () => {
 
       addEvent(newEvent);
       addEventMutation.mutate(newEvent);
+      return;
+    }
+
+    // Start 2. poločasu
+    if (matchPhase === "halftime") {
+      setTotalSeconds(0);
+      elapsedBeforePause.current = 0;
+      lastStartTime.current = Date.now();
+      setTimerRunning(true);
+      setTimerPaused(false);
+      setMatchPhase("secondHalf");
+
+      const newEvent = {
+        type: "I",
+        team: null,
+        time: "Začátek 2. poločasu",
+        authorId: null,
+        matchId: matchDetails.id,
+        message: "Začátek 2. poločasu",
+      };
+
+      addEvent(newEvent);
+      addEventMutation.mutate(newEvent);
+      return;
+    }
+
+    // Potvrzení zápisu (po skončení zápasu)
+    if (matchPhase === "finished") {
+      setMatchPhase("postMatchConfirm");
+      setMatchState("Done");
+
+      const newEvent = {
+        type: "I",
+        team: null,
+        time: "Zápis potvrzen",
+        authorId: null,
+        matchId: matchDetails.id,
+        message: "Zápis potvrzen - zápas uzavřen",
+      };
+
+      addEvent(newEvent);
+      addEventMutation.mutate(newEvent);
+
+      updateMatchMutation.mutate({
+        id: matchDetails.id,
+        timePlayed: timeRef.current,
+        score: scoreRef.current,
+        state: "Done",
+      });
       return;
     }
 
@@ -211,6 +332,7 @@ export const useMatchTimer = () => {
     timePlayed: formatTime(totalSeconds),
     timerRunning,
     timerPaused,
+    matchPhase,
     handleControl,
     initialCheckCompleted,
     startButtonClicked,
