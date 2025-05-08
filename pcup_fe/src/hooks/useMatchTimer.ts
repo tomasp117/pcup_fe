@@ -6,6 +6,9 @@ import {
 } from "./MatchReport/useEvent";
 import { useUpdateMatch } from "./useMatches";
 
+const HALFTIME = 20;
+const SEND_INTERVAL = 10;
+
 export const useMatchTimer = () => {
   const {
     timerRunning,
@@ -148,12 +151,15 @@ export const useMatchTimer = () => {
     }));
   }, [totalSeconds]);
 
-  // 🔁 10s synchronizace na server
+  // 🔁 Xs synchronizace na server
   useEffect(() => {
     if (!timerRunning || timerPaused) return;
 
     // sync pouze pokud jsme dosáhli nové celé desítky
-    if (totalSeconds % 10 === 0 && totalSeconds !== lastSyncedSecond.current) {
+    if (
+      totalSeconds % SEND_INTERVAL === 0 &&
+      totalSeconds !== lastSyncedSecond.current
+    ) {
       lastSyncedSecond.current = totalSeconds;
 
       const time = formatTime(totalSeconds);
@@ -172,7 +178,11 @@ export const useMatchTimer = () => {
   }, [totalSeconds, timerRunning, timerPaused]);
 
   useEffect(() => {
-    if (matchPhase === "firstHalf" && totalSeconds >= 10 && timerRunning) {
+    if (
+      matchPhase === "firstHalf" &&
+      totalSeconds >= HALFTIME &&
+      timerRunning
+    ) {
       setTimerRunning(false);
       setTimerPaused(true);
       setMatchPhase("halftime");
@@ -197,7 +207,11 @@ export const useMatchTimer = () => {
       });
     }
 
-    if (matchPhase === "secondHalf" && totalSeconds >= 10 && timerRunning) {
+    if (
+      matchPhase === "secondHalf" &&
+      totalSeconds >= HALFTIME &&
+      timerRunning
+    ) {
       setTimerRunning(false);
       setTimerPaused(false);
       setMatchPhase("finished");

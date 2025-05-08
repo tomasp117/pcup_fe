@@ -65,7 +65,7 @@ export const DroppableGroup = ({
   return (
     <Card
       ref={cardRef}
-      className={`h-full transition-colors duration-200 ${
+      className={`h-fit  transition-colors duration-200 ${
         isOver && canDrop ? "border-2 border-primary bg-primary/5" : ""
       }`}
     >
