@@ -1,4 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
+import { Group } from "@/interfaces/MatchReport/Group";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -25,6 +26,19 @@ export const useSaveBracket = () => {
       // - Ukázat notifikaci že bylo uloženo
       // - Invalidovat query
       console.log("Bracket byl úspěšně uložen!");
+    },
+  });
+};
+
+export const useGroupsByCategory = (categoryId: number) => {
+  return useQuery<Group[]>({
+    queryKey: ["groups", categoryId],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/groups?category=${categoryId}`);
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst skupiny.");
+      }
+      return res.json();
     },
   });
 };

@@ -24,6 +24,27 @@ export const useMatches = () => {
   });
 };
 
+export const useMatchesByCategory = (categoryId: number) => {
+  return useQuery<Match[]>({
+    queryKey: ["matches", categoryId],
+    queryFn: async () => {
+      const res = await fetch(
+        `${API_URL}/matches/by-category?category=${categoryId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst zápasy.");
+      }
+      return res.json();
+    },
+  });
+};
+
 /* export const useSelectMatch = () => {
   const {
     setMatchDetails,

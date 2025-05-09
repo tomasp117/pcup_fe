@@ -1,14 +1,8 @@
-import { useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useTeamsByCategory } from "@/hooks/useTeams";
 
-export const Participants = () => {
-  const { id } = useParams<{ id: string }>();
-  const {
-    data: teams,
-    isLoading,
-    error,
-  } = useTeamsByCategory(id ? parseInt(id, 10) : 0);
+export const Participants = ({ categoryId }: { categoryId: number }) => {
+  const { data: teams, isLoading, error } = useTeamsByCategory(categoryId);
 
   if (isLoading) {
     return (

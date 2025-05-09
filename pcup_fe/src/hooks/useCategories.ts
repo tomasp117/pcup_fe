@@ -16,7 +16,7 @@ export const useCategories = () => {
   });
 };
 
-export const useCategoryDetail = (id: string) => {
+export const useCategoryDetail = (id: number) => {
   return useQuery({
     queryKey: ["category-detail", id],
     queryFn: async () => {
