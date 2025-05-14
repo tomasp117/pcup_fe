@@ -42,7 +42,10 @@ export const useReliableAddEvent = (matchId: number) => {
     mutationFn: async (event: Event) => {
       const res = await fetch(`${API_URL}/events/add`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify(event),
       });
       if (!res.ok) {
@@ -73,7 +76,10 @@ export const useReliableAddEvent = (matchId: number) => {
         try {
           const res = await fetch(`${API_URL}/events/add`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
             body: JSON.stringify(e),
           });
           if (res.ok) {
@@ -158,6 +164,10 @@ export const useDeleteEventsByMatchId = () => {
     mutationFn: async (matchId: number) => {
       const res = await fetch(`${API_URL}/events?matchId=${matchId}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (!res.ok) throw new Error("Nepodařilo se smazat události");
     },
@@ -172,6 +182,10 @@ export const useDeleteLastEvent = () => {
     mutationFn: async (matchId: number) => {
       const res = await fetch(`${API_URL}/events/last?matchId=${matchId}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (!res.ok) throw new Error("Nepodařilo se smazat poslední událost");
       return res.json() as Promise<Event>; // včetně `id`

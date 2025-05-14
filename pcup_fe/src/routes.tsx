@@ -12,6 +12,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { MatchSelectorPage } from "./pages/MatchSelectorPage";
 import { MatchReport } from "./pages/MatchReport";
 import { MatchReportPage } from "./pages/MatchReportPage";
+import { TeamPage } from "./pages/TeamPage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -85,6 +86,10 @@ export const router = createBrowserRouter([
             {/* </MatchProvider> */}
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "teams/:id",
+        element: <TeamPage />,
       },
     ],
   },

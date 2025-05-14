@@ -23,3 +23,24 @@ export const useTeamsByCategory = (categoryId: number) => {
     enabled: !!categoryId,
   });
 };
+
+// Fetch team by ID
+export const useTeamById = (teamId: number) => {
+  return useQuery<Team>({
+    queryKey: ["team", teamId],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/teams/${teamId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst tým.");
+      }
+
+      return res.json();
+    },
+    enabled: !!teamId,
+  });
+};

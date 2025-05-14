@@ -89,3 +89,22 @@ export const useUpdateMatch = () => {
     },
   });
 };
+
+// Get matches by team
+export const useMatchesByTeam = (id: number) => {
+  return useQuery<Match[]>({
+    queryKey: ["team-matches", id],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/teams/${id}/matches`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst zápasy.");
+      }
+      return res.json();
+    },
+  });
+};

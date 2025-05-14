@@ -1,5 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { useTeamsByCategory } from "@/hooks/useTeams";
+import { Link } from "react-router-dom";
 
 export const Participants = ({ categoryId }: { categoryId: number }) => {
   const { data: teams, isLoading, error } = useTeamsByCategory(categoryId);
@@ -39,7 +40,11 @@ export const Participants = ({ categoryId }: { categoryId: number }) => {
             index % 2 === 0 ? "bg-white" : "bg-primary/10"
           }`}
         >
-          <div className="font-medium">{team.name}</div>
+          <div className="font-medium">
+            <Link to={`/teams/${team.id}`} className="text-blue-500 underline">
+              {team.name}
+            </Link>
+          </div>
         </div>
       ))}
     </div>

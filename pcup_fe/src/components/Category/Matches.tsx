@@ -20,6 +20,7 @@ import {
 } from "../ui/select";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Link } from "react-router-dom";
 
 export const Matches = ({ categoryId }: { categoryId: number }) => {
   const { data: matches, isLoading, error } = useMatchesByCategory(categoryId);
@@ -125,10 +126,20 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
                 </TableCell>
                 <TableCell>{match.playground ?? "-"}</TableCell>
                 <TableCell className="font-medium text-primary ">
-                  {match.homeTeam?.name ?? "-"}
+                  <Link
+                    to={`/teams/${match.homeTeam.id}`}
+                    className="text-blue-500 underline"
+                  >
+                    {match.homeTeam?.name ?? "-"}
+                  </Link>
                 </TableCell>
                 <TableCell className="font-medium text-primary">
-                  {match.awayTeam?.name ?? "-"}
+                  <Link
+                    to={`/teams/${match.awayTeam.id}`}
+                    className="text-blue-500 underline"
+                  >
+                    {match.awayTeam?.name ?? "-"}
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

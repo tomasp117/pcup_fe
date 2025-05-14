@@ -1,3 +1,5 @@
+import { Category } from "./Category";
+import { Club } from "./Club";
 import { Match } from "./Match";
 import { Coach } from "./Person/Roles/Coach";
 import { Player } from "./Person/Roles/Player";
@@ -8,4 +10,6 @@ export interface Team {
   players: Player[];
   coaches: Coach[];
   matches: Match[];
+  club?: Club;
+  category?: Category;
 }

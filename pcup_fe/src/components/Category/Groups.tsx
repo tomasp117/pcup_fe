@@ -9,6 +9,7 @@ import {
   TableCell,
   Table,
 } from "../ui/table";
+import { Link } from "react-router-dom";
 
 export const Groups = ({ categoryId }: { categoryId: number }) => {
   const { data: groups, isLoading, error } = useGroupsByCategory(categoryId);
@@ -60,7 +61,14 @@ export const Groups = ({ categoryId }: { categoryId: number }) => {
                       className="even:bg-gray-200 odd:bg-white"
                     >
                       <TableCell>{index + 1}.</TableCell>
-                      <TableCell>{team.name}</TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/teams/${team.id}`}
+                          className="text-blue-500 underline"
+                        >
+                          {team.name}
+                        </Link>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
