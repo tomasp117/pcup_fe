@@ -9,6 +9,7 @@ import { CategorySelect } from "@/components/CategorySelect";
 import { useCategoryData } from "@/hooks/Draws/useCategoryData";
 import { Groups } from "@/components/Category/Groups";
 import { Matches } from "@/components/Category/Matches";
+import { Standings } from "@/components/Category/Standings";
 
 const tabs = ["Účastníci", "Skupiny", "Utkání", "Tabulky"];
 const API_URL = import.meta.env.VITE_API_URL;
@@ -66,6 +67,10 @@ export const CategoryPage = () => {
 
         {category && activeTab === "Utkání" && (
           <Matches categoryId={selectedCategoryId!} />
+        )}
+
+        {category && activeTab === "Tabulky" && (
+          <Standings categoryId={selectedCategoryId!} />
         )}
       </div>
     </div>

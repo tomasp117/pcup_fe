@@ -10,7 +10,8 @@ export interface Match {
   playground: string;
   homeTeam: Team;
   awayTeam: Team;
-  score: string;
+  scoreHome: number;
+  scoreAway: number;
   state: "None" | "Generated" | "Pending" | "Done";
   events: Event[];
   referees: Referee[];

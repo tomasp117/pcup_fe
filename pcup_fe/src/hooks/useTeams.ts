@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Fetch teams by category
 export const useTeamsByCategory = (categoryId: number) => {
   return useQuery<Team[]>({
     queryKey: ["teams-by-category", categoryId],

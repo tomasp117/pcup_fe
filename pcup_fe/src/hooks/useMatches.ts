@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Fetch all matches
 export const useMatches = () => {
   return useQuery<Match[]>({
     queryKey: ["matches"],
@@ -24,6 +25,7 @@ export const useMatches = () => {
   });
 };
 
+// Fetch matches by category
 export const useMatchesByCategory = (categoryId: number) => {
   return useQuery<Match[]>({
     queryKey: ["matches", categoryId],
@@ -45,48 +47,7 @@ export const useMatchesByCategory = (categoryId: number) => {
   });
 };
 
-/* export const useSelectMatch = () => {
-  const {
-    setMatchDetails,
-    setTeamHome,
-    setTeamAway,
-    setPlayers,
-    setScoreHome,
-    setScoreAway,
-    setEvents,
-  } = useMatchContext();
-
-  const handleSelectMatch = (match: Match) => {
-    // Nastavíš základní info
-    setMatchDetails(match);
-
-    // Nastavíš týmy
-    setTeamHome(match.homeTeam);
-    setTeamAway(match.awayTeam);
-
-    // Připravíš hráče (sloučíš hráče obou týmů)
-    const allPlayers = [
-      ...(match.homeTeam.players || []),
-      ...(match.awayTeam.players || []),
-    ];
-    setPlayers(allPlayers);
-
-    // Nastavíš skóre (pokud už je nějaké)
-    if (match.score) {
-      const [homeScore, awayScore] = match.score.split(":").map(Number);
-      setScoreHome(homeScore);
-      setScoreAway(awayScore);
-    } else {
-      setScoreHome(0);
-      setScoreAway(0);
-    }
-
-    setEvents(match.events || []);
-  };
-
-  return { handleSelectMatch };
-}; */
-
+// Navigate to match report of the selected match
 export const useSelectMatch = () => {
   const navigate = useNavigate();
 
@@ -97,12 +58,14 @@ export const useSelectMatch = () => {
   return { handleSelectMatch };
 };
 
+// Update match details (after x seconds and etc.)
 export const useUpdateMatch = () => {
   return useMutation({
     mutationFn: async (data: {
       id: number;
       timePlayed: string;
-      score: string;
+      scoreHome: number;
+      scoreAway: number;
       state: string;
     }) => {
       const res = await fetch(`${API_URL}/matches/${data.id}`, {
@@ -113,7 +76,8 @@ export const useUpdateMatch = () => {
         },
         body: JSON.stringify({
           timePlayed: data.timePlayed,
-          score: data.score,
+          homeScore: data.scoreHome,
+          awayScore: data.scoreAway,
           state: data.state,
         }),
       });

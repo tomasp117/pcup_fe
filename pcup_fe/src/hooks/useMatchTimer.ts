@@ -38,7 +38,7 @@ export const useMatchTimer = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const syncIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const scoreRef = useRef(`${scoreHome}:${scoreAway}`);
+  //const scoreRef = useRef(`${scoreHome}:${scoreAway}`);
   const timeRef = useRef("00:00");
   const stateRef = useRef(matchState);
 
@@ -65,13 +65,11 @@ export const useMatchTimer = () => {
     if (
       !initializedRef.current &&
       (matchDetails.state === "Pending" || matchDetails.state === "Done") &&
-      matchDetails.timePlayed &&
-      matchDetails.score
+      matchDetails.timePlayed /*&&
+      matchDetails.scoreHome  &&
+      matchDetails.scoreAway */
     ) {
       const [minutes, seconds] = matchDetails.timePlayed
-        .split(":")
-        .map((v) => parseInt(v));
-      const [home, away] = matchDetails.score
         .split(":")
         .map((v) => parseInt(v));
 
@@ -106,9 +104,9 @@ export const useMatchTimer = () => {
   }, [matchDetails]);
 
   // Aktualizuj refy
-  useEffect(() => {
-    scoreRef.current = `${scoreHome}:${scoreAway}`;
-  }, [scoreHome, scoreAway]);
+  // useEffect(() => {
+  //   scoreRef.current = `${scoreHome}:${scoreAway}`;
+  // }, [scoreHome, scoreAway]);
 
   useEffect(() => {
     timeRef.current = formatTime(totalSeconds);
@@ -169,7 +167,8 @@ export const useMatchTimer = () => {
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: time,
-        score,
+        scoreHome: scoreHome,
+        scoreAway: scoreAway,
         state,
       });
 
@@ -202,7 +201,8 @@ export const useMatchTimer = () => {
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: timeRef.current,
-        score: scoreRef.current,
+        scoreHome: scoreHome,
+        scoreAway: scoreAway,
         state: "Pending",
       });
     }
@@ -232,7 +232,8 @@ export const useMatchTimer = () => {
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: timeRef.current,
-        score: scoreRef.current,
+        scoreHome: scoreHome,
+        scoreAway: scoreAway,
         state: "Pending",
       });
     }
@@ -313,7 +314,8 @@ export const useMatchTimer = () => {
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: timeRef.current,
-        score: scoreRef.current,
+        scoreHome: scoreHome,
+        scoreAway: scoreAway,
         state: "Done",
       });
       return;
@@ -335,7 +337,8 @@ export const useMatchTimer = () => {
     updateMatchMutation.mutate({
       id: matchDetails.id,
       timePlayed: "00:00",
-      score: "0:0",
+      scoreHome: 0,
+      scoreAway: 0,
       state: "None",
     });
   };

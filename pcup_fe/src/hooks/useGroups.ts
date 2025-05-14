@@ -42,3 +42,16 @@ export const useGroupsByCategory = (categoryId: number) => {
     },
   });
 };
+
+export const useGroupStandings = (groupId: number) => {
+  return useQuery({
+    queryKey: ["groupStandings", groupId],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/groups/${groupId}/standings`);
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst tabulku.");
+      }
+      return res.json();
+    },
+  });
+};

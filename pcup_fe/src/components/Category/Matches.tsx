@@ -10,10 +10,21 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 export const Matches = ({ categoryId }: { categoryId: number }) => {
   const { data: matches, isLoading, error } = useMatchesByCategory(categoryId);
-
+  const [playgroundFilter, setPlaygroundFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -38,12 +49,56 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
     );
   }
 
+  const filteredMatches = matches.filter((match) => {
+    const matchesPlayground =
+      playgroundFilter === "all" || match.playground === playgroundFilter;
+
+    const matchesSearch =
+      searchTerm.trim() === "" ||
+      match.homeTeam?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      match.awayTeam?.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesPlayground && matchesSearch;
+  });
+
   return (
     <Card>
       <CardHeader>
         <h2 className="text-lg font-bold text-primary">Zápasy</h2>
       </CardHeader>
       <CardContent className="p-4">
+        <div className="flex flex-wrap gap-4 mb-4 items-end">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="playground">Hřiště</Label>
+            <Select
+              value={playgroundFilter}
+              onValueChange={setPlaygroundFilter}
+            >
+              <SelectTrigger className="w-[200px]" id="playground">
+                <SelectValue placeholder="Vyber hřiště" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Všechna hřiště</SelectItem>
+                {[...new Set(matches.map((m) => m.playground))].map((pg) => (
+                  <SelectItem key={pg} value={pg}>
+                    {pg}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="search">Hledat tým</Label>
+            <Input
+              id="search"
+              className="w-[250px]"
+              placeholder="Např. Polanka"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
         <Table className="text-sm">
           <TableHeader className="bg-primary/10">
             <TableRow>
@@ -54,7 +109,7 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {matches.map((match) => (
+            {filteredMatches.map((match) => (
               <TableRow
                 key={match.id}
                 className="even:bg-primary/10 hover:bg-primary/20 cursor-pointer "
