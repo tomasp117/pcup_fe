@@ -25,7 +25,10 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
     try {
       const response = await fetch("http://localhost:5056/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify({ username, password }),
       });
 

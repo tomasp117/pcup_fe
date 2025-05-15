@@ -218,6 +218,10 @@ export const TimeTable = () => {
     try {
       await fetch(`${API_URL}/matches/assign-group-matches/${categoryId}`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       toast.success("Zápasy úspěšně přiřazeny");
@@ -234,6 +238,10 @@ export const TimeTable = () => {
     try {
       await fetch(`${API_URL}/matches/assign-all-group-matches`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       toast.success("Všechny zápasy úspěšně přiřazeny");

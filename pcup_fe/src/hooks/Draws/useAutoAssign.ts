@@ -13,11 +13,16 @@ export function useAutoAssign(
     setErrorMessage(null);
 
     try {
+      console.log("Auto-assigning teams...");
+      console.log("Category ID:", category);
       const response = await fetch(
         `${API_URL}/teams/assign-groups?category=${category}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+           },
           body: JSON.stringify(teamDraws),
         }
       );
