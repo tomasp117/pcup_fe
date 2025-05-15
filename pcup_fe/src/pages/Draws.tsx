@@ -212,11 +212,15 @@ export const Draws = () => {
     }
 
     try {
+      console.log(JSON.stringify(validGroups, null, 2));
       const response = await fetch(
         `${API_URL}/groups/save?category=${category}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           body: JSON.stringify(validGroups),
         }
       );

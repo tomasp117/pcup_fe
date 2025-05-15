@@ -13,6 +13,10 @@ import { MatchSelectorPage } from "./pages/MatchSelectorPage";
 import { MatchReport } from "./pages/MatchReport";
 import { MatchReportPage } from "./pages/MatchReportPage";
 import { TeamPage } from "./pages/TeamPage";
+import { TournamentForm } from "./pages/TournamentForm";
+import { TournamentInstanceForm } from "./pages/TournamentInstanceForm";
+import { CategoryForm } from "./pages/CategoryForm";
+import { CreateTournamentWizard } from "./components/CreateTournamentWizard";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -90,6 +94,38 @@ export const router = createBrowserRouter([
       {
         path: "teams/:id",
         element: <TeamPage />,
+      },
+      // {
+      //   path: "create-tournament",
+      //   element: (
+      //     <ProtectedRoute allowedRoles={["Admin"]}>
+      //       <TournamentForm />
+      //     </ProtectedRoute>
+      //   ),
+      // },
+      // {
+      //   path: "create-tournament-instance",
+      //   element: (
+      //     <ProtectedRoute allowedRoles={["Admin"]}>
+      //       <TournamentInstanceForm />
+      //     </ProtectedRoute>
+      //   ),
+      // },
+      // {
+      //   path: "create-category",
+      //   element: (
+      //     <ProtectedRoute allowedRoles={["Admin"]}>
+      //       <CategoryForm />
+      //     </ProtectedRoute>
+      //   ),
+      // },
+      {
+        path: "create-tournament-full",
+        element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <CreateTournamentWizard />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

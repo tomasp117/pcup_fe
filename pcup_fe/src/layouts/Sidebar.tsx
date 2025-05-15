@@ -19,6 +19,9 @@ import {
   Split,
   LayoutDashboard,
   LogOut,
+  Workflow,
+  Sliders,
+  FolderPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -95,6 +98,12 @@ export const Sidebar = () => {
       name: "Rozpis utkání - editor",
       path: "/time-table-editor",
       icon: <LayoutDashboard />,
+      roles: ["Admin"],
+    },
+    {
+      name: "Vytvořit turnaj",
+      path: "/create-tournament-full",
+      icon: <FolderPlus />,
       roles: ["Admin"],
     },
   ];
