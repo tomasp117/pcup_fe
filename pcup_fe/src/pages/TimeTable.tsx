@@ -11,11 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEdition } from "@/Contexts/TournamentEditionContext";
 import { Category } from "@/interfaces/CategorySelect/ICategory";
 import { GroupDetailDTO } from "@/interfaces/Timetable/GroupDetailDTO";
 import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
 import { toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -36,10 +38,12 @@ export const TimeTable = () => {
   const [filterCourt, setFilterCourt] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
 
+  const edition = useEdition();
+
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/categories`);
+      const res = await fetch(`${API_URL}/${edition}/categories`);
       if (!res.ok) throw new Error("Nepodařilo se načíst kategorie");
       const data = await res.json();
       setCategories(data);
@@ -64,6 +68,7 @@ export const TimeTable = () => {
       setGroups(data);
     } catch (err) {
       setError("Chyba při načítání skupin");
+      setGroups([]);
     } finally {
       setIsLoading(false);
     }
@@ -236,7 +241,7 @@ export const TimeTable = () => {
   const handleAssignAllMatches = async () => {
     setIsLoading(true);
     try {
-      await fetch(`${API_URL}/matches/assign-all-group-matches`, {
+      await fetch(`${API_URL}/${edition}/matches/assign-all-group-matches`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -276,7 +281,7 @@ export const TimeTable = () => {
   const handleGenerateSlots = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch(`${API_URL}/matches/generate-blank`, {
+      const res = await fetch(`${API_URL}/${edition}/matches/generate-blank`, {
         method: "POST",
       });
       if (!res.ok) throw new Error("Chyba při generování slotů");

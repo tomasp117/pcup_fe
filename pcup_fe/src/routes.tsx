@@ -3,26 +3,20 @@ import { MainLayout } from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import { Draws } from "./pages/Draws";
 import { TimeTable } from "./pages/TimeTable";
-import { MatchProvider } from "./Contexts/MatchReportContext/MatchContext";
-import { PlayoffBracketEditor } from "./components/Timetable/PlayoffBracketEditor";
 import { ErrorPage } from "./pages/ErrorPage";
 import { MyTeam } from "./pages/MyTeam";
 import { CategoryPage } from "./pages/CategoryPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { MatchSelectorPage } from "./pages/MatchSelectorPage";
-import { MatchReport } from "./pages/MatchReport";
 import { MatchReportPage } from "./pages/MatchReportPage";
 import { TeamPage } from "./pages/TeamPage";
-import { TournamentForm } from "./pages/TournamentForm";
-import { TournamentInstanceForm } from "./pages/TournamentInstanceForm";
-import { CategoryForm } from "./pages/CategoryForm";
 import { CreateTournamentWizard } from "./components/CreateTournamentWizard";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/:edition?",
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [

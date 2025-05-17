@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -10,14 +10,32 @@ import { useCategoryData } from "@/hooks/Draws/useCategoryData";
 import { Groups } from "@/components/Category/Groups";
 import { Matches } from "@/components/Category/Matches";
 import { Standings } from "@/components/Category/Standings";
+import { parse } from "path";
 
 const tabs = ["Účastníci", "Skupiny", "Utkání", "Tabulky"];
 const API_URL = import.meta.env.VITE_API_URL;
 export const CategoryPage = () => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const categoryIdFromUrl = parseInt(id || "0", 10);
+
+  const [selectedCategoryId, setSelectedCategoryId] =
+    useState<number>(categoryIdFromUrl);
   const [activeTab, setActiveTab] = useState("Účastníci");
+
+  useEffect(() => {
+    if (id) {
+      const parsed = parseInt(id);
+      if (!isNaN(parsed)) {
+        setSelectedCategoryId(parsed);
+      }
+    }
+  }, [id]);
+
+  const handleCategoryChange = (newId: number) => {
+    setSelectedCategoryId(newId);
+    navigate(`/kategorie/${newId}`);
+  };
 
   const {
     data: category,
@@ -33,7 +51,7 @@ export const CategoryPage = () => {
             <h2 className="text-2xl font-bold">Kategorie</h2>
             <CategorySelect
               value={selectedCategoryId}
-              onChange={setSelectedCategoryId}
+              onChange={handleCategoryChange}
             />
           </div>
         </CardHeader>
@@ -55,22 +73,18 @@ export const CategoryPage = () => {
       <div>
         {isLoading && <p>Načítám kategorii...</p>}
         {error && <p>Chyba při načítání kategorie.</p>}
-        {category &&
-          selectedCategoryId !== null &&
-          activeTab === "Účastníci" && (
-            <Participants categoryId={selectedCategoryId} />
-          )}
 
+        {category && activeTab === "Účastníci" && (
+          <Participants categoryId={selectedCategoryId} />
+        )}
         {category && activeTab === "Skupiny" && (
-          <Groups categoryId={selectedCategoryId!} />
+          <Groups categoryId={selectedCategoryId} />
         )}
-
         {category && activeTab === "Utkání" && (
-          <Matches categoryId={selectedCategoryId!} />
+          <Matches categoryId={selectedCategoryId} />
         )}
-
         {category && activeTab === "Tabulky" && (
-          <Standings categoryId={selectedCategoryId!} />
+          <Standings categoryId={selectedCategoryId} />
         )}
       </div>
     </div>

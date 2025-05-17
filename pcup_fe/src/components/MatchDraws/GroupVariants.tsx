@@ -51,6 +51,8 @@ export const GroupVariants = ({
               moveTeam={moveTeam}
               moveBack={moveBack}
               removeTeamFromGroup={removeTeamFromGroup}
+              isDraggable={false}
+              isVariant={true}
             />
           ))}
           <div className="flex justify-between items-center">
@@ -90,6 +92,8 @@ export const GroupVariants = ({
                   moveTeam={moveTeam}
                   moveBack={moveBack}
                   removeTeamFromGroup={removeTeamFromGroup}
+                  isDraggable={false}
+                  isVariant={true}
                 />
               ))}
 

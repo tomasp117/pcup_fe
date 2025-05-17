@@ -51,6 +51,7 @@ export const GroupList = ({
                 moveTeam={moveTeam}
                 moveBack={moveBack}
                 removeTeamFromGroup={removeTeamFromGroup}
+                isDraggable={true}
               />
             </div>
           );

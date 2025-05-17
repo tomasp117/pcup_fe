@@ -1,12 +1,15 @@
+import { useEdition } from "@/Contexts/TournamentEditionContext";
+import { Category } from "@/interfaces/MatchReport/Category";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const useCategories = () => {
-  return useQuery({
-    queryKey: ["categories"],
+  const edition = useEdition();
+  return useQuery<Category[]>({
+    queryKey: ["categories", edition],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/categories`);
+      const res = await fetch(`${API_URL}/${edition}/categories`);
       if (!res.ok) {
         throw new Error("Nepodařilo se načíst kategorie.");
       }

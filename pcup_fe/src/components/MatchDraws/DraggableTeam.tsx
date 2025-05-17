@@ -13,6 +13,7 @@ export const DraggableTeam = ({
   handleChange,
   removeFromGroup,
   isDraggable,
+  isVariant = false,
 }: {
   team: TeamDraw;
   groupId?: number;
@@ -23,6 +24,7 @@ export const DraggableTeam = ({
   ) => void;
   removeFromGroup?: (team: TeamDraw) => void;
   isDraggable: boolean;
+  isVariant?: boolean;
 }) => {
   const rowRef = useRef<HTMLTableRowElement>(null);
   const dragHandleRef = useRef<HTMLSpanElement>(null);
@@ -31,7 +33,7 @@ export const DraggableTeam = ({
     () => ({
       type: "TEAM",
       item: {
-        ...team, // ✅ Posíláme AKTUÁLNÍ hodnoty týmu
+        ...team,
         fromGroup: groupId ?? null,
       },
       canDrag: isDraggable,
@@ -104,6 +106,7 @@ export const DraggableTeam = ({
             variant={"destructive"}
             onClick={() => removeFromGroup?.(team)}
             className="px-2 py-1 text-xs rounded"
+            disabled={isVariant}
           >
             Odebrat
           </Button>

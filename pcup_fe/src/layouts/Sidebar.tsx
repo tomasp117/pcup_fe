@@ -44,6 +44,7 @@ import { useUser } from "@/Contexts/UserContext";
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/hooks/useCategories";
 import { Category } from "@/interfaces/MatchReport/Category";
+import { useEdition } from "@/Contexts/TournamentEditionContext";
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -69,46 +70,73 @@ export const Sidebar = () => {
     roles?: string[];
   };
 
+  const edition = useEdition();
+
   const menuItems: MenuItem[] = [
-    { name: "Domů", path: "/", icon: <Home /> },
+    { name: "Domů", path: `/${edition}`, icon: <Home /> },
     {
       name: "Kategorie",
-      path: `/kategorie/${categories?.[0]?.id}`,
+      path: `/${edition}/kategorie/${categories?.[0]?.id}`,
       icon: <Trophy />,
       dynamicChildren: true,
     },
     {
       name: "Rozpis utkání",
-      path: "/time-table",
+      path: `/${edition}/time-table`,
       icon: <CalendarRange />,
     },
     {
       name: "Zápis utkání",
-      path: "/match-report",
+      path: `/${edition}/match-report`,
       icon: <PenBox />,
       roles: ["Admin", "Recorder"],
     },
     {
       name: "Rozdělení skupin - editor",
-      path: "/draws-editor",
+      path: `/${edition}/draws-editor`,
       icon: <Split />,
       roles: ["Admin"],
     },
     {
       name: "Rozpis utkání - editor",
-      path: "/time-table-editor",
+      path: `/${edition}/time-table-editor`,
       icon: <LayoutDashboard />,
       roles: ["Admin"],
     },
     {
       name: "Vytvořit turnaj",
-      path: "/create-tournament-full",
+      path: `/${edition}/create-tournament-full`,
       icon: <FolderPlus />,
       roles: ["Admin"],
     },
   ];
 
   const { user, logout } = useUser();
+
+  const defaultEdition = 2025;
+
+  const normalizePath = (path: string) => {
+    if (!path) return "/";
+    const prefix = `/${defaultEdition}`;
+    return path.startsWith(prefix) ? path.slice(prefix.length) || "/" : path;
+  };
+
+  const isActive = (item: MenuItem): boolean => {
+    const current = normalizePath(location.pathname);
+
+    console.log("Current path:", current);
+    console.log("Item path:", item.path);
+
+    if (item.name === "Kategorie") {
+      return current.includes("/kategorie/");
+    }
+    if (item.dynamicChildren) {
+      return current.startsWith("/kategorie/");
+    }
+
+    const target = normalizePath(item.path);
+    return current === target;
+  };
 
   return (
     <div className="flex">
@@ -153,7 +181,7 @@ export const Sidebar = () => {
                       to={item.path || "#"}
                       className={cn(
                         "flex items-center px-4 py-2 rounded-lg transition-all",
-                        location.pathname === item.path
+                        isActive(item)
                           ? "bg-primary text-white"
                           : " hover:bg-primary/10"
                       )}
@@ -234,7 +262,10 @@ export const Sidebar = () => {
                             setIsCategoriesOpen(!isCategoriesOpen)
                           }
                           className={cn(
-                            "flex items-center w-full px-4 py-2 sidebar-item-hover transition-all",
+                            "flex items-center w-full px-4 py-2 transition-all",
+                            isActive(item)
+                              ? "bg-primary text-white"
+                              : "hover:bg-primary/10",
                             isCollapsed ? "justify-center" : "justify-start"
                           )}
                         >
@@ -281,7 +312,7 @@ export const Sidebar = () => {
                                 categories?.map((category: Category) => (
                                   <Link
                                     key={category.id}
-                                    to={`/kategorie/${category.id}`}
+                                    to={`/${edition}/kategorie/${category.id}`}
                                     className="block px-4 py-1 rounded-lg sidebar-item-hover"
                                   >
                                     {category.name}
@@ -309,7 +340,7 @@ export const Sidebar = () => {
                         to={item.path}
                         className={cn(
                           "flex items-center px-4 py-3 transition-all",
-                          location.pathname === item.path
+                          isActive(item)
                             ? "bg-primary text-white"
                             : " sidebar-item-hover",
                           isCollapsed ? "justify-center" : "justify-start"

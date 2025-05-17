@@ -228,6 +228,7 @@ export const Draws = () => {
       if (!response.ok) throw new Error(`Chyba: ${response.status}`);
 
       toast.success("Skupiny byly úspěšně uloženy.");
+      setGroups(validGroups);
       setSelectedVariant(null);
       setGroupVariants([]);
     } catch (error) {

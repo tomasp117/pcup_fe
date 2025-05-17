@@ -8,6 +8,7 @@ import {
 } from "./ui/select";
 
 import { Category } from "@/interfaces/CategorySelect/ICategory";
+import { useCategories } from "@/hooks/useCategories";
 
 interface CategorySelectProps {
   value: number | null;
@@ -22,39 +23,27 @@ export const CategorySelect = ({
   onChange,
   noMini41,
 }: CategorySelectProps) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  //const [categories, setCategories] = useState<Category[]>([]);
+  //const [isLoading, setIsLoading] = useState(false);
+  //const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`${API_URL}/categories`);
-        if (!res.ok) throw new Error("Nepodařilo se načíst kategorie");
-        const data = await res.json();
-        setCategories(data);
-      } catch (err) {
-        setError("Chyba při načítání kategorií.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data: categories = [], isLoading, error } = useCategories();
 
-    fetchCategories();
-  }, []);
-
+  // Nastavení výchozí hodnoty (první vhodná kategorie)
   useEffect(() => {
     if (!isLoading && !error && categories.length > 0 && value === null) {
       const firstAvailableCategory = categories.find(
         (cat) => !(noMini41 && cat.name === "Mini 4+1")
       );
-      if (firstAvailableCategory) onChange(firstAvailableCategory.id);
+      if (firstAvailableCategory) {
+        Promise.resolve().then(() => onChange(firstAvailableCategory.id));
+      }
     }
-  }, [isLoading, error, categories, value, onChange, noMini41]);
+  }, [isLoading, error, categories, value, noMini41, onChange]);
 
   if (isLoading) return <p>Načítání kategorií...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (error)
+    return <p className="text-red-500">Chyba při načítání kategorií.</p>;
 
   return (
     <div className="flex flex-wrap items-center gap-4">

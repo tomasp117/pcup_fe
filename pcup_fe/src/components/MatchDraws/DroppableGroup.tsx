@@ -19,16 +19,21 @@ export const DroppableGroup = ({
   moveTeam,
   moveBack,
   removeTeamFromGroup,
+  isDraggable = true,
+  isVariant = false,
 }: {
   group: Group;
   moveTeam?: (team: TeamDraw, groupId: number) => void;
   moveBack?: (team: TeamDraw) => void;
   removeTeamFromGroup?: (teamId: number, fromGroup: number | null) => void;
+  isDraggable?: boolean;
+  isVariant?: boolean;
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: "TEAM",
+    canDrop: () => isDraggable,
     drop: (item: TeamDraw & { fromGroup: number | string | null }) => {
       if (!group.id) {
         console.warn("⚠️ Skupina nemá platné ID:", group);
@@ -94,6 +99,7 @@ export const DroppableGroup = ({
                   isDraggable={
                     !!moveTeam && !!moveBack && !!removeTeamFromGroup
                   }
+                  isVariant={isVariant}
                 />
               ))
             ) : (
