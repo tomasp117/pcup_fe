@@ -1,10 +1,8 @@
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useState, useRef, useEffect } from "react";
-import {
-  useDeleteEventsByMatchId,
-  useReliableAddEvent,
-} from "./MatchReport/useEvent";
-import { useUpdateMatch } from "./useMatches";
+import { useDeleteEventsByMatchId, useReliableAddEvent } from "./useEvent";
+import { useUpdateMatch } from "../useMatches";
+import { toast } from "react-toastify";
 
 const HALFTIME = 20;
 const SEND_INTERVAL = 10;
@@ -342,6 +340,44 @@ export const useMatchTimer = () => {
       state: "None",
     });
   };
+
+  useEffect(() => {
+    const handleOffline = () => {
+      toast.dismiss();
+      toast.clearWaitingQueue();
+      toast.error("Ztráta připojení k internetu");
+      toast.info("Zápis se ukládá do místního úložiště.");
+      toast.info(
+        "Zápis se pokusíme odeslat, jakmile se připojíte k internetu."
+      );
+
+      // toast({
+      //   title: "Jste offline",
+      //   description: "Změny nebudou ukládány, dokud se znovu nepřipojíte.",
+      //   variant: "destructive",
+      // });
+    };
+
+    const handleOnline = () => {
+      toast.dismiss();
+      toast.clearWaitingQueue();
+      toast.success("Znovu připojeno k internetu");
+      toast.info("Zápis se pokusíme odeslat.");
+
+      // toast({
+      //   title: "Zpět online",
+      //   description: "Data se nyní opět synchronizují.",
+      // });
+    };
+
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, []);
 
   return {
     scoreHome,

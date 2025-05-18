@@ -149,8 +149,9 @@ export const TimeTable = () => {
       group: {
         id: groupId,
         name: groupName,
-        categoryId: 0,
-        categoryName: "",
+        categoryId: categoryId!,
+        categoryName:
+          categories.find((cat) => cat.id === categoryId)?.name ?? "",
       },
       homeTeam: {
         id: homeTeamId,
@@ -201,7 +202,10 @@ export const TimeTable = () => {
 
     const res = await fetch(`${API_URL}/matches/update-batch`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       body: JSON.stringify(body),
     });
 
@@ -241,13 +245,25 @@ export const TimeTable = () => {
   const handleAssignAllMatches = async () => {
     setIsLoading(true);
     try {
-      await fetch(`${API_URL}/${edition}/matches/assign-all-group-matches`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await fetch(
+        `${API_URL}/${edition}/matches/assign-all-group-matches`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.message || "Chyba při přiřazení zápasů");
+
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
 
       toast.success("Všechny zápasy úspěšně přiřazeny");
     } catch (err) {
@@ -255,11 +271,12 @@ export const TimeTable = () => {
     } finally {
       setIsLoading(false);
       await fetchMatches();
+      await fetchUnassignedMatches(categoryId!);
     }
   };
 
   const fetchMatches = async () => {
-    if (matches.length > 0) return;
+    //if (matches.length > 0) return;
     try {
       const res = await fetch(`${API_URL}/matches`);
       if (!res.ok) throw new Error("Chyba při načítání zápasů");
@@ -283,12 +300,17 @@ export const TimeTable = () => {
       setIsLoading(true);
       const res = await fetch(`${API_URL}/${edition}/matches/generate-blank`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (!res.ok) throw new Error("Chyba při generování slotů");
       await fetchMatches();
     } catch (err) {
-      setError("Nepodařilo se vygenerovat sloty");
+      setError(`Chyba při generování slotů ${err}`);
     } finally {
+      setError(null);
       setIsLoading(false);
     }
   };
@@ -478,6 +500,9 @@ export const TimeTable = () => {
                     match={match}
                     unassignedMatches={unassignedMatches}
                     onAssign={handleAssignUnassignedMatch}
+                    category={
+                      categories.find((cat) => cat.id === categoryId)?.name
+                    }
                   />
                 ))}
           </TableBody>

@@ -20,12 +20,14 @@ interface MatchSlotRowProps {
     groupName: string,
     groupId: number
   ) => void;
+  category?: string;
 }
 
 export const MatchSlotRow = ({
   match,
   unassignedMatches,
   onAssign,
+  category,
 }: MatchSlotRowProps) => {
   const isUnassigned = !match.homeTeam || !match.awayTeam;
   const selectedValue = isUnassigned
@@ -89,7 +91,9 @@ export const MatchSlotRow = ({
               <SelectItem value={`${match.homeTeam.id}-${match.awayTeam.id}`}>
                 <div className="flex flex-col items-start">
                   <span className="text-xs">
-                    {match.group.categoryName}
+                    {match.group.categoryName === ""
+                      ? category
+                      : match.group.categoryName}
                     {": "}
                     {match.group?.name ?? "Bez skupiny"}
                   </span>

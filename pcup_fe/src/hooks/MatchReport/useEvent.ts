@@ -35,6 +35,8 @@ const clearPendingEvents = () => {
   });
 }; */
 
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
 export const useReliableAddEvent = (matchId: number) => {
   const queryClient = useQueryClient();
 
@@ -48,28 +50,34 @@ export const useReliableAddEvent = (matchId: number) => {
         },
         body: JSON.stringify(event),
       });
+
+      if (res.status === 500) {
+        throw new Error("Server error: 500");
+      }
+
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(`Server error: ${res.status} ${errorText}`);
       }
+
       return res.ok;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events", matchId] });
     },
     onError: (error, event) => {
-      console.warn("Ukládám událost pro pozdější odeslání", event);
+      console.warn("⚠️ Ukládám událost pro pozdější odeslání:", event);
       savePendingEvent(event);
     },
   });
 
-  // Retry pending events on reconnect
   useEffect(() => {
     const sendPending = async () => {
       const pending = getPendingEvents();
+
       if (pending.length === 0) return;
 
-      console.log("Zkouším odeslat pending události...");
+      console.log("🔁 Zkouším odeslat pending události...");
       const successes: Event[] = [];
 
       for (const e of pending) {
@@ -82,32 +90,44 @@ export const useReliableAddEvent = (matchId: number) => {
             },
             body: JSON.stringify(e),
           });
+
           if (res.ok) {
+            console.log("✅ Odesláno:", e);
             successes.push(e);
+          } else {
+            console.warn(
+              `[offline retry] Nepodařilo se odeslat (status ${res.status})`,
+              e
+            );
+            // Pokud to není opravitelné (např. 4xx/5xx), taky to odstraníme
+            if (res.status >= 400) {
+              successes.push(e);
+            }
           }
         } catch (err) {
-          // síťová chyba, nech být
+          console.warn(
+            "[offline retry] Síťová chyba při odesílání události:",
+            e
+          );
         }
+
+        await delay(200); // Zpomalení mezi pokusy
       }
 
-      if (successes.length > 0) {
-        // Zbývající neúspěšné události necháme v localStorage
-        const stillPending = pending.filter(
-          (ev) =>
-            !successes.some(
-              (s) => s.time === ev.time && s.authorId === ev.authorId
-            )
-        );
-        if (stillPending.length > 0) {
-          localStorage.setItem(
-            PENDING_EVENTS_KEY,
-            JSON.stringify(stillPending)
-          );
-        } else {
-          clearPendingEvents();
-        }
-        queryClient.invalidateQueries({ queryKey: ["events", matchId] });
+      const stillPending = pending.filter(
+        (ev) =>
+          !successes.some(
+            (s) => s.time === ev.time && s.authorId === ev.authorId
+          )
+      );
+
+      if (stillPending.length > 0) {
+        localStorage.setItem(PENDING_EVENTS_KEY, JSON.stringify(stillPending));
+      } else {
+        clearPendingEvents();
       }
+
+      queryClient.invalidateQueries({ queryKey: ["events", matchId] });
     };
 
     window.addEventListener("online", sendPending);
@@ -121,9 +141,14 @@ export const useMatchEvents = (matchId: number) => {
   return useQuery<Event[]>({
     queryKey: ["events", matchId],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/events/match/${matchId}`);
-      if (!res.ok) throw new Error("Nepodařilo se načíst události");
-      return res.json();
+      try {
+        const res = await fetch(`${API_URL}/events/match/${matchId}`);
+        if (!res.ok) throw new Error("Nepodařilo se načíst události");
+        return res.json();
+      } catch (error) {
+        console.error("Chyba při načítání událostí:", error);
+        return [];
+      }
     },
   });
 };

@@ -7,6 +7,7 @@ import { MatchLog } from "@/components/MatchReport/MatchLog/MatchLog";
 import { MatchSelector } from "@/components/MatchReport/MatchSelector";
 import MatchTeamTable from "@/components/MatchReport/MatchTeamTable/MatchTeamTable";
 import { useReconstructStats } from "@/hooks/MatchReport/useReconstructStats";
+import { useOfflineProtection } from "@/hooks/useOfflineProtection";
 import { Match } from "@/interfaces/MatchReport/Match";
 import { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
@@ -15,7 +16,7 @@ export const MatchReport = () => {
   const { matchDetails, teamAway, teamHome } = useMatchContext();
   const match = useLoaderData() as Match;
   useReconstructStats();
-
+  useOfflineProtection();
   return (
     <div className="flex flex-col gap-8">
       <>
