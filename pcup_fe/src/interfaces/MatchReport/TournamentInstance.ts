@@ -4,8 +4,10 @@ import { Team } from "./Team";
 export interface TournamentInstance {
   id: number;
   editionNumber: number;
-  startDate: Date;
-  endDate: Date;
-  categories: Category[];
+  startDate: string;
+  endDate: string;
+  tournamentId: number;
+  tournamentName: string;
   teams: Team[];
+  categories: Category[];
 }

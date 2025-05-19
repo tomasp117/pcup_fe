@@ -4,22 +4,33 @@ import { TournamentForm } from "@/pages/TournamentForm";
 import { TournamentInstanceForm } from "@/pages/TournamentInstanceForm";
 import { CategoryForm } from "@/pages/CategoryForm";
 import { ProgressSteps } from "./ProgressSteps";
+import { ClubForm } from "@/pages/ClubForm";
 
 export const CreateTournamentWizard = () => {
   const [step, setStep] = useState(1);
   const [tournamentId, setTournamentId] = useState<number | null>(null);
   const [instanceId, setInstanceId] = useState<number | null>(null);
 
+  const [tournamentName, setTournamentName] = useState<string | null>(null);
+  const [tournamentInstanceEdition, setTournamentInstanceEdition] = useState<
+    number | null
+  >(null);
+
   const goNext = () => setStep((s) => s + 1);
   const goBack = () => setStep((s) => s - 1);
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <ProgressSteps step={step} />
+      <ProgressSteps
+        step={step}
+        tournamentName={tournamentName ?? undefined}
+        tournamentInstanceEdition={tournamentInstanceEdition ?? undefined}
+      />
       {step === 1 && (
         <TournamentForm
-          onSuccess={(id) => {
+          onSuccess={(id, name) => {
             setTournamentId(id);
+            setTournamentName(name);
             goNext();
           }}
         />
@@ -27,16 +38,18 @@ export const CreateTournamentWizard = () => {
       {step === 2 && tournamentId !== null && (
         <TournamentInstanceForm
           tournamentId={tournamentId}
-          onSuccess={(id) => {
+          onSuccess={(id, editionNumber) => {
             setInstanceId(id);
+            setTournamentInstanceEdition(editionNumber);
             goNext();
           }}
           onBack={goBack}
         />
       )}
       {step === 3 && instanceId !== null && (
-        <CategoryForm instanceId={instanceId} onBack={goBack} />
+        <CategoryForm instanceId={instanceId} onBack={goBack} onSkip={goNext} />
       )}
+      {step === 4 && <ClubForm />}
     </div>
   );
 };

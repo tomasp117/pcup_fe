@@ -1,16 +1,13 @@
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCreateTournament } from "@/hooks/useTournaments";
-import { useNavigate } from "react-router-dom";
+import { useCreateTournament, useTournaments } from "@/hooks/useTournaments";
 
 type TournamentFormProps = {
-  onSuccess: (tournamentId: number) => void;
+  onSuccess: (id: number, name: string) => void;
 };
 
 export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
-  const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -25,16 +22,18 @@ export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
     error: mutationError,
   } = useCreateTournament();
 
+  const { data: tournaments, isLoading } = useTournaments();
+
   const onSubmit = ({ name }: { name: string }) => {
     mutate(name, {
       onSuccess: (data) => {
-        onSuccess(data.id);
+        onSuccess(data.id, name);
       },
     });
   };
 
   return (
-    <div className="max-w-md mx-auto space-y-4">
+    <div className="max-w-md mx-auto space-y-6">
       <h2 className="text-xl font-bold">Vytvořit nový turnaj</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -52,6 +51,27 @@ export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
       {isError && (
         <p className="text-red-600">❌ {(mutationError as Error).message}</p>
       )}
+
+      <div className="border-t pt-6 mt-6 space-y-4">
+        <h3 className="font-semibold">Nebo vyber existující turnaj:</h3>
+
+        {isLoading ? (
+          <p>Načítám...</p>
+        ) : (
+          <div className="space-y-2">
+            {tournaments?.map((tournament: { id: number; name: string }) => (
+              <Button
+                key={tournament.id}
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => onSuccess(tournament.id, tournament.name)}
+              >
+                {tournament.name}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

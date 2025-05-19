@@ -22,9 +22,6 @@ export const useSaveBracket = () => {
       return res.json();
     },
     onSuccess: () => {
-      // Tady můžeš třeba:
-      // - Ukázat notifikaci že bylo uloženo
-      // - Invalidovat query
       console.log("Bracket byl úspěšně uložen!");
     },
   });

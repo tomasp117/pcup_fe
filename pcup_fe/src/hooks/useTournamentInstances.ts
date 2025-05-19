@@ -1,3 +1,4 @@
+import { TournamentInstance } from "@/interfaces/MatchReport/TournamentInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -42,5 +43,19 @@ export const useTournamentInstances = () => {
       if (!res.ok) throw new Error("Nepodařilo se načíst instance");
       return res.json();
     },
+  });
+};
+
+export const useTournamentInstancesByTournamentId = (tournamentId: number) => {
+  return useQuery<TournamentInstance[]>({
+    queryKey: ["tournament-instances", tournamentId],
+    queryFn: async () => {
+      const res = await fetch(
+        `${API_URL}/tournament-instances/by-tournament?tournamentId=${tournamentId}`
+      );
+      if (!res.ok) throw new Error("Nepodařilo se načíst edice turnaje");
+      return res.json();
+    },
+    enabled: !!tournamentId,
   });
 };
