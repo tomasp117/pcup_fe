@@ -27,6 +27,8 @@ const buttonVariants = cva(
           "border border-red-500 bg-red-100 text-red-800 shadow hover:bg-red-200",
         twoMinPenaltyCountute:
           "border border-blue-500 bg-blue-100 text-blue-800 shadow hover:bg-blue-200",
+        secondaryOutline:
+          "border bg-background shadow-sm hover:border-secondary hover:bg-primary/10",
       },
       size: {
         default: "h-9 px-4 py-2",

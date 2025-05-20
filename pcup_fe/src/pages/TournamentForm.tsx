@@ -1,13 +1,22 @@
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCreateTournament, useTournaments } from "@/hooks/useTournaments";
+import {
+  useCreateTournament,
+  useDeleteTournament,
+  useTournaments,
+} from "@/hooks/useTournaments";
+import { useNavigate } from "react-router-dom";
+import { Delete, Pencil, X } from "lucide-react";
+import { toast } from "react-toastify";
 
 type TournamentFormProps = {
   onSuccess: (id: number, name: string) => void;
 };
 
 export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -23,6 +32,9 @@ export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
   } = useCreateTournament();
 
   const { data: tournaments, isLoading } = useTournaments();
+
+  const { mutate: deleteTournament, isPending: isDeleting } =
+    useDeleteTournament();
 
   const onSubmit = ({ name }: { name: string }) => {
     mutate(name, {
@@ -59,15 +71,43 @@ export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
           <p>Načítám...</p>
         ) : (
           <div className="space-y-2">
-            {tournaments?.map((tournament: { id: number; name: string }) => (
-              <Button
+            {tournaments?.map((tournament) => (
+              <div
                 key={tournament.id}
-                variant="outline"
-                className="w-full justify-start"
-                onClick={() => onSuccess(tournament.id, tournament.name)}
+                className="flex items-center justify-between gap-2"
               >
-                {tournament.name}
-              </Button>
+                <Button
+                  variant="secondaryOutline"
+                  className="flex-1 justify-start"
+                  onClick={() => onSuccess(tournament.id, tournament.name)}
+                >
+                  {tournament.name}
+                </Button>
+                <Button
+                  variant="secondaryOutline"
+                  size="sm"
+                  onClick={() => navigate(`/tournaments/${tournament.id}/edit`)}
+                >
+                  <Pencil size={16} />
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    if (window.confirm("Opravdu chceš tento turnaj smazat?")) {
+                      deleteTournament(tournament.id, {
+                        onSuccess: () => {
+                          toast.success("✅ Turnaj byl úspěšně smazán.");
+                        },
+                      });
+                    }
+                  }}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : <X size={16} />}
+                </Button>
+              </div>
             ))}
           </div>
         )}

@@ -59,3 +59,72 @@ export const useTournamentInstancesByTournamentId = (tournamentId: number) => {
     enabled: !!tournamentId,
   });
 };
+
+export const useTournamentInstance = (id: number) => {
+  return useQuery<TournamentInstance>({
+    queryKey: ["tournament-instance", id],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/tournament-instances/${id}`);
+      if (!res.ok) throw new Error("Nepodařilo se načíst instanci");
+      return res.json();
+    },
+  });
+};
+
+export const useUpdateTournamentInstance = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      id: number;
+      editionNumber: number;
+      startDate: string;
+      endDate: string;
+    }) => {
+      const res = await fetch(`${API_URL}/tournament-instances/${data.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournament-instances"] });
+    },
+  });
+};
+
+export const useDeleteTournamentInstance = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`${API_URL}/tournament-instances/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournament-instances"] });
+    },
+  });
+};

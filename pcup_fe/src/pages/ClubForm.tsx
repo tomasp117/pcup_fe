@@ -3,7 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Papa from "papaparse";
 import { useState } from "react";
-import { useCreateClub } from "@/hooks/useClubs";
+
+import { useNavigate } from "react-router-dom";
+import { Pencil, X } from "lucide-react";
+import { toast } from "react-toastify";
+import { useClubs, useCreateClub, useDeleteClub } from "@/hooks/useClubs";
 
 type ClubFormValues = {
   name: string;
@@ -11,11 +15,14 @@ type ClubFormValues = {
   address?: string;
   website?: string;
   state?: string;
+  logo?: string;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const ClubForm = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -32,13 +39,14 @@ export const ClubForm = () => {
     data: createdClub,
   } = useCreateClub();
 
+  const { data: clubs, isLoading } = useClubs();
+  const { mutate: deleteClub, isPending: isDeleting } = useDeleteClub();
+
   const [csvMessage, setCsvMessage] = useState("");
 
   const onSubmit = (data: ClubFormValues) => {
     mutate(data, {
-      onSuccess: () => {
-        reset();
-      },
+      onSuccess: () => reset(),
     });
   };
 
@@ -47,13 +55,9 @@ export const ClubForm = () => {
     if (!file) return;
 
     const reader = new FileReader();
-
     reader.onload = async () => {
-      const arrayBuffer = reader.result as ArrayBuffer;
-
-      // 👉 ruční dekódování pomocí windows-1250
       const decoder = new TextDecoder("windows-1250");
-      const text = decoder.decode(arrayBuffer);
+      const text = decoder.decode(reader.result as ArrayBuffer);
 
       Papa.parse(text, {
         header: true,
@@ -84,12 +88,12 @@ export const ClubForm = () => {
               body: JSON.stringify(payload),
             });
 
-            if (res.ok) {
-              setCsvMessage("✅ Kluby z CSV byly úspěšně importovány.");
-            } else {
-              setCsvMessage("❌ Chyba při importu CSV.");
-            }
-          } catch (err) {
+            setCsvMessage(
+              res.ok
+                ? "✅ Kluby z CSV byly úspěšně importovány."
+                : "❌ Chyba při importu CSV."
+            );
+          } catch {
             setCsvMessage("❌ Výjimka při importu CSV.");
           }
         },
@@ -116,6 +120,7 @@ export const ClubForm = () => {
         <Input placeholder="Adresa" {...register("address")} />
         <Input placeholder="Web" {...register("website")} />
         <Input placeholder="Země (např. CZ nebo SK)" {...register("state")} />
+        <Input placeholder="Logo (volitelné)" {...register("logo")} />
 
         <Button type="submit" disabled={isPending}>
           {isPending ? "Ukládám..." : "Vytvořit klub"}
@@ -140,6 +145,51 @@ export const ClubForm = () => {
           onChange={handleCsvUpload}
         />
         {csvMessage && <p className="text-sm">{csvMessage}</p>}
+      </div>
+
+      <div className="border-t pt-6 mt-6 space-y-4">
+        <h3 className="font-semibold">Existující kluby:</h3>
+
+        {isLoading ? (
+          <p>Načítám...</p>
+        ) : (
+          <div className="space-y-2">
+            {clubs?.map((club) => (
+              <div key={club.id} className="flex items-center gap-2">
+                <Button
+                  variant="secondaryOutline"
+                  className="flex-1 justify-start"
+                >
+                  {club.name}
+                </Button>
+                <Button
+                  variant="secondaryOutline"
+                  size="sm"
+                  onClick={() => navigate(`/clubs/${club.id}/edit`)}
+                >
+                  <Pencil size={16} />
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    if (window.confirm("Opravdu chceš tento klub smazat?")) {
+                      deleteClub(club.id, {
+                        onSuccess: () => {
+                          toast.success("✅ Klub byl úspěšně smazán.");
+                        },
+                      });
+                    }
+                  }}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Mazání..." : <X size={16} />}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

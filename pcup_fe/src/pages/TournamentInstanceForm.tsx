@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import {
   useCreateTournamentInstance,
+  useDeleteTournamentInstance,
   useTournamentInstancesByTournamentId,
 } from "@/hooks/useTournamentInstances";
 import { useTournaments } from "@/hooks/useTournaments";
@@ -13,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { Pencil, X } from "lucide-react";
 
 type FormValues = {
   tournamentId: string;
@@ -33,9 +36,13 @@ export const TournamentInstanceForm = ({
   onBack,
 }: TournamentInstanceFormProps) => {
   const { mutate, isPending, isError, error } = useCreateTournamentInstance();
+  const navigate = useNavigate();
 
   const { data: instances, isLoading: loadingInstances } =
     useTournamentInstancesByTournamentId(tournamentId);
+
+  const { mutate: deleteInstance, isPending: deleting } =
+    useDeleteTournamentInstance();
 
   const {
     register,
@@ -128,15 +135,39 @@ export const TournamentInstanceForm = ({
           ) : instances.length > 0 ? (
             <div className="space-y-2">
               {instances.map((instance) => (
-                <Button
-                  key={instance.id}
-                  variant="outline"
-                  className="w-full justify-start"
-                  onClick={() => onSuccess(instance.id, instance.editionNumber)}
-                >
-                  Edice {instance.editionNumber} ({instance.startDate} –{" "}
-                  {instance.endDate})
-                </Button>
+                <div key={instance.id} className="flex items-center gap-2">
+                  <Button
+                    variant="secondaryOutline"
+                    className="flex-1 justify-start"
+                    onClick={() =>
+                      onSuccess(instance.id, instance.editionNumber)
+                    }
+                  >
+                    Edice {instance.editionNumber} ({instance.startDate} –{" "}
+                    {instance.endDate})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      navigate(`/tournament-instances/${instance.id}/edit`)
+                    }
+                  >
+                    <Pencil size={16} />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      if (window.confirm("Opravdu chceš tuto edici smazat?")) {
+                        deleteInstance(instance.id);
+                      }
+                    }}
+                    disabled={deleting}
+                  >
+                    {deleting ? "Deleting..." : <X size={16} />}
+                  </Button>
+                </div>
               ))}
             </div>
           ) : (
