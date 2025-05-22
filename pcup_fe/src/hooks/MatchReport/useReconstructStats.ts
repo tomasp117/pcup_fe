@@ -15,8 +15,11 @@ export const useReconstructStats = () => {
   const initializedRef = useRef(false);
 
   useEffect(() => {
+    if (initializedRef.current) return;
     if (!events || events.length === 0) return;
     if (players.length === 0) return;
+
+    initializedRef.current = true;
 
     const playersMap = new Map<number, Player>();
     players.forEach((p) =>
@@ -42,20 +45,19 @@ export const useReconstructStats = () => {
       if (!player) continue;
 
       if (type === "G") {
-        const isSeven = message.includes("7m Gól");
-        const isMissed = message.includes("7m hod neproměněn");
+        player.goalCount++;
+        if (team === "L") scoreHome++;
+        else if (team === "R") scoreAway++;
+      }
 
-        if (isMissed) {
-          player.sevenMeterMissCount++;
-        } else if (isSeven) {
-          player.sevenMeterGoalCount++;
-          if (team === "L") scoreHome++;
-          else if (team === "R") scoreAway++;
-        } else {
-          player.goalCount++;
-          if (team === "L") scoreHome++;
-          else if (team === "R") scoreAway++;
-        }
+      if (type === "7G") {
+        player.sevenMeterGoalCount++;
+        player.goalCount++;
+        if (team === "L") scoreHome++;
+        else if (team === "R") scoreAway++;
+      }
+      if (type === "7N") {
+        player.sevenMeterMissCount++;
       }
 
       if (type === "Y") player.yellowCardCount = 1;
@@ -66,5 +68,5 @@ export const useReconstructStats = () => {
     setPlayers(Array.from(playersMap.values()));
     setScoreHome(scoreHome);
     setScoreAway(scoreAway);
-  }, [events]);
+  }, []);
 };

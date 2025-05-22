@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useDeleteEventsByMatchId, useReliableAddEvent } from "./useEvent";
 import { useUpdateMatch } from "../useMatches";
 import { toast } from "react-toastify";
+import { useApplyMatchStats, useRevertMatchStats } from "../MyTeam/usePlayers";
 
 const HALFTIME = 20;
 const SEND_INTERVAL = 10;
@@ -49,6 +50,10 @@ export const useMatchTimer = () => {
   const lastSyncedSecond = useRef<number>(-1);
 
   const initializedRef = useRef(false);
+
+  const { mutate: applyStats } = useApplyMatchStats();
+
+  const revertStats = useRevertMatchStats();
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -316,6 +321,12 @@ export const useMatchTimer = () => {
         scoreAway: scoreAway,
         state: "Done",
       });
+
+      applyStats(matchDetails.id, {
+        onError: () => toast.error("Chyba při aktualizaci statistik hráčů."),
+      });
+      toast.success("Zápis potvrzen");
+
       return;
     }
 
@@ -390,8 +401,17 @@ export const useMatchTimer = () => {
     initialCheckCompleted,
     startButtonClicked,
     resetMatch: () => {
+      console.log(`Match state: ${matchState} - ${matchDetails.state}`);
+      if (matchState === "Done") {
+        console.log("Zápas je již uzavřen.");
+        revertStats.mutate(matchDetails.id, {
+          onError: () => toast.error("Chyba při vracení statistik hráčů."),
+        });
+        toast.success("Statistiky hráčů vráceny.");
+      }
       resetTimer();
       resetMatch();
+
       deleteEventsMutation.mutate(matchDetails.id);
     },
   };

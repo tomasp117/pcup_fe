@@ -16,6 +16,25 @@ enum GoalType {
   MissedAway = "RN",
 }
 
+const getEventType = (goalType: GoalType): string => {
+  switch (goalType) {
+    case GoalType.NormalHome:
+      return "G";
+    case GoalType.NormalAway:
+      return "G";
+    case GoalType.SevenHome:
+      return "7G";
+    case GoalType.SevenAway:
+      return "7G";
+    case GoalType.MissedHome:
+      return "7N";
+    case GoalType.MissedAway:
+      return "7N";
+    default:
+      return "";
+  }
+};
+
 function GoalHandlers() {
   const {
     matchDetails,
@@ -76,7 +95,6 @@ function GoalHandlers() {
         break;
     }
 
-    // 🔹 Až potom aktualizujeme hráče
     updatePlayerStats(playerId, (player) => {
       if (player.redCardCount > 0) return player;
 
@@ -101,6 +119,7 @@ function GoalHandlers() {
       ) {
         updatedPlayer.sevenMeterMissCount++;
       }
+      console.log("updatedPlayer", updatedPlayer);
 
       return updatedPlayer;
     });
@@ -108,13 +127,14 @@ function GoalHandlers() {
     // 🔹 Teď můžeme bezpečně upravit skóre, event a ukázat toast
     if (goalType === GoalType.NormalHome || goalType === GoalType.SevenHome) {
       setScoreHome((prev) => prev + 1);
+      console.log("setScoreHome", goalType);
     }
     if (goalType === GoalType.NormalAway || goalType === GoalType.SevenAway) {
       setScoreAway((prev) => prev + 1);
     }
 
     const newEvent: Event = {
-      type: "G",
+      type: getEventType(goalType),
       team: isHome ? "L" : "R",
       time: matchDetails.timePlayed,
       authorId: playerId,

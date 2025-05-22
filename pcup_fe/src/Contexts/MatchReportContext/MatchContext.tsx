@@ -117,7 +117,7 @@ export const MatchProvider: React.FC<{
 
       const updatedPlayers = [...prevPlayers];
       updatedPlayers[index] = updateFn({ ...prevPlayers[index] });
-
+      console.log("Updated player stats:", updatedPlayers[index]);
       return updatedPlayers;
     });
   };
@@ -134,7 +134,16 @@ export const MatchProvider: React.FC<{
     const allPlayers = [
       ...(match.homeTeam?.players ?? []),
       ...(match.awayTeam?.players ?? []),
-    ];
+    ].map((p) => ({
+      ...p,
+      goalCount: 0,
+      sevenMeterGoalCount: 0,
+      sevenMeterMissCount: 0,
+      yellowCardCount: 0,
+      redCardCount: 0,
+      twoMinPenaltyCount: 0,
+    }));
+
     setPlayers(allPlayers);
   }, [match]);
 

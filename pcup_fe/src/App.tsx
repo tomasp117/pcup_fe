@@ -1,22 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
-  RouterProvider,
-} from "react-router-dom";
-import ColorTest from "./pages/ColorTest";
-import { MainLayout } from "./layouts/MainLayout";
-import HomePage from "./pages/HomePage";
-import { MatchReport } from "./pages/MatchReport";
-import { MatchProvider } from "./Contexts/MatchReportContext/MatchContext";
+import { BrowserRouter as Router, RouterProvider } from "react-router-dom";
+
 import { UserProvider } from "./Contexts/UserContext";
-import { Draws } from "./pages/Draws";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { TimeTable } from "./pages/TimeTable";
 import { router } from "./routes";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
