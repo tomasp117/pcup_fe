@@ -64,8 +64,8 @@ export const useUpdateMatch = () => {
     mutationFn: async (data: {
       id: number;
       timePlayed: string;
-      scoreHome: number;
-      scoreAway: number;
+      homeScore: number;
+      awayScore: number;
       state: string;
     }) => {
       const res = await fetch(`${API_URL}/matches/${data.id}`, {
@@ -76,8 +76,8 @@ export const useUpdateMatch = () => {
         },
         body: JSON.stringify({
           timePlayed: data.timePlayed,
-          homeScore: data.scoreHome,
-          awayScore: data.scoreAway,
+          homeScore: data.homeScore,
+          awayScore: data.awayScore,
           state: data.state,
         }),
       });
@@ -107,4 +107,38 @@ export const useMatchesByTeam = (id: number) => {
       return res.json();
     },
   });
+};
+
+export const useMatchPreview = (id: number) => {
+  return useQuery<Match>({
+    queryKey: ["match-preview", id],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/matches/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst zápas.");
+      }
+
+      return res.json();
+    },
+    refetchInterval: 5000,
+  });
+};
+
+export const fetchMatch = async (id: number): Promise<Match> => {
+  const res = await fetch(`${API_URL}/matches/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Nepodařilo se načíst zápas.");
+  }
+
+  return res.json();
 };

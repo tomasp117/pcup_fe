@@ -21,8 +21,8 @@ interface MatchContextProps {
   players: Player[];
   timerRunning: boolean;
   matchState: MatchState;
-  scoreHome: number;
-  scoreAway: number;
+  homeScore: number;
+  awayScore: number;
   events: Event[];
   matchPhase: MatchPhase;
   matchStarted: boolean;
@@ -32,8 +32,8 @@ interface MatchContextProps {
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   setTimerRunning: React.Dispatch<React.SetStateAction<boolean>>;
   setMatchState: React.Dispatch<React.SetStateAction<MatchState>>;
-  setScoreHome: React.Dispatch<React.SetStateAction<number>>;
-  setScoreAway: React.Dispatch<React.SetStateAction<number>>;
+  sethomeScore: React.Dispatch<React.SetStateAction<number>>;
+  setawayScore: React.Dispatch<React.SetStateAction<number>>;
   addEvent: (event: Event) => void;
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   updatePlayerStats: (
@@ -96,8 +96,8 @@ export const MatchProvider: React.FC<{
   const [players, setPlayers] = useState<Player[]>([]);
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
   const [matchState, setMatchState] = useState<MatchState>("None");
-  const [scoreHome, setScoreHome] = useState<number>(0);
-  const [scoreAway, setScoreAway] = useState<number>(0);
+  const [homeScore, sethomeScore] = useState<number>(0);
+  const [awayScore, setawayScore] = useState<number>(0);
   const [events, setEvents] = useState<Event[]>([]);
   const [matchStarted, setMatchStarted] = useState<boolean>(false);
 
@@ -150,8 +150,8 @@ export const MatchProvider: React.FC<{
   useEffect(() => {
     // if (match.score) {
     //   const [home, away] = match.score.split(":").map((v) => parseInt(v));
-    //   setScoreHome(home);
-    //   setScoreAway(away);
+    //   sethomeScore(home);
+    //   setawayScore(away);
     // }
 
     if (match.state) {
@@ -179,8 +179,8 @@ export const MatchProvider: React.FC<{
   }, [match]);
 
   const resetMatch = () => {
-    setScoreHome(0);
-    setScoreAway(0);
+    sethomeScore(0);
+    setawayScore(0);
     setEvents([]);
     setTimerRunning(false);
     setMatchState("None");
@@ -218,8 +218,8 @@ export const MatchProvider: React.FC<{
         players,
         timerRunning,
         matchState,
-        scoreHome,
-        scoreAway,
+        homeScore,
+        awayScore,
         events,
         matchPhase,
         matchStarted,
@@ -229,8 +229,8 @@ export const MatchProvider: React.FC<{
         setPlayers,
         setTimerRunning,
         setMatchState,
-        setScoreHome,
-        setScoreAway,
+        sethomeScore,
+        setawayScore,
         addEvent,
         setEvents,
         updatePlayerStats,

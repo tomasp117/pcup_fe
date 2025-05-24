@@ -11,5 +11,7 @@ export interface Team {
   coaches: Coach[];
   matches: Match[];
   club?: Club;
-  category?: Category;
+  //category?: Category;
+  categoryId?: number;
+  categoryName?: string;
 }

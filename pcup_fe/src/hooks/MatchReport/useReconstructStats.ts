@@ -6,8 +6,8 @@ export const useReconstructStats = () => {
   const {
     events,
     updatePlayerStats,
-    setScoreHome,
-    setScoreAway,
+    sethomeScore,
+    setawayScore,
     setPlayers,
     players,
   } = useMatchContext();
@@ -15,11 +15,8 @@ export const useReconstructStats = () => {
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (initializedRef.current) return;
     if (!events || events.length === 0) return;
     if (players.length === 0) return;
-
-    initializedRef.current = true;
 
     const playersMap = new Map<number, Player>();
     players.forEach((p) =>
@@ -34,8 +31,8 @@ export const useReconstructStats = () => {
       })
     );
 
-    let scoreHome = 0;
-    let scoreAway = 0;
+    let homeScore = 0;
+    let awayScore = 0;
 
     for (const event of events) {
       const { type, authorId, team, message } = event;
@@ -46,15 +43,15 @@ export const useReconstructStats = () => {
 
       if (type === "G") {
         player.goalCount++;
-        if (team === "L") scoreHome++;
-        else if (team === "R") scoreAway++;
+        if (team === "L") homeScore++;
+        else if (team === "R") awayScore++;
       }
 
       if (type === "7G") {
         player.sevenMeterGoalCount++;
         player.goalCount++;
-        if (team === "L") scoreHome++;
-        else if (team === "R") scoreAway++;
+        if (team === "L") homeScore++;
+        else if (team === "R") awayScore++;
       }
       if (type === "7N") {
         player.sevenMeterMissCount++;
@@ -66,7 +63,7 @@ export const useReconstructStats = () => {
     }
 
     setPlayers(Array.from(playersMap.values()));
-    setScoreHome(scoreHome);
-    setScoreAway(scoreAway);
-  }, []);
+    sethomeScore(homeScore);
+    setawayScore(awayScore);
+  }, [events]);
 };

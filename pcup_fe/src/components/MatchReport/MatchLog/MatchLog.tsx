@@ -23,8 +23,8 @@ export const MatchLog = () => {
     events,
     matchState,
     setEvents,
-    setScoreHome,
-    setScoreAway,
+    sethomeScore,
+    setawayScore,
     updatePlayerStats,
     timerRunning,
     matchStarted,
@@ -89,8 +89,8 @@ export const MatchLog = () => {
                 );
               }
 
-              if (isHomeTeam) setScoreHome((prev) => Math.max(prev - 1, 0));
-              else setScoreAway((prev) => Math.max(prev - 1, 0));
+              if (isHomeTeam) sethomeScore((prev) => Math.max(prev - 1, 0));
+              else setawayScore((prev) => Math.max(prev - 1, 0));
             }
 
             if (type === "2") {

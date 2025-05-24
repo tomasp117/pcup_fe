@@ -7,8 +7,8 @@ export interface MatchDTO {
   timePlayed: string;
   playground: string;
   //score: string;
-  scoreHome: number;
-  scoreAway: number;
+  homeScore: number;
+  awayScore: number;
   state: string;
   homeTeam: TeamDTO | null;
   awayTeam: TeamDTO | null;

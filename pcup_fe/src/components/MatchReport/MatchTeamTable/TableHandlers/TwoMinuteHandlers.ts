@@ -11,10 +11,16 @@ function TwoMinuteHandlers() {
 
   function addTwoMinutes(playerId: number): void {
     if (!canAdd2M) return;
+
     setCanAdd2M(false);
 
     const player = players.find((p) => p.id === playerId);
+
     if (!player) {
+      setCanAdd2M(true);
+      return;
+    }
+    if (player.twoMinPenaltyCount >= 3) {
       setCanAdd2M(true);
       return;
     }
@@ -23,17 +29,16 @@ function TwoMinuteHandlers() {
 
     let toastMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
     let eventMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-    let willGetRedCard = false;
+    const redEventMessage = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    //let willGetRedCard = false;
+
+    const updatedCount = player.twoMinPenaltyCount + 1;
 
     updatePlayerStats(playerId, (player) => {
-      if (player.redCardCount > 0) return player;
+      const updatedPlayer = { ...player, twoMinPenaltyCount: updatedCount };
 
-      const updatedPlayer = { ...player };
-      updatedPlayer.twoMinPenaltyCount++;
-
-      if (updatedPlayer.twoMinPenaltyCount >= 3) {
+      if (updatedCount >= 3) {
         updatedPlayer.redCardCount = 1;
-        willGetRedCard = true;
       }
 
       return updatedPlayer;
@@ -56,13 +61,28 @@ function TwoMinuteHandlers() {
       onError: (error) => {
         console.error("Error adding event:", error);
       },
+      onSuccess: () => {
+        if (updatedCount >= 3) {
+          const redCardEvent = {
+            type: "R",
+            team: isHome ? "L" : "R",
+            time: matchDetails.timePlayed,
+            authorId: playerId,
+            matchId: matchDetails.id,
+            message: redEventMessage,
+          };
+          addEvent(redCardEvent);
+          addEventMutation.mutate(redCardEvent, {
+            onError: (error) => {
+              console.error("Error adding event:", error);
+            },
+          });
+          showToast(`${toastMessage} 🟥 Červená karta!`, "error");
+        } else {
+          showToast(toastMessage, "info");
+        }
+      },
     });
-
-    if (willGetRedCard) {
-      showToast(`${toastMessage} 🟥 Červená karta!`, "error");
-    } else {
-      showToast(toastMessage, "info");
-    }
 
     setTimeout(() => {
       setCanAdd2M(true);

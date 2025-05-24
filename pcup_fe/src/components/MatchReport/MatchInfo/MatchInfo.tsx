@@ -8,6 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { MatchTeamCard } from "./MatchTeamCard";
 import { Team } from "@/interfaces/MatchReport/Team";
+import { useCategories } from "@/hooks/useCategories";
+import { useEffect } from "react";
 
 export interface MatchInfoProps {
   teamHome: Team;
@@ -15,11 +17,18 @@ export interface MatchInfoProps {
 }
 
 export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
+  const { data: categories } = useCategories();
+
+  const category = categories?.find(
+    (cat) => cat.id === teamHome.categoryId || cat.id === teamAway.categoryId
+  );
   return (
     <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">
       {/* Header - Kategorie */}
       <CardMatchReportHeader className="text-white text-center py-2 sm:py-3">
-        <h2 className="text-lg font-semibold">Kategorie:</h2>
+        <h2 className="text-lg font-semibold">
+          Kategorie: {category?.name || "N/A"}
+        </h2>
       </CardMatchReportHeader>
 
       {/* Flexbox pro layout */}

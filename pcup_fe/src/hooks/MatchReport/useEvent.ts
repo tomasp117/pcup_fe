@@ -153,6 +153,24 @@ export const useMatchEvents = (matchId: number) => {
   });
 };
 
+export const useMatchEventsPreview = (matchId: number) => {
+  return useQuery<Event[]>({
+    queryKey: ["events", matchId],
+    queryFn: async () => {
+      try {
+        const res = await fetch(`${API_URL}/events/match/${matchId}`);
+        if (!res.ok) throw new Error("Nepodařilo se načíst události");
+        return res.json();
+      } catch (error) {
+        console.error("Chyba při načítání událostí:", error);
+        return [];
+      }
+    },
+    refetchInterval: 5000,
+    refetchOnWindowFocus: true,
+  });
+};
+
 export const generateFrontendMessage = (
   event: Event,
   players: Player[]

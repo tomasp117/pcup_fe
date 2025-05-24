@@ -14,7 +14,7 @@ import { useLoaderData } from "react-router-dom";
 
 export const MatchReport = () => {
   const { matchDetails, teamAway, teamHome } = useMatchContext();
-  const match = useLoaderData() as Match;
+
   useReconstructStats();
   useOfflineProtection();
   return (

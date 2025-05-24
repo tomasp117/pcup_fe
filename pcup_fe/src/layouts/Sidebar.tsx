@@ -124,9 +124,6 @@ export const Sidebar = () => {
   const isActive = (item: MenuItem): boolean => {
     const current = normalizePath(location.pathname);
 
-    console.log("Current path:", current);
-    console.log("Item path:", item.path);
-
     if (item.name === "Kategorie") {
       return current.includes("/kategorie/");
     }

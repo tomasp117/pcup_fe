@@ -20,12 +20,14 @@ import {
 } from "../ui/select";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Matches = ({ categoryId }: { categoryId: number }) => {
   const { data: matches, isLoading, error } = useMatchesByCategory(categoryId);
   const [playgroundFilter, setPlaygroundFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const navigate = useNavigate();
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -114,6 +116,7 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
               <TableRow
                 key={match.id}
                 className="even:bg-primary/10 hover:bg-primary/20 cursor-pointer "
+                onClick={() => navigate(`/match-preview/${match.id}`)}
               >
                 <TableCell>
                   {match.time

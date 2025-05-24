@@ -16,8 +16,8 @@ import { Play, Pause } from "lucide-react";
 
 export default function ScoreAndTime() {
   const {
-    scoreHome,
-    scoreAway,
+    homeScore,
+    awayScore,
     timePlayed,
     handleControl,
     timerRunning,
@@ -70,13 +70,13 @@ export default function ScoreAndTime() {
       <div className="flex justify-between gap-2 sm:gap-4 w-full h-[30%]">
         <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
           <CardContentNoPadding className="flex items-center justify-center w-full">
-            <h2 className="text-md sm:text-2xl font-bold">{scoreHome}</h2>
+            <h2 className="text-md sm:text-2xl font-bold">{homeScore}</h2>
           </CardContentNoPadding>
         </CardMatchReport>
 
         <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
           <CardContentNoPadding className="flex items-center justify-center w-full">
-            <h2 className="text-md sm:text-2xl font-bold">{scoreAway}</h2>
+            <h2 className="text-md sm:text-2xl font-bold">{awayScore}</h2>
           </CardContentNoPadding>
         </CardMatchReport>
       </div>

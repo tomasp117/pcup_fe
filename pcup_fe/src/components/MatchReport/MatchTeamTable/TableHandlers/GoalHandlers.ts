@@ -39,9 +39,9 @@ function GoalHandlers() {
   const {
     matchDetails,
 
-    setScoreHome,
+    sethomeScore,
     players,
-    setScoreAway,
+    setawayScore,
 
     addEvent,
     updatePlayerStats,
@@ -126,11 +126,11 @@ function GoalHandlers() {
 
     // 🔹 Teď můžeme bezpečně upravit skóre, event a ukázat toast
     if (goalType === GoalType.NormalHome || goalType === GoalType.SevenHome) {
-      setScoreHome((prev) => prev + 1);
-      console.log("setScoreHome", goalType);
+      sethomeScore((prev) => prev + 1);
+      console.log("sethomeScore", goalType);
     }
     if (goalType === GoalType.NormalAway || goalType === GoalType.SevenAway) {
-      setScoreAway((prev) => prev + 1);
+      setawayScore((prev) => prev + 1);
     }
 
     const newEvent: Event = {

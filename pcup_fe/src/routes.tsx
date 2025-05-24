@@ -15,6 +15,8 @@ import { EditTournamentForm } from "./pages/EditTournamentForm";
 import { EditTournamentInstanceForm } from "./pages/EditTournamentInstanceForm";
 import { EditCategoryForm } from "./pages/EditCategoryForm";
 import { EditClubForm } from "./pages/EditClubForm";
+import { MatchPreviewPage } from "./pages/MatchPreviewPage";
+import { fetchMatch } from "./hooks/useMatches";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -83,40 +85,19 @@ export const router = createBrowserRouter([
         },
         element: (
           <ProtectedRoute allowedRoles={["Recorder", "Admin"]}>
-            {/* <MatchProvider> */}
             <MatchReportPage />
-            {/* </MatchProvider> */}
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "match-preview/:id",
+
+        element: <MatchPreviewPage />,
       },
       {
         path: "teams/:id",
         element: <TeamPage />,
       },
-      // {
-      //   path: "create-tournament",
-      //   element: (
-      //     <ProtectedRoute allowedRoles={["Admin"]}>
-      //       <TournamentForm />
-      //     </ProtectedRoute>
-      //   ),
-      // },
-      // {
-      //   path: "create-tournament-instance",
-      //   element: (
-      //     <ProtectedRoute allowedRoles={["Admin"]}>
-      //       <TournamentInstanceForm />
-      //     </ProtectedRoute>
-      //   ),
-      // },
-      // {
-      //   path: "create-category",
-      //   element: (
-      //     <ProtectedRoute allowedRoles={["Admin"]}>
-      //       <CategoryForm />
-      //     </ProtectedRoute>
-      //   ),
-      // },
       {
         path: "create-tournament-full",
         element: (

@@ -13,16 +13,16 @@ export const useMatchTimer = () => {
     timerRunning,
     setTimerRunning,
     setMatchState,
-    scoreHome,
-    scoreAway,
+    homeScore,
+    awayScore,
     matchDetails,
     matchState,
     matchPhase,
     setMatchStarted,
     setMatchDetails,
     setMatchPhase,
-    setScoreHome,
-    setScoreAway,
+    sethomeScore,
+    setawayScore,
     addEvent,
     resetMatch,
   } = useMatchContext();
@@ -37,7 +37,7 @@ export const useMatchTimer = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const syncIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  //const scoreRef = useRef(`${scoreHome}:${scoreAway}`);
+  //const scoreRef = useRef(`${homeScore}:${awayScore}`);
   const timeRef = useRef("00:00");
   const stateRef = useRef(matchState);
 
@@ -69,8 +69,8 @@ export const useMatchTimer = () => {
       !initializedRef.current &&
       (matchDetails.state === "Pending" || matchDetails.state === "Done") &&
       matchDetails.timePlayed /*&&
-      matchDetails.scoreHome  &&
-      matchDetails.scoreAway */
+      matchDetails.homeScore  &&
+      matchDetails.awayScore */
     ) {
       const [minutes, seconds] = matchDetails.timePlayed
         .split(":")
@@ -78,8 +78,8 @@ export const useMatchTimer = () => {
 
       const total = minutes * 60 + seconds;
       setTotalSeconds(total);
-      //   setScoreHome(home);
-      //   setScoreAway(away);
+      //   sethomeScore(home);
+      //   setawayScore(away);
 
       // ⏱ Nastav přesný čas startu tak, aby odpovídal aktuálnímu stavu
       elapsedBeforePause.current = total * 1000;
@@ -108,8 +108,8 @@ export const useMatchTimer = () => {
 
   // Aktualizuj refy
   // useEffect(() => {
-  //   scoreRef.current = `${scoreHome}:${scoreAway}`;
-  // }, [scoreHome, scoreAway]);
+  //   scoreRef.current = `${homeScore}:${awayScore}`;
+  // }, [homeScore, awayScore]);
 
   useEffect(() => {
     timeRef.current = formatTime(totalSeconds);
@@ -164,14 +164,16 @@ export const useMatchTimer = () => {
       lastSyncedSecond.current = totalSeconds;
 
       const time = formatTime(totalSeconds);
-      const score = `${scoreHome}:${scoreAway}`;
+      const score = `${homeScore}:${awayScore}`;
       const state = matchState;
+
+      console.log("SYNC", homeScore, awayScore, state);
 
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: time,
-        scoreHome: scoreHome,
-        scoreAway: scoreAway,
+        homeScore: homeScore,
+        awayScore: awayScore,
         state,
       });
 
@@ -189,23 +191,27 @@ export const useMatchTimer = () => {
       setTimerPaused(true);
       setMatchPhase("halftime");
 
-      const newEvent = {
-        type: "I",
-        team: null,
-        time: timeRef.current,
-        authorId: null,
-        matchId: matchDetails.id,
-        message: "Konec 1. poločasu",
-      };
+      toast.info("Konec 1. poločasu", {
+        className: "text-lg font-bold py-4",
+      });
 
-      addEvent(newEvent);
-      addEventMutation.mutate(newEvent);
+      // const newEvent = {
+      //   type: "I",
+      //   team: null,
+      //   time: timeRef.current,
+      //   authorId: null,
+      //   matchId: matchDetails.id,
+      //   message: "Konec 1. poločasu",
+      // };
+
+      // addEvent(newEvent);
+      // addEventMutation.mutate(newEvent);
 
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: timeRef.current,
-        scoreHome: scoreHome,
-        scoreAway: scoreAway,
+        homeScore: homeScore,
+        awayScore: awayScore,
         state: "Pending",
       });
     }
@@ -218,25 +224,18 @@ export const useMatchTimer = () => {
       setTimerRunning(false);
       setTimerPaused(false);
       setMatchPhase("finished");
+
+      toast.info("Konec 2. poločasu", {
+        className: "text-lg font-bold py-4",
+      });
+
       //setMatchState("Done");
-
-      const newEvent = {
-        type: "I",
-        team: null,
-        time: timeRef.current,
-        authorId: null,
-        matchId: matchDetails.id,
-        message: "Konec zápasu",
-      };
-
-      addEvent(newEvent);
-      addEventMutation.mutate(newEvent);
 
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: timeRef.current,
-        scoreHome: scoreHome,
-        scoreAway: scoreAway,
+        homeScore: homeScore,
+        awayScore: awayScore,
         state: "Pending",
       });
     }
@@ -305,20 +304,32 @@ export const useMatchTimer = () => {
       const newEvent = {
         type: "I",
         team: null,
-        time: "Zápis potvrzen",
+        time: timeRef.current,
         authorId: null,
         matchId: matchDetails.id,
-        message: "Zápis potvrzen - zápas uzavřen",
+        message: "Konec zápasu",
       };
 
       addEvent(newEvent);
       addEventMutation.mutate(newEvent);
 
+      // const newEvent = {
+      //   type: "I",
+      //   team: null,
+      //   time: "Zápis potvrzen",
+      //   authorId: null,
+      //   matchId: matchDetails.id,
+      //   message: "Zápis potvrzen - zápas uzavřen",
+      // };
+
+      // addEvent(newEvent);
+      // addEventMutation.mutate(newEvent);
+
       updateMatchMutation.mutate({
         id: matchDetails.id,
         timePlayed: timeRef.current,
-        scoreHome: scoreHome,
-        scoreAway: scoreAway,
+        homeScore: homeScore,
+        awayScore: awayScore,
         state: "Done",
       });
 
@@ -346,8 +357,8 @@ export const useMatchTimer = () => {
     updateMatchMutation.mutate({
       id: matchDetails.id,
       timePlayed: "00:00",
-      scoreHome: 0,
-      scoreAway: 0,
+      homeScore: 0,
+      awayScore: 0,
       state: "None",
     });
   };
@@ -391,8 +402,8 @@ export const useMatchTimer = () => {
   }, []);
 
   return {
-    scoreHome,
-    scoreAway,
+    homeScore,
+    awayScore,
     timePlayed: formatTime(totalSeconds),
     timerRunning,
     timerPaused,
