@@ -225,13 +225,25 @@ export const TimeTable = () => {
   const handleAssignMatches = async () => {
     setIsLoading(true);
     try {
-      await fetch(`${API_URL}/matches/assign-group-matches/${categoryId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await fetch(
+        `${API_URL}/matches/assign-group-matches/${categoryId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.message || "Chyba při přiřazení zápasů");
+
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
 
       toast.success("Zápasy úspěšně přiřazeny");
     } catch (err) {
@@ -239,6 +251,7 @@ export const TimeTable = () => {
     } finally {
       setIsLoading(false);
       await fetchMatches();
+      await fetchUnassignedMatches(categoryId!);
     }
   };
 

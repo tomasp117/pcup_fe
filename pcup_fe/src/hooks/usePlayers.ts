@@ -5,6 +5,7 @@ import { Event } from "@/interfaces/MatchReport/Event";
 
 export const useReconstructedPlayers = (match: Match, events: Event[]) => {
   return useMemo(() => {
+    if (!match) return { homePlayers: [], awayPlayers: [] };
     const playerMap = new Map<number, Player>();
 
     const allPlayers = [

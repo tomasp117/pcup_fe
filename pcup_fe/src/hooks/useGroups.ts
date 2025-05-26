@@ -1,19 +1,29 @@
-import { Group } from "@/interfaces/MatchReport/Group";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  PlaceholderGroup,
+  PlaceholderGroupDTO,
+} from "@/components/Timetable/PlayoffBracketEditorPlaceholder";
+import { BracketRow } from "@/interfaces/BracketEditor/IBracketRow";
+import { Group } from "@/interfaces/BracketEditor/IGroup";
+
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const useSaveBracket = () => {
+export const useSaveBracket = (categoryId: number) => {
   return useMutation({
-    mutationFn: async (bracketData: any) => {
-      const res = await fetch(`${API_URL}/bracket/save`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(bracketData),
-      });
+    mutationFn: async (bracketData: Group[]) => {
+      const res = await fetch(
+        `${API_URL}/groups/bracket?category=${categoryId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(bracketData),
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Nepodařilo se uložit pavouka.");
@@ -50,5 +60,66 @@ export const useGroupStandings = (groupId: number) => {
       }
       return res.json();
     },
+  });
+};
+
+export const useBracketByCategory = (categoryId: number) => {
+  return useQuery<Group[]>({
+    queryKey: ["bracket", categoryId],
+    queryFn: async () => {
+      const res = await fetch(
+        `${API_URL}/groups/bracket?category=${categoryId}`
+      );
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst pavouka.");
+      }
+      return res.json();
+    },
+  });
+};
+
+export const useSaveBracketPlaceholder = (categoryId: number) => {
+  return useMutation({
+    mutationFn: async (bracketData: PlaceholderGroupDTO[]) => {
+      const res = await fetch(
+        `${API_URL}/groups/bracket/placeholder?category=${categoryId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(bracketData),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Nepodařilo se uložit placeholdery.");
+      }
+      return;
+    },
+    onSuccess: () => {
+      console.log("Placeholder byl úspěšně uložen!");
+    },
+    onError: (error) => {
+      toast.error("Nepodařilo se uložit pavouka.");
+      console.error(error);
+    },
+  });
+};
+
+export const useGroupsWithPlaceholders = (categoryId: number) => {
+  return useQuery({
+    queryKey: ["groups-with-placeholders", categoryId],
+    queryFn: async () => {
+      const res = await fetch(
+        `${API_URL}/groups/with-placeholders?categoryId=${categoryId}`
+      );
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst skupiny s placeholdery.");
+      }
+      return res.json();
+    },
+    enabled: !!categoryId,
   });
 };

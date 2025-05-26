@@ -102,7 +102,7 @@ export function useCategoryData(API_URL: string) {
         remainingTeams = await teamsResponse.json();
         newGroups = Array.from({ length: 4 }, (_, index) => ({
           id: -(index + 1),
-          name: `Skupina ${String.fromCharCode(65 + index)}`,
+          name: `${String.fromCharCode(65 + index)}`,
           teams: [],
         }));
       } else {

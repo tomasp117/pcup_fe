@@ -59,7 +59,7 @@ export const Draws = () => {
       teams: [],
       groups: Array.from({ length: 4 }, (_, index) => ({
         id: index + 1,
-        name: `Skupina ${String.fromCharCode(65 + index)}`,
+        name: `${String.fromCharCode(65 + index)}`,
         teams: [],
       })),
       selectedVariant: null,
@@ -185,7 +185,7 @@ export const Draws = () => {
 
     const newGroups = Array.from({ length: newCount }, (_, index) => ({
       id: groups[index]?.id,
-      name: `Skupina ${String.fromCharCode(65 + index)}`,
+      name: `${String.fromCharCode(65 + index)}`,
       teams: groups[index]?.teams || [],
     }));
 
