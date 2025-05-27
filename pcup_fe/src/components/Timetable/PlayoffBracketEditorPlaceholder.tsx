@@ -20,6 +20,7 @@ import {
 import { set } from "react-hook-form";
 
 import { Group } from "@/interfaces/BracketEditor/IGroup";
+import { useTeamsByCategory } from "@/hooks/useTeams";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -75,6 +76,12 @@ export const PlayoffBracketEditorPlaceholder = ({
   const { data: groups, isLoading } = useGroupsByCategory(categoryId);
   const { mutate: saveBracket, isPending } =
     useSaveBracketPlaceholder(categoryId);
+
+  const { data: allTeams } = useTeamsByCategory(categoryId);
+
+  if (allTeams == null) {
+    return <div className="text-red-500">Týmy nejsou načteny.</div>;
+  }
 
   const { data: placeholderGroups } = useGroupsWithPlaceholders(categoryId);
 
@@ -234,7 +241,7 @@ export const PlayoffBracketEditorPlaceholder = ({
         teams: g.teams.map((t) =>
           t.type === "placeholder"
             ? { name: `${t.position}.${t.group}` }
-            : { name: t.name }
+            : { id: t.id, name: t.name }
         ),
       }))
     );
@@ -256,72 +263,71 @@ export const PlayoffBracketEditorPlaceholder = ({
       return;
     }
 
-    // Zjisti názvy skupin, které se v dané fázi používají
-    const groupNamesInRow = row.groups.map((g) => g.name.trim());
+    try {
+      const updatedGroups = await Promise.all(
+        row.groups.map(async (group) => {
+          const resolvedTeams: PlaceholderTeam[] = await Promise.all(
+            group.teams.map(async (team) => {
+              if (team.type !== "placeholder") return team;
 
-    // Zjisti odpovídající groupId pro každé jméno
-    const groupNameToId: Record<string, number> = {};
-    for (const backendGroup of groups) {
-      if (groupNamesInRow.includes(backendGroup.name.trim())) {
-        if (!backendGroup.id) {
-          toast.error(`Skupina ${backendGroup.name} nemá přiřazené ID.`);
-          return;
-        }
+              // Najdi skupinu podle názvu z placeholderu (např. "B")
+              const realGroup = groups.find(
+                (g) =>
+                  g.name.trim().toLowerCase() ===
+                  team.group.trim().toLowerCase()
+              );
 
-        groupNameToId[backendGroup.name.trim()] = backendGroup.id;
-      }
+              if (!realGroup || realGroup.id == null) {
+                return {
+                  type: "resolved",
+                  id: null,
+                  name: `N/A (skupina '${team.group}' nenalezena)`,
+                };
+              }
+
+              // FETCHUJ standings pro konkrétní placeholder skupinu!
+              const standings = await fetchGroupStandings(realGroup.id);
+              const realTeam = standings?.[team.position - 1];
+
+              if (!realTeam) {
+                return {
+                  type: "resolved",
+                  id: null,
+                  name: `N/A (${team.position}.${team.group})`,
+                };
+              }
+
+              return {
+                type: "resolved",
+                id: realTeam.teamId,
+                name: realTeam.teamName,
+              };
+            })
+          );
+
+          return {
+            ...group,
+            teams: resolvedTeams,
+          };
+        })
+      );
+
+      setRows((prev) =>
+        prev.map((r, i) =>
+          i === rowIndex
+            ? {
+                ...r,
+                groups: updatedGroups,
+              }
+            : r
+        )
+      );
+
+      toast.success(`Reálné týmy pro fázi "${row.name}" byly přiřazeny.`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Nastala chyba při přiřazování týmů.");
     }
-
-    // Načti standings pro každou skupinu
-    const standingsMap: Record<string, { id: number; name: string }[]> = {};
-    for (const groupName of groupNamesInRow) {
-      const groupId = groupNameToId[groupName];
-      if (!groupId) continue;
-
-      try {
-        const standings = await fetchGroupStandings(groupId);
-        standingsMap[groupName] = standings;
-      } catch {
-        toast.error(`Nepodařilo se načíst tabulku skupiny ${groupName}`);
-        return;
-      }
-    }
-
-    // Nahraď placeholdery reálnými týmy
-    const updatedGroups = row.groups.map((group) => {
-      const resolvedTeams = group.teams.map((team) => {
-        if (team.type === "placeholder") {
-          const groupName = team.group;
-          const position = team.position;
-          const resolvedTeam = standingsMap[groupName]?.[position - 1];
-
-          return resolvedTeam
-            ? { id: resolvedTeam.id, name: resolvedTeam.name }
-            : { id: null, name: `N/A (${position}.${groupName})` };
-        } else {
-          return team;
-        }
-      });
-
-      return {
-        ...group,
-        teams: resolvedTeams,
-      };
-    });
-
-    setRows((prev) =>
-      prev.map((r, i) =>
-        i === rowIndex
-          ? {
-              ...r,
-              groups: updatedGroups as PlaceholderGroup[],
-            }
-          : r
-      )
-    );
-    toast.success(`Reálné týmy pro fázi "${row.name}" byly přiřazeny.`);
-
-    console.log("Reálné týmy pro fázi:", row.name, updatedGroups);
   };
 
   useEffect(() => {
@@ -365,6 +371,39 @@ export const PlayoffBracketEditorPlaceholder = ({
 
     setRows(newRows);
   }, [placeholderGroups]);
+
+  const updateResolvedTeam = (
+    rowIndex: number,
+    groupIndex: number,
+    teamIndex: number,
+    selected: { id: number; name: string }
+  ) => {
+    setRows((prev) =>
+      prev.map((row, i) =>
+        i === rowIndex
+          ? {
+              ...row,
+              groups: row.groups.map((g, j) =>
+                j === groupIndex
+                  ? {
+                      ...g,
+                      teams: g.teams.map((t, k) =>
+                        k === teamIndex
+                          ? {
+                              type: "resolved",
+                              id: selected.id,
+                              name: selected.name,
+                            }
+                          : t
+                      ),
+                    }
+                  : g
+              ),
+            }
+          : row
+      )
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -470,7 +509,35 @@ export const PlayoffBracketEditorPlaceholder = ({
                               </span>
                             </>
                           ) : (
-                            <span>{team.name}</span>
+                            <Select
+                              value={team.id?.toString() || ""}
+                              onValueChange={(value) => {
+                                const selected = allTeams.find(
+                                  (t) => t.id.toString() === value
+                                );
+                                if (!selected) return;
+                                updateResolvedTeam(
+                                  rowIndex,
+                                  groupIndex,
+                                  teamIndex,
+                                  selected
+                                );
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Vyber tým" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {allTeams.map((team) => (
+                                  <SelectItem
+                                    key={team.id}
+                                    value={team.id.toString()}
+                                  >
+                                    {team.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           )}
                         </div>
                       ))}
@@ -490,7 +557,7 @@ export const PlayoffBracketEditorPlaceholder = ({
           </div>
         </div>
       ))}
-      <Button onClick={addRow}>
+      <Button onClick={addRow} className="w-fit">
         Přidat fázi <Plus />
       </Button>
       <Button
