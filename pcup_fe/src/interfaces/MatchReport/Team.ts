@@ -8,7 +8,7 @@ export interface Team {
   id: number;
   name: string;
   players: Player[];
-  coaches: Coach[];
+  coach: Coach;
   matches: Match[];
   club?: Club;
   //category?: Category;

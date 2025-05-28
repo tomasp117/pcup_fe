@@ -17,8 +17,9 @@ import { EditCategoryForm } from "./pages/EditCategoryForm";
 import { EditClubForm } from "./pages/EditClubForm";
 import { MatchPreviewPage } from "./pages/MatchPreviewPage";
 import { fetchMatch } from "./hooks/useMatches";
-import { PlayoffVisualizer } from "./pages/PlayOffVisualizer";
+
 import { PlayoffBracketPage } from "./pages/PlayoffBracketPage";
+import { ClubAdminPage } from "./pages/ClubAdminPage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -61,6 +62,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Coach", "Admin"]}>
             <MyTeam />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "my-club",
+        element: (
+          <ProtectedRoute allowedRoles={["ClubAdmin", "Admin"]}>
+            <ClubAdminPage />
           </ProtectedRoute>
         ),
       },

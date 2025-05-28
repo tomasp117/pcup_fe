@@ -1,3 +1,5 @@
+import { Club } from "@/interfaces/MatchReport/Club";
+
 import {
   QueryClient,
   useMutation,
@@ -14,15 +16,15 @@ type ClubCreateInput = {
   logo?: string; // ➕
 };
 
-type Club = {
-  id: number;
-  name: string;
-  email?: string;
-  address?: string;
-  website?: string;
-  state?: string;
-  logo: string;
-};
+// type Club = {
+//   id: number;
+//   name: string;
+//   email?: string;
+//   address?: string;
+//   website?: string;
+//   state?: string;
+//   logo: string;
+// };
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -126,7 +128,6 @@ export const useUpdateClub = () => {
     },
   });
 };
-
 
 export const useMyClub = () => {
   return useQuery<Club | null>({

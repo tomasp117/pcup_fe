@@ -400,13 +400,29 @@ export const Sidebar = () => {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="hover:bg-blue-100"
+                                className="hover:bg-primary/10"
                               >
                                 <Users size={20} />
                               </Button>
                             </Link>
                           </TooltipTrigger>
                           <TooltipContent side="right">My Team</TooltipContent>
+                        </Tooltip>
+                      )}
+                      {user.role === "ClubAdmin" && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link to="/my-club">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-primary/10"
+                              >
+                                <Users size={20} />
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">My Club</TooltipContent>
                         </Tooltip>
                       )}
                       <Tooltip>
