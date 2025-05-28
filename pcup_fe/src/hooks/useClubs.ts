@@ -126,3 +126,22 @@ export const useUpdateClub = () => {
     },
   });
 };
+
+
+export const useMyClub = () => {
+  return useQuery<Club | null>({
+    queryKey: ["my-club"],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/club-admin/my-club`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error("Nepodařilo se načíst můj klub.");
+      return res.json();
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+};

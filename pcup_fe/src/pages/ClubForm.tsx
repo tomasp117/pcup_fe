@@ -143,6 +143,7 @@ export const ClubForm = () => {
           type="file"
           accept=".csv"
           onChange={handleCsvUpload}
+          className="cursor-pointer :hover:bg-primary/10"
         />
         {csvMessage && <p className="text-sm">{csvMessage}</p>}
       </div>

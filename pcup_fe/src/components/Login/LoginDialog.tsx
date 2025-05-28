@@ -19,6 +19,16 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // addEventListener("keydown", (e) => {
+  //   e.preventDefault();
+  //   if (e.key === "Enter" && isOpen) {
+  //     handleLogin();
+  //   }
+  //   if (e.key === "Escape") {
+  //     setIsOpen(false);
+  //   }
+  // });
+
   const handleLogin = async () => {
     setIsLoading(true);
     setError(null);
@@ -88,9 +98,11 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
             className="float-right"
             disabled={isLoading}
           >
-            {isLoading
-              ? <Loader2 className="animate-spin mr-2" /> + "Přihlašování"
-              : "Přihlásit se"}
+            {isLoading ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              "Přihlásit se"
+            )}
           </Button>
         </div>
       </DialogContent>

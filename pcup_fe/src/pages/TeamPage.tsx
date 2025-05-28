@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { useTeamById } from "@/hooks/useTeams";
 import { useMatchesByTeam } from "@/hooks/useMatches";
+import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 
 const API_URL2 = "http://localhost:5056";
 
@@ -62,14 +63,29 @@ export const TeamPage = () => {
           <h2 className="text-2xl font-bold">{team.name}</h2>
         </CardHeader>
         <CardContent>
-          <p>
-            <strong>Klub:</strong> {team.club?.name}
-          </p>
-          <p>
-            <strong>Kategorie:</strong> {team.category?.name}
-          </p>
-          {/* Logo pokud existuje */}
-          {logo && <img src={logo} alt="Logo týmu" className="h-24 mt-4" />}
+          <div className="flex justify-between">
+            <div className="flex flex-col">
+              <p>
+                <strong>Klub:</strong> {team.club?.name}
+              </p>
+              <p>
+                <strong>Kategorie:</strong> {team.categoryName}
+              </p>
+              <p>
+                <strong>Hráči:</strong>
+              </p>
+
+              {team.players.map((palyer: Player) => (
+                <p key={palyer.id}>
+                  {palyer.person.firstName} {palyer.person.lastName}
+                </p>
+              ))}
+            </div>
+            {/* Logo pokud existuje */}
+            {logo && (
+              <img src={logo} alt="Logo týmu" className="mt-4 h-fit w-[40%] " />
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -114,7 +130,7 @@ export const TeamPage = () => {
               </TableBody>
             </Table>
           ) : (
-            <p>Tým zatím neodehrál žádné zápasy.</p>
+            <p>Tým zatím nemá přiřazené zápasy.</p>
           )}
         </CardContent>
       </Card>

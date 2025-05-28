@@ -80,11 +80,11 @@ export const Sidebar = () => {
       icon: <Trophy />,
       dynamicChildren: true,
     },
-    {
-      name: "Rozpis utkání",
-      path: `/${edition}/time-table`,
-      icon: <CalendarRange />,
-    },
+    // {
+    //   name: "Rozpis utkání",
+    //   path: `/${edition}/time-table`,
+    //   icon: <CalendarRange />,
+    // },
     {
       name: "Zápis utkání",
       path: `/${edition}/match-report`,

@@ -131,7 +131,7 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
                 <TableCell className="font-medium text-primary ">
                   <Link
                     to={`/teams/${match.homeTeam.id}`}
-                    className="text-blue-500 underline"
+                    className="hover:text-blue-500 hover:underline"
                   >
                     {match.homeTeam?.name ?? "-"}
                   </Link>

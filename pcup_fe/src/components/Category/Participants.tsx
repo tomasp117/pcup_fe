@@ -41,7 +41,10 @@ export const Participants = ({ categoryId }: { categoryId: number }) => {
           }`}
         >
           <div className="font-medium">
-            <Link to={`/teams/${team.id}`} className="text-blue-500 underline">
+            <Link
+              to={`/teams/${team.id}`}
+              className="hover:text-blue-500 hover:underline"
+            >
               {team.name}
             </Link>
           </div>

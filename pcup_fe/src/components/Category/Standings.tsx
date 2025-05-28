@@ -27,14 +27,16 @@ export const Standings = ({ categoryId }: { categoryId: number }) => {
     return <p className="text-center mt-6">Žádné skupiny.</p>;
 
   return (
-    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-      {groups.map((group) => (
-        <GroupStandingsCard
-          key={group.id}
-          groupId={group.id}
-          groupName={group.name}
-        />
-      ))}
+    <div className="grid gap-6 grid-cols-1 sm:grid-cols-1 lg:grid-cols-2">
+      {groups
+        .filter((group) => group.id !== null)
+        .map((group) => (
+          <GroupStandingsCard
+            key={group.id}
+            groupId={group.id as number}
+            groupName={group.name}
+          />
+        ))}
     </div>
   );
 };

@@ -64,7 +64,7 @@ export const Groups = ({ categoryId }: { categoryId: number }) => {
                       <TableCell>
                         <Link
                           to={`/teams/${team.id}`}
-                          className="text-blue-500 underline"
+                          className="hover:underline hover:text-blue-600"
                         >
                           {team.name}
                         </Link>

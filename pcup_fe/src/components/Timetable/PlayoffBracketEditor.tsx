@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { BracketRow } from "@/interfaces/BracketEditor/IBracketRow";
 import { useTeamsByCategory } from "@/hooks/useTeams";
 import {
@@ -243,21 +243,54 @@ export const PlayoffBracketEditor = ({
                             </SelectContent>
                           </Select>
                         ))}
-                        <Button
-                          onClick={() => addTeamToGroup(rowIndex, groupIndex)}
-                          className="mt-2 text-xs w-fit"
-                        >
-                          Přidat tým <Plus />
-                        </Button>
+                        <div className="flex justify-between items-center">
+                          <Button
+                            onClick={() => addTeamToGroup(rowIndex, groupIndex)}
+                            className="mt-2 text-xs w-fit"
+                          >
+                            Přidat tým <Plus />
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setBracket((prev) =>
+                                prev.map((r, i) =>
+                                  i === rowIndex
+                                    ? {
+                                        ...r,
+                                        groups: r.groups.filter(
+                                          (_, j) => j !== groupIndex
+                                        ),
+                                      }
+                                    : r
+                                )
+                              );
+                            }}
+                            className="mt-2 bg-red-500 hover:bg-red-600 text-xs w-fit"
+                          >
+                            <Trash2 className="" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
-                  <Button
-                    onClick={() => addGroupToRow(rowIndex)}
-                    className="w-fit mt-2"
-                  >
-                    Přidat skupinu <Plus className="ml-1 h-4 w-4" />
-                  </Button>
+                  <div className="flex justify-between items-center w-full">
+                    <Button
+                      onClick={() => addGroupToRow(rowIndex)}
+                      className="w-fit mt-2"
+                    >
+                      Přidat skupinu <Plus className="ml-1" />
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setBracket((prev) =>
+                          prev.filter((_, i) => i !== rowIndex)
+                        );
+                      }}
+                      className="w-fit mt-2 bg-red-500 hover:bg-red-600"
+                    >
+                      Odstranit fázi
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}

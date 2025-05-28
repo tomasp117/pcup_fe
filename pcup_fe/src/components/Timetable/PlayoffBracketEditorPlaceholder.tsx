@@ -395,7 +395,19 @@ export const PlayoffBracketEditorPlaceholder = ({
               onChange={(e) => updateRowName(rowIndex, e.target.value)}
               className="w-fit bg-primary/10 font-semibold"
             />
-            <Button onClick={() => resolveRealTeamsForRow(rowIndex)}>
+            <Button
+              onClick={() => resolveRealTeamsForRow(rowIndex)}
+              disabled={
+                row.groups?.length === 0 ||
+                isPending ||
+                row.groups.some((g) => g.teams.length === 0) ||
+                row.groups.some((g) =>
+                  g.teams.some(
+                    (t) => t.type === "placeholder" && !t.group && !t.position
+                  )
+                )
+              }
+            >
               Přiřadit reálné týmy
             </Button>
           </div>
@@ -490,7 +502,7 @@ export const PlayoffBracketEditorPlaceholder = ({
           </div>
         </div>
       ))}
-      <Button onClick={addRow}>
+      <Button className="w-fit" onClick={addRow}>
         Přidat fázi <Plus />
       </Button>
       <Button

@@ -225,6 +225,9 @@ export const useMatchTimer = () => {
       setTimerPaused(false);
       setMatchPhase("finished");
 
+
+      //alert("Zápas skončil. Potvrďte zápis.");
+
       toast.info("Konec 2. poločasu", {
         className: "text-lg font-bold py-4",
       });

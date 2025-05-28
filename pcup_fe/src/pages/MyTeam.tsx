@@ -307,7 +307,7 @@ export const MyTeam = () => {
                         <TableCell className="flex justify-end gap-2">
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="secondaryOutline"
                             onClick={() => handleEditClick(player)}
                           >
                             <Pencil size={16} />

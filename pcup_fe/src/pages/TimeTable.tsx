@@ -9,6 +9,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
+  TableRounded,
   TableRow,
 } from "@/components/ui/table";
 import { useEdition } from "@/Contexts/TournamentEditionContext";
@@ -373,7 +374,10 @@ export const TimeTable = () => {
       </Card>
       {isLoading && <p>Načítání zápasů...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      <div className="flex gap-4 flex-wrap">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {groups.length === 0 && !isLoading && (
+          <p className="text-gray-500">Žádné skupiny pro tuto kategorii</p>
+        )}
         {groups.map((group) => (
           <Card key={group.id} className=" ">
             <CardHeader className="py-2  ">
@@ -381,7 +385,7 @@ export const TimeTable = () => {
             </CardHeader>
             <CardContent className="p-4">
               {group.teams && group.teams.length > 0 ? (
-                <Table className="text-sm">
+                <TableRounded className="text-sm ">
                   <TableHeader className="bg-primary/10">
                     <TableRow>
                       <TableHead>#</TableHead>
@@ -399,7 +403,7 @@ export const TimeTable = () => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                </TableRounded>
               ) : (
                 <p className="text-gray-500 text-sm">Žádné týmy</p>
               )}
@@ -419,13 +423,23 @@ export const TimeTable = () => {
             </Button>
             <Button
               onClick={handleAssignMatches}
-              disabled={!categoryId || isLoading || matches.length === 0}
+              disabled={
+                !categoryId ||
+                isLoading ||
+                matches.length === 0 ||
+                unassignedMatches.length === 0
+              }
             >
               Přiřadit zápasy kategorie do slotů
             </Button>
             <Button
               onClick={handleAssignAllMatches}
-              disabled={!categoryId || isLoading || matches.length === 0}
+              disabled={
+                !categoryId ||
+                isLoading ||
+                matches.length === 0 ||
+                unassignedMatches.length === 0
+              }
             >
               Přiřadit všechny zápasy do slotů
             </Button>

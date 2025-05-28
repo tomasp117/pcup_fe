@@ -9,6 +9,7 @@ import {
   TableCell,
   Table,
 } from "../ui/table";
+import { Link } from "react-router-dom";
 
 export const GroupStandingsCard = ({
   groupId,
@@ -46,7 +47,14 @@ export const GroupStandingsCard = ({
               {standings.map((team: any, index: number) => (
                 <TableRow key={team.teamId}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell className="font-medium">{team.teamName}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link
+                      to={`/teams/${team.teamId}`}
+                      className="hover:text-primary hover:underline"
+                    >
+                      {team.teamName}
+                    </Link>
+                  </TableCell>
                   <TableCell>{team.matchesPlayed}</TableCell>
                   <TableCell>{team.wins}</TableCell>
                   <TableCell>{team.draws}</TableCell>
