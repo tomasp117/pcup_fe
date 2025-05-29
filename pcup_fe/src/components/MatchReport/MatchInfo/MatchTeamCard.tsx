@@ -10,14 +10,16 @@ interface MatchTeamCardProps {
   team: Team;
   side: "home" | "away";
 }
-const API_URL = "http://localhost:5056";
+//const API_URL = "http://localhost:5056";
+
+const API_URL_IMAGES = import.meta.env.VITE_API_URL_IMAGES;
 
 const teamLogos: Record<string, string> = {
-  Polanka: `${API_URL}/images/polanka.gif`,
-  Ostrava: `${API_URL}/images/ostrava.gif`,
-  "Frýdek-Místek": `${API_URL}/images/frydek.png`,
-  Zubří: `${API_URL}/images/zubri.png`,
-  Praha: `${API_URL}/images/praha.png`,
+  Polanka: `${API_URL_IMAGES}/polanka.gif`,
+  Ostrava: `${API_URL_IMAGES}/ostrava.gif`,
+  "Frýdek-Místek": `${API_URL_IMAGES}/frydek.png`,
+  Zubří: `${API_URL_IMAGES}/zubri.png`,
+  Praha: `${API_URL_IMAGES}/praha.png`,
 };
 
 export const MatchTeamCard = ({ team, side }: MatchTeamCardProps) => {
@@ -28,7 +30,7 @@ export const MatchTeamCard = ({ team, side }: MatchTeamCardProps) => {
         return teamLogos[key];
       }
     }
-    return `${API_URL}/images/default-logo.png`; // fallback logo
+    return `${API_URL_IMAGES}/default-logo.png`; // fallback logo
   };
 
   const logo = findLogo();

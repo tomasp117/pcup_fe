@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, UserCircle } from "lucide-react";
 import { useUser } from "@/Contexts/UserContext";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
   const { setUser } = useUser();
@@ -33,7 +35,7 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5056/api/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,6 +91,12 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleLogin();
+                }
+              }}
               placeholder="Zadejte heslo"
             />
           </div>

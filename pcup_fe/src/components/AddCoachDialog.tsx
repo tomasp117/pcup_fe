@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { format } from "date-fns";
+import { cs } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -56,6 +56,9 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
   const [license, setLicense] = useState("C");
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [emailError, setEmailError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
   const isValid = () => {
     return (
@@ -108,9 +111,24 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
     return errors;
   };
 
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      setEmailError("Neplatný formát e-mailu.");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const phoneNumberRegex = /^\+?[0-9\s-]{7,15}$/;
+  const isPhoneNumberValid = (value: string) => {
+    return phoneNumberRegex.test(value);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:w-[400px] bg-white p-6 rounded-lg shadow-md">
+      <DialogContent className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-white p-4 sm:p-6 rounded-lg shadow-md">
         <DialogHeader>
           <DialogTitle>Přidat trenéra</DialogTitle>
         </DialogHeader>
@@ -128,42 +146,41 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
           <Input
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => handleEmailChange(e.target.value)}
           />
+          {emailError && <p className="text-sm text-red-500">{emailError}</p>}
           <Input
             placeholder="Telefon"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
+          {phoneNumber && !isPhoneNumberValid(phoneNumber) && (
+            <p className="text-sm text-red-500">
+              Neplatný formát telefonního čísla.
+            </p>
+          )}
           <Input
             placeholder="Adresa"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
           />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !dateOfBirth && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateOfBirth
-                  ? format(dateOfBirth, "dd.MM.yyyy")
-                  : "Datum narození"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={dateOfBirth}
-                onSelect={setDateOfBirth}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <div>
+            <label className="text-sm font-medium">Datum narození</label>
+            <Calendar
+              locale={cs}
+              mode="single"
+              selected={dateOfBirth}
+              onSelect={(date) => setDateOfBirth(date || undefined)}
+              fromYear={1950}
+              toYear={new Date().getFullYear()}
+              captionLayout="dropdown"
+              initialFocus
+              className="rounded-md border mt-1 p-2 shadow-sm bg-white"
+              classNames={{
+                caption_dropdowns: "flex gap-2",
+              }}
+            />
+          </div>
           <Input
             placeholder="Uživatelské jméno"
             value={username}

@@ -14,14 +14,16 @@ import { useTeamById } from "@/hooks/useTeams";
 import { useMatchesByTeam } from "@/hooks/useMatches";
 import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 
-const API_URL2 = "http://localhost:5056";
+//const API_URL2 = "http://localhost:5056";
+
+const API_URL_IMAGES = import.meta.env.VITE_API_URL_IMAGES;
 
 const teamLogos: Record<string, string> = {
-  Polanka: `${API_URL2}/images/polanka.gif`,
-  Ostrava: `${API_URL2}/images/ostrava.gif`,
-  "Frýdek-Místek": `${API_URL2}/images/frydek.png`,
-  Zubří: `${API_URL2}/images/zubri.png`,
-  Praha: `${API_URL2}/images/praha.png`,
+  Polanka: `${API_URL_IMAGES}/polanka.gif`,
+  Ostrava: `${API_URL_IMAGES}/ostrava.gif`,
+  "Frýdek-Místek": `${API_URL_IMAGES}/frydek.png`,
+  Zubří: `${API_URL_IMAGES}/zubri.png`,
+  Praha: `${API_URL_IMAGES}/praha.png`,
 };
 
 // API endpoint
@@ -37,7 +39,7 @@ export const TeamPage = () => {
 
   const findLogo = () => {
     if (!team || !team.name) {
-      return `${API_URL}/images/default-logo.png`; // fallback logo
+      return `${API_URL_IMAGES}/default-logo.png`; // fallback logo
     }
     const teamName = team.name.toLowerCase();
     for (const key in teamLogos) {
@@ -45,7 +47,7 @@ export const TeamPage = () => {
         return teamLogos[key];
       }
     }
-    return `${API_URL}/images/default-logo.png`; // fallback logo
+    return `${API_URL_IMAGES}/default-logo.png`; // fallback logo
   };
 
   const logo = findLogo();

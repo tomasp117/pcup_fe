@@ -8,8 +8,12 @@ import { useState } from "react";
 import { AddCoachDialog } from "@/components/AddCoachDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
+import { useDeleteCoach } from "@/hooks/useCoaches";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+const API_URL_IMAGES = import.meta.env.VITE_API_URL_IMAGES;
 
 interface CreateCoachDTO {
   firstName: string;
@@ -30,6 +34,14 @@ export const ClubAdminPage = () => {
 
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
+  const [visibleCoachDetails, setVisibleCoachDetails] = useState<number | null>(
+    null
+  );
+
+  const { mutate: handleDeleteCoach } = useDeleteCoach();
+
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -48,7 +60,7 @@ export const ClubAdminPage = () => {
       }
     },
     onSuccess: () => {
-      toast("Trenér byl úspěšně přidán");
+      toast.success("Trenér byl úspěšně přidán");
       queryClient.invalidateQueries({ queryKey: ["my-club"] });
       setSelectedTeamId(null);
     },
@@ -96,15 +108,65 @@ export const ClubAdminPage = () => {
     return <div>Nemáš přiřazen žádný klub.</div>;
   }
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setLogoFile(e.target.files[0]);
+    }
+  };
+
+  const uploadLogo = async () => {
+    if (!logoFile || !club?.id) return;
+
+    const formData = new FormData();
+    formData.append("file", logoFile);
+
+    const res = await fetch(`${API_URL}/clubs/${club.id}/upload-logo`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      toast.error("Chyba při nahrávání loga");
+      return;
+    }
+
+    const newPath = await res.text();
+    toast.success("Logo nahráno");
+    queryClient.invalidateQueries({ queryKey: ["my-club"] });
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">{club.name}</h1>
-        {club.email && <p className="text-muted-foreground">{club.email}</p>}
-        {club.website && (
-          <a href={club.website} className="text-blue-600 underline">
-            {club.website}
-          </a>
+      <div className="flex flex-col sm:flex-row justify-between">
+        <div className="flex flex-col">
+          <div>
+            <h1 className="text-2xl font-bold">{club.name}</h1>
+            {club.email && (
+              <p className="text-muted-foreground">{club.email}</p>
+            )}
+            {club.website && (
+              <a href={club.website} className="text-blue-600 underline">
+                {club.website}
+              </a>
+            )}
+          </div>
+          <div className="space-y-2">
+            <input type="file" accept="image/*" onChange={handleLogoChange} />
+            <Button onClick={uploadLogo} disabled={!logoFile}>
+              Nahrát logo
+            </Button>
+          </div>
+        </div>
+
+        {club.logo && (
+          <img
+            src={`${API_URL_IMAGES}/${club.logo}`}
+            alt="Logo klubu"
+            className="h-24 w-fit mt-2"
+          />
         )}
       </div>
 
@@ -133,6 +195,58 @@ export const ClubAdminPage = () => {
                     <Plus className="w-4 h-4 mr-1" />
                     Přidat trenéra
                   </Button>
+                )}
+                {visibleCoachDetails === team.id ? (
+                  <div className="space-y-1 mt-2 text-sm">
+                    <div>
+                      <strong>Id:</strong> {team.coach.id}
+                    </div>
+                    <div>
+                      <strong>Email:</strong> {team.coach.person.email}
+                    </div>
+                    <div>
+                      <strong>Telefon:</strong> {team.coach.person.phoneNumber}
+                    </div>
+                    <div>
+                      <strong>Adresa:</strong> {team.coach.person.address}
+                    </div>
+                    <div>
+                      <strong>Datum narození:</strong>{" "}
+                      {format(
+                        new Date(team.coach.person.dateOfBirth),
+                        "dd.MM.yyyy"
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  team.coach && (
+                    <Button
+                      className="ml-4"
+                      size="sm"
+                      onClick={() => setVisibleCoachDetails(team.id)}
+                    >
+                      Zobrazit detaily
+                    </Button>
+                  )
+                )}
+                {team.coach && (
+                  <>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            `Opravdu chceš odstranit trenéra ${team.coach?.person.firstName} ${team.coach?.person.lastName}?`
+                          )
+                        ) {
+                          handleDeleteCoach(team.coach.id);
+                        }
+                      }}
+                    >
+                      Odstranit trenéra
+                    </Button>
+                  </>
                 )}
               </div>
               <div>

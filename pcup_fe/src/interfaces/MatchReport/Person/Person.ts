@@ -1,3 +1,5 @@
+import { Login } from "./Login";
+
 export interface Person {
   id: number | null;
   firstName: string;
@@ -6,4 +8,5 @@ export interface Person {
   phoneNumber: string | null;
   address: string | null;
   dateOfBirth: string;
+  login: Login;
 }
