@@ -42,7 +42,12 @@ export const EditClubForm = () => {
 
   const onSubmit = (formData: FormValues) => {
     mutate(
-      { id: clubId, ...formData, logo: formData.logo ?? "" },
+      {
+        id: clubId,
+        ...formData,
+        logo: formData.logo ?? "",
+        teams: [],
+      },
       {
         onSuccess: () => navigate(-1),
       }

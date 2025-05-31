@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useBracketByCategory } from "@/hooks/useGroups";
-import { PlayoffVisualizer } from "./PlayOffVisualizer";
+import { PlayoffVisualizer } from "./PlayoffVisualizer";
 
 export const PlayoffBracketPage = () => {
   const categoryId = 2; // TODO: načti z URL nebo z contextu
