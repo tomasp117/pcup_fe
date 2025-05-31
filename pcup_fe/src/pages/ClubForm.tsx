@@ -5,7 +5,7 @@ import Papa from "papaparse";
 import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Pencil, X } from "lucide-react";
+import { MoveRight, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useClubs, useCreateClub, useDeleteClub } from "@/hooks/useClubs";
 
@@ -18,9 +18,14 @@ type ClubFormValues = {
   logo?: string;
 };
 
+interface ClubFormProps {
+  onBack?: () => void;
+  onSkip?: () => void;
+}
+
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ClubForm = () => {
+export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
   const navigate = useNavigate();
 
   const {
@@ -65,6 +70,7 @@ export const ClubForm = () => {
         complete: async (results) => {
           const parsed = results.data as {
             Id: string;
+            ContactEmail: string;
             State: string;
             Club: string;
             Web: string;
@@ -76,6 +82,7 @@ export const ClubForm = () => {
               name: row.Club.trim(),
               state: row.State?.trim() || "",
               website: row.Web?.trim() || "",
+              email: row.ContactEmail?.trim() || "",
             }));
 
           try {
@@ -192,6 +199,18 @@ export const ClubForm = () => {
           </div>
         )}
       </div>
+      {onSkip && (
+        <div className="pt-4 border-t mt-4">
+          <Button
+            type="button"
+            variant="secondaryOutline"
+            className="text-sm text-muted-foreground"
+            onClick={() => onSkip?.()}
+          >
+            Přeskočit krok kategorií <MoveRight size={16} className="ml-1" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
