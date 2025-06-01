@@ -146,3 +146,44 @@ export const useMyClub = () => {
     staleTime: 1000 * 60 * 5,
   });
 };
+
+export const useClubAdmin = (clubId?: number) => {
+  return useQuery({
+    enabled: !!clubId,
+    queryKey: ["club-admin", clubId],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/clubs/${clubId}/admin`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!res.ok) throw new Error("Nepodařilo se načíst admina.");
+      return res.json();
+    },
+  });
+};
+
+export const useCreateClubAdmin = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      const res = await fetch(`${API_URL}/club-admin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(error || "Chyba při vytváření Club Admina.");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clubAdmin"] });
+    },
+  });
+};

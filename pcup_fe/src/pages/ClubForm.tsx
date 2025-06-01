@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { MoveRight, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useClubs, useCreateClub, useDeleteClub } from "@/hooks/useClubs";
+import { Club } from "@/interfaces/MatchReport/Club";
+import { ClubAdminDialog } from "@/components/ClubAdminDialog";
 
 type ClubFormValues = {
   name: string;
@@ -27,6 +29,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
   const navigate = useNavigate();
+
+  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
+  const [adminDialogOpen, setAdminDialogOpen] = useState(false);
 
   const {
     register,
@@ -167,6 +172,10 @@ export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
                 <Button
                   variant="secondaryOutline"
                   className="flex-1 justify-start"
+                  onClick={() => {
+                    setSelectedClub(club);
+                    setAdminDialogOpen(true);
+                  }}
                 >
                   {club.name}
                 </Button>
@@ -210,6 +219,13 @@ export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
             Přeskočit krok kategorií <MoveRight size={16} className="ml-1" />
           </Button>
         </div>
+      )}
+      {selectedClub && (
+        <ClubAdminDialog
+          club={selectedClub}
+          open={adminDialogOpen}
+          onClose={() => setAdminDialogOpen(false)}
+        />
       )}
     </div>
   );
