@@ -73,8 +73,8 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
     A: "Mladší dorostenci",
     B: "Starší žáci",
     C: "Mladší žáci",
-    D: "Minižáci 6+1",
-    E: "Minižáci 4+1",
+    D: "Mini 6+1",
+    E: "Mini 4+1",
   };
 
   const {
