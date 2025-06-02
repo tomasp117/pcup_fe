@@ -102,7 +102,7 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
           const payload = parsed
             .filter((row) => row.Caption?.trim())
             .map((row) => {
-              let name = row.Caption.trim();
+              let name = row.Caption.trim(); // Extenze za captionem
               if (row.Ext?.trim()) {
                 name += " " + row.Ext.trim();
               }

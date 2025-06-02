@@ -229,7 +229,7 @@ export const MyTeam = () => {
                 <TableHead>Příjmení</TableHead>
                 <TableHead>Góly</TableHead>
                 <TableHead>7m Góly</TableHead>
-                <TableHead>7m Minely</TableHead>
+                <TableHead>7m Neproměněny</TableHead>
                 <TableHead>2min</TableHead>
                 <TableHead>ŽK</TableHead>
                 <TableHead>ČK</TableHead>

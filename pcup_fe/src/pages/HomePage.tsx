@@ -53,15 +53,15 @@ export default function HomePage() {
       </div>
 
       {/* Grid layout - Obsah pro vybranou kategorii */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
         <TeamCard category={selectedCategory} />
         <StatsCard category={selectedCategory} />
         <MatchesCard category={selectedCategory} />
         <ResultsCard category={selectedCategory} />
-      </div>
+      </div> */}
 
       {/* Fotogalerie */}
-      <GalleryCard />
+      {/* <GalleryCard /> */}
       <InfoCard />
       <MapCard />
     </div>
