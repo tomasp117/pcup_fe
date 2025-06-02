@@ -102,11 +102,15 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
           const payload = parsed
             .filter((row) => row.Caption?.trim())
             .map((row) => {
+              let name = row.Caption.trim();
+              if (row.Ext?.trim()) {
+                name += " " + row.Ext.trim();
+              }
               const categoryName =
                 categoryMap[row.Category?.trim()] || row.Category?.trim();
               const clubNameRaw = row.Club?.trim() || "";
               return {
-                name: row.Caption.trim(),
+                name,
                 clubName: clubNameRaw,
                 categoryName,
                 tournamentInstanceId: instanceId,
