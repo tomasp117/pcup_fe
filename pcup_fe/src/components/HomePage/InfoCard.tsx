@@ -11,11 +11,11 @@ export const InfoCard = () => {
           <CardTitle>Kontaktní osoba</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="font-semibold">Ing. Petr Foltýn</p>
+          <p className="font-semibold">Tomáš Prorok</p>
           <p className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-primary" /> +420 725 237 978
+            <Phone className="w-4 h-4 text-primary" /> +420 733 272 824
           </p>
-          <p className="text-sm text-gray-500">(Dostupnost po 17 hodině)</p>
+          {/* <p className="text-sm text-gray-500">(Dostupnost po 17 hodině)</p> */}
         </CardContent>
       </Card>
 
@@ -31,7 +31,8 @@ export const InfoCard = () => {
               href="mailto:polankacup@gmail.com"
               className="text-primary hover:underline"
             >
-              polankacup@gmail.com
+              {/* polankacup@gmail.com */}
+              tomas.prorok.st@gmail.com
             </a>
           </p>
         </CardContent>
