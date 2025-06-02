@@ -39,7 +39,7 @@ export const InfoCard = () => {
       </Card>
 
       {/* Propozice */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Propozice</CardTitle>
         </CardHeader>
@@ -55,10 +55,10 @@ export const InfoCard = () => {
             </Button>
           </a>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Dětský den */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Dětský den</CardTitle>
         </CardHeader>
@@ -71,10 +71,10 @@ export const InfoCard = () => {
             <Button className="w-full ">Sobota 14:00</Button>
           </a>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Plakát */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Plakát</CardTitle>
         </CardHeader>
@@ -90,10 +90,10 @@ export const InfoCard = () => {
             </Button>
           </a>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Rozlosování */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Rozlosování</CardTitle>
         </CardHeader>
@@ -109,7 +109,7 @@ export const InfoCard = () => {
             </Button>
           </a>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
