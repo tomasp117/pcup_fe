@@ -18,7 +18,8 @@ interface MatchLogPreviewProps {
 }
 
 export const MatchLogPreview = ({ match }: MatchLogPreviewProps) => {
-  const { data: events, error } = useMatchEventsPreview(match.id);
+  const isPolling = match.state !== "Done";
+  const { data: events, error } = useMatchEventsPreview(match.id, isPolling);
 
   if (error) {
     return (
