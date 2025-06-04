@@ -12,7 +12,8 @@ import { useMatchEventsPreview } from "@/hooks/MatchReport/useEvent";
 export const MatchPreviewPage = () => {
   const { id } = useParams<{ id: string }>();
   const { data: match, isLoading } = useMatchPreview(id ? parseInt(id) : 0);
-  const { data: events } = useMatchEventsPreview(Number(id));
+  const isPolling = match?.state !== "Done";
+  const { data: events } = useMatchEventsPreview(Number(id), isPolling);
 
   const { homePlayers, awayPlayers } = useReconstructedPlayers(
     match!,

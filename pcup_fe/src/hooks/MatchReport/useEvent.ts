@@ -153,7 +153,7 @@ export const useMatchEvents = (matchId: number) => {
   });
 };
 
-export const useMatchEventsPreview = (matchId: number) => {
+export const useMatchEventsPreview = (matchId: number, isPolling: boolean) => {
   return useQuery<Event[]>({
     queryKey: ["events", matchId],
     queryFn: async () => {
@@ -166,8 +166,8 @@ export const useMatchEventsPreview = (matchId: number) => {
         return [];
       }
     },
-    refetchInterval: 5000,
-    refetchOnWindowFocus: true,
+    refetchInterval: isPolling ? 5000 : false,
+    refetchOnWindowFocus: isPolling,
   });
 };
 

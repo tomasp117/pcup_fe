@@ -43,6 +43,7 @@ interface MatchContextProps {
   setMatchPhase: React.Dispatch<React.SetStateAction<MatchPhase>>;
   setMatchStarted: React.Dispatch<React.SetStateAction<boolean>>;
   resetMatch: () => void;
+  getPlayersForTeam: (team: Team) => Player[];
 }
 
 const MatchContext = createContext<MatchContextProps | undefined>(undefined);
@@ -51,44 +52,6 @@ export const MatchProvider: React.FC<{
   children: ReactNode;
   match: Match;
 }> = ({ children, match }) => {
-  //const match = useLoaderData() as Match;
-
-  // const [teamHome, setTeamHome] = useState<Team>({
-  //   id: 0,
-  //   name: "",
-  //   players: [],
-  //   coaches: [],
-  //   matches: [],
-  // });
-  // const [teamAway, setTeamAway] = useState<Team>({
-  //   id: 0,
-  //   name: "",
-  //   players: [],
-  //   coaches: [],
-  //   matches: [],
-  // });
-  // const [matchDetails, setMatchDetails] = useState<Match>({
-  //   id: 0,
-  //   time: "",
-  //   timePlayed: "00:00",
-  //   playground: "",
-  //   homeTeam: teamHome,
-  //   awayTeam: teamAway,
-  //   score: "0:0",
-  //   state: "None",
-  //   events: [],
-  //   referees: [],
-  //   category: {
-  //     id: 0,
-  //     name: "",
-  //     groups: [],
-  //     matches: [],
-  //     voiting: [],
-  //     stats: [],
-  //     votingOpen: false,
-  //   },
-  // });
-
   const [matchDetails, setMatchDetails] = useState<Match>(match);
   const [teamHome, setTeamHome] = useState<Team>(match.homeTeam);
   const [teamAway, setTeamAway] = useState<Team>(match.awayTeam);
@@ -146,6 +109,30 @@ export const MatchProvider: React.FC<{
 
     setPlayers(allPlayers);
   }, [match]);
+
+  function getPlayersForTeam(team: Team): Player[] {
+    // Pokud je zápas uzavřený a má lineupy
+    if (
+      (matchDetails.state === "Done" || matchDetails.state === "Pending") &&
+      matchDetails.lineups &&
+      matchDetails.lineups.length > 0
+    ) {
+      const lineup = matchDetails.lineups.find((l) => l.teamId === team.id);
+      // V lineup.players jsou LineupPlayer objekty, kde je vždy .player
+      return (
+        lineup?.players.map((lp) => {
+          // Najdi odpovídajícího hráče v `players` podle id
+          const base = players.find((p) => p.id === lp.player.id);
+          return base ?? lp.player; // pokud není v players, vezmi z lineup (mělo by sedět)
+        }) ?? []
+      );
+    }
+    // Jinak hráči z týmu, najít je v players (kvůli statistikám)
+    return (team.players ?? []).map((tp) => {
+      const base = players.find((p) => p.id === tp.id);
+      return base ?? tp;
+    });
+  }
 
   useEffect(() => {
     // if (match.score) {
@@ -237,6 +224,7 @@ export const MatchProvider: React.FC<{
         setMatchPhase,
         setMatchStarted,
         resetMatch,
+        getPlayersForTeam,
       }}
     >
       {children}

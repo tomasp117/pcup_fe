@@ -24,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "react-toastify";
+import { Label } from "@radix-ui/react-label";
 
 interface Props {
   open: boolean;
@@ -65,6 +67,7 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
       firstName &&
       lastName &&
       username &&
+      email &&
       password.length >= 7 &&
       /[A-Z]/.test(password) &&
       /[a-z]/.test(password) &&
@@ -81,16 +84,19 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
       !username ||
       !password ||
       !dateOfBirth
-    )
+    ) {
+      toast.error("Prosím vyplňte všechna povinná pole.");
       return;
+    }
 
+    const isoDateOnly = dateOfBirth.toISOString().split("T")[0];
     onSave({
       firstName,
       lastName,
       email,
       phoneNumber,
       address,
-      dateOfBirth: dateOfBirth.toISOString(),
+      dateOfBirth: isoDateOnly, // dateOfBirth.toISOString(),
       username,
       password,
       license,

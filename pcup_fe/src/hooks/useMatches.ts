@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Match } from "@/interfaces/MatchReport/Match";
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -125,7 +126,11 @@ export const useMatchPreview = (id: number) => {
 
       return res.json();
     },
-    refetchInterval: 5000,
+    refetchInterval: (query) => {
+      const match = query.state.data;
+      if (match && match.state === "Done") return false;
+      return 5000;
+    },
   });
 };
 
@@ -141,4 +146,31 @@ export const fetchMatch = async (id: number): Promise<Match> => {
   }
 
   return res.json();
+};
+
+export const useCreateLineups = () => {
+  return useMutation({
+    mutationFn: async (matchId: number) => {
+      const res = await fetch(
+        `${API_URL}/matches/${matchId}/generate-lineups`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Nepodařilo se uložit soupisku.");
+      }
+      //return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Soupisky byly úspěšně uloženy.");
+    },
+    onError: (err) => {
+      toast.error("Chyba při ukládání soupisky.");
+    },
+  });
 };

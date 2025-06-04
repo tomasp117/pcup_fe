@@ -6,15 +6,43 @@ import { Event } from "@/interfaces/MatchReport/Event";
 export const useReconstructedPlayers = (match: Match, events: Event[]) => {
   return useMemo(() => {
     if (!match) return { homePlayers: [], awayPlayers: [] };
-    const playerMap = new Map<number, Player>();
 
-    const allPlayers = [
-      ...(match.homeTeam.players ?? []),
-      ...(match.awayTeam.players ?? []),
-    ];
+    let homePlayers: Player[] = [];
+    let awayPlayers: Player[] = [];
 
-    allPlayers.forEach((p) => {
-      playerMap.set(p.id, {
+    // pokud je zápas hotový a lineupy existují, ber hráče z nich
+    if (match.state === "Done" && match.lineups && match.lineups.length > 0) {
+      const homeLineup = match.lineups.find(
+        (l) => l.teamId === match.homeTeam.id
+      );
+      const awayLineup = match.lineups.find(
+        (l) => l.teamId === match.awayTeam.id
+      );
+
+      homePlayers =
+        homeLineup?.players.map((lp) => ({
+          ...lp.player,
+          goalCount: 0,
+          sevenMeterGoalCount: 0,
+          sevenMeterMissCount: 0,
+          yellowCardCount: 0,
+          redCardCount: 0,
+          twoMinPenaltyCount: 0,
+        })) ?? [];
+
+      awayPlayers =
+        awayLineup?.players.map((lp) => ({
+          ...lp.player,
+          goalCount: 0,
+          sevenMeterGoalCount: 0,
+          sevenMeterMissCount: 0,
+          yellowCardCount: 0,
+          redCardCount: 0,
+          twoMinPenaltyCount: 0,
+        })) ?? [];
+    } else {
+      // jinak klasicky z týmů
+      homePlayers = (match.homeTeam.players ?? []).map((p) => ({
         ...p,
         goalCount: 0,
         sevenMeterGoalCount: 0,
@@ -22,7 +50,23 @@ export const useReconstructedPlayers = (match: Match, events: Event[]) => {
         yellowCardCount: 0,
         redCardCount: 0,
         twoMinPenaltyCount: 0,
-      });
+      }));
+
+      awayPlayers = (match.awayTeam.players ?? []).map((p) => ({
+        ...p,
+        goalCount: 0,
+        sevenMeterGoalCount: 0,
+        sevenMeterMissCount: 0,
+        yellowCardCount: 0,
+        redCardCount: 0,
+        twoMinPenaltyCount: 0,
+      }));
+    }
+
+    // ---- aplikuj eventy na hráče ----
+    const playerMap = new Map<number, Player>();
+    [...homePlayers, ...awayPlayers].forEach((p) => {
+      playerMap.set(p.id, { ...p });
     });
 
     for (const event of events) {
@@ -56,9 +100,10 @@ export const useReconstructedPlayers = (match: Match, events: Event[]) => {
       }
     }
 
+    // finální výstup z mapy
     return {
-      homePlayers: match.homeTeam.players.map((p) => playerMap.get(p.id)!),
-      awayPlayers: match.awayTeam.players.map((p) => playerMap.get(p.id)!),
+      homePlayers: homePlayers.map((p) => playerMap.get(p.id)!),
+      awayPlayers: awayPlayers.map((p) => playerMap.get(p.id)!),
     };
   }, [match, events]);
 };

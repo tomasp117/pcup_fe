@@ -71,7 +71,7 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className=" sm:w-[350px] rounded-lg shadow-md bg-white p-6">
+      <DialogContent className="sm:w-[350px] rounded-lg shadow-md bg-white p-6 max-h-[100dvh] overflow-y-auto">
         <DialogTitle>Přihlášení</DialogTitle>
         <div className="space-y-4">
           <div>

@@ -2,6 +2,7 @@ import { Referee } from "./Person/Roles/Referee";
 import { Team } from "./Team";
 import { Event } from "./Event";
 import { Category } from "./Category";
+import { Lineup } from "./Lineup";
 
 export interface Match {
   id: number;
@@ -18,4 +19,5 @@ export interface Match {
   events: Event[];
   referees: Referee[];
   category: Category;
+  lineups?: Lineup[];
 }

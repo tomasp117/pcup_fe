@@ -16,14 +16,21 @@ import TwoMinuteHandlers from "./TableHandlers/TwoMinuteHandlers";
 import YellowCardHandlers from "./TableHandlers/YellowCardHandlers";
 import { RedCardHandlers } from "./TableHandlers/RedCardHandlers";
 import { Team } from "@/interfaces/MatchReport/Team";
+import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 
 interface MatchTeamTableProps {
   team: Team;
 }
 
 export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
-  const { matchDetails, players, setPlayers, matchStarted, matchState } =
-    useMatchContext();
+  const {
+    matchDetails,
+    players,
+    setPlayers,
+    matchStarted,
+    matchState,
+    getPlayersForTeam,
+  } = useMatchContext();
 
   const { addGoal, GoalType } = GoalHandlers();
   const { addTwoMinutes } = TwoMinuteHandlers();
@@ -34,9 +41,7 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
 
   const isHomeTeam = team === matchDetails.homeTeam;
 
-  const filteredPlayers = players.filter((p) =>
-    team.players.some((tp) => tp.id === p.id)
-  );
+  const teamPlayers = getPlayersForTeam(team);
 
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">
@@ -54,7 +59,7 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredPlayers.map((player, idx) => (
+          {teamPlayers.map((player, idx) => (
             <TableRow
               key={player.id}
               className={idx % 2 === 0 ? "bg-gray-100" : "bg-white"}

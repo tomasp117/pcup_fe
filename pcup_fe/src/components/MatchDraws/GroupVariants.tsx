@@ -51,7 +51,7 @@ export const GroupVariants = ({
               moveTeam={moveTeam}
               moveBack={moveBack}
               removeTeamFromGroup={removeTeamFromGroup}
-              isDraggable={false}
+              isDraggable={true}
               isVariant={true}
             />
           ))}

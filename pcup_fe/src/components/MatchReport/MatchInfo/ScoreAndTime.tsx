@@ -10,9 +10,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useMatchTimer } from "@/hooks/MatchReport/useMatchTimer";
+import { useUpdateMatch } from "@/hooks/useMatches";
 
 import { Play, Pause } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function ScoreAndTime() {
   const {
@@ -27,6 +30,10 @@ export default function ScoreAndTime() {
     startButtonClicked,
     resetMatch,
   } = useMatchTimer();
+
+  const updateMatchMutation = useUpdateMatch();
+
+  const { matchState, matchDetails } = useMatchContext();
 
   function getButtonIcon() {
     if (matchPhase === "finished" || matchPhase === "postMatchConfirm")
@@ -108,17 +115,38 @@ export default function ScoreAndTime() {
             <Tooltip>
               <TooltipTrigger asChild className="">
                 <span>
-                  <Button
-                    variant="destructive"
-                    onClick={() => {
-                      if (confirm("Opravdu chceš celý zápas resetovat?")) {
-                        resetMatch();
-                      }
-                    }}
-                    disabled={!navigator.onLine}
-                  >
-                    Reset zápasu
-                  </Button>
+                  {matchState === "Done" ? (
+                    <Button
+                      variant="destructive"
+                      onClick={async () => {
+                        // zde si můžeš udělat případně confirm dialog
+                        await updateMatchMutation.mutateAsync({
+                          id: matchDetails.id,
+                          timePlayed: timePlayed,
+                          homeScore: homeScore,
+                          awayScore: awayScore,
+                          state: "Pending",
+                        });
+                        toast.success("Zápas je znovu otevřen k editaci.");
+                        window.location.reload();
+                        // můžeš případně refetchnout zápas
+                      }}
+                    >
+                      Editovat zápis
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        if (confirm("Opravdu chceš celý zápas resetovat?")) {
+                          resetMatch();
+                        }
+                      }}
+                      disabled={!navigator.onLine}
+                    >
+                      Reset zápasu
+                    </Button>
+                  )}
                 </span>
               </TooltipTrigger>
               {!navigator.onLine && (

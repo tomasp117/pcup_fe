@@ -1,7 +1,7 @@
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useState, useRef, useEffect } from "react";
 import { useDeleteEventsByMatchId, useReliableAddEvent } from "./useEvent";
-import { useUpdateMatch } from "../useMatches";
+import { useCreateLineups, useUpdateMatch } from "../useMatches";
 import { toast } from "react-toastify";
 import { useApplyMatchStats, useRevertMatchStats } from "../MyTeam/usePlayers";
 
@@ -53,6 +53,8 @@ export const useMatchTimer = () => {
 
   const { mutate: applyStats } = useApplyMatchStats();
 
+  const createLineups = useCreateLineups();
+
   const revertStats = useRevertMatchStats();
 
   const formatTime = (seconds: number) => {
@@ -93,6 +95,18 @@ export const useMatchTimer = () => {
         setTimerPaused(false);
         setMatchState("Done");
         setMatchPhase("postMatchConfirm");
+        return;
+      }
+
+      if (matchDetails.lineups && matchDetails.lineups.length > 0) {
+        setInitialCheckCompleted(true);
+        setStartButtonClicked(true);
+        setMatchStarted(true);
+        setTimerRunning(false);
+        setTimerPaused(false);
+        setMatchState("Pending");
+        setMatchPhase("finished");
+        initializedRef.current = true;
         return;
       }
 
@@ -225,7 +239,6 @@ export const useMatchTimer = () => {
       setTimerPaused(false);
       setMatchPhase("finished");
 
-
       //alert("Zápas skončil. Potvrďte zápis.");
 
       toast.info("Konec 2. poločasu", {
@@ -339,6 +352,8 @@ export const useMatchTimer = () => {
       applyStats(matchDetails.id, {
         onError: () => toast.error("Chyba při aktualizaci statistik hráčů."),
       });
+
+      createLineups.mutate(matchDetails.id);
       toast.success("Zápis potvrzen");
 
       return;

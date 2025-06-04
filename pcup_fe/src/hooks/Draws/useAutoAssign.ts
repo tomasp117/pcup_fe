@@ -19,16 +19,18 @@ export function useAutoAssign(
         `${API_URL}/teams/assign-groups?category=${category}`,
         {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-           },
+          },
           body: JSON.stringify(teamDraws),
         }
       );
 
       if (!response.ok) throw new Error(`Chyba: ${response.status}`);
       const data: GroupVariant[] = await response.json();
+
+      console.log("Auto-assigned variants:", data);
 
       setGroupVariants(data);
 
