@@ -39,48 +39,54 @@ export const InfoCard = () => {
       </Card>
 
       {/* Propozice */}
-      {/* <Card>
+      <Card>
         <CardHeader>
-          <CardTitle>Propozice</CardTitle>
+          <CardTitle>Organizace akce</CardTitle>
         </CardHeader>
         <CardContent>
           <a
-            href="https://www.polankacup.cz/2024/files/propozice.2024.pdf"
+            download
+            href="assets/informace.2025.docx"
             target="_blank"
             rel="noopener noreferrer"
           >
             <Button className="w-full  flex items-center gap-2">
               <FileText className="w-4 h-4" />
-              <span>Informace pro účastníky</span>
+              <span>Informace k organizaci</span>
             </Button>
           </a>
         </CardContent>
-      </Card> */}
+      </Card>
 
-      {/* Dětský den */}
-      {/* <Card>
+      {/* Pozvánka */}
+      <Card>
         <CardHeader>
-          <CardTitle>Dětský den</CardTitle>
+          <CardTitle>Pozvánka</CardTitle>
         </CardHeader>
         <CardContent>
           <a
-            href="https://www.polankacup.cz/2024/files/detsky_den.2024.png"
+            href="assets/pozvanka.2025.pdf"
+            download
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button className="w-full ">Sobota 14:00</Button>
+            <Button className="w-full ">
+              <Download className="w-4 h-4" />
+              Pozvánka
+            </Button>
           </a>
         </CardContent>
-      </Card> */}
+      </Card>
 
       {/* Plakát */}
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Plakát</CardTitle>
         </CardHeader>
         <CardContent>
           <a
-            href="https://www.polankacup.cz/2024/files/plakat.2024.png"
+            href="assets/plakat.2025.pdf"
+            download
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -90,7 +96,7 @@ export const InfoCard = () => {
             </Button>
           </a>
         </CardContent>
-      </Card> */}
+      </Card>
 
       {/* Rozlosování */}
       {/* <Card>
