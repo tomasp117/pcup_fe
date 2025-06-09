@@ -2,6 +2,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Mail, Phone, FileText, Download } from "lucide-react";
 
+const plakatUrl = "../../assets/plakat.2025.pdf";
+const pozvankaUrl = "../../assets/pozvanka.2025.pdf";
+
 export const InfoCard = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -46,7 +49,7 @@ export const InfoCard = () => {
         <CardContent>
           <a
             download
-            href="assets/informace.2025.docx"
+            href="/assets/informace-2025.docx"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -65,8 +68,8 @@ export const InfoCard = () => {
         </CardHeader>
         <CardContent>
           <a
-            href="assets/pozvanka.2025.pdf"
             download
+            href="/assets/pozvanka-2025.pdf"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -85,7 +88,7 @@ export const InfoCard = () => {
         </CardHeader>
         <CardContent>
           <a
-            href="assets/plakat.2025.pdf"
+            href="/assets/plakat-2025.png"
             download
             target="_blank"
             rel="noopener noreferrer"

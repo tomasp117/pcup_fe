@@ -3,10 +3,10 @@ import { Player } from "./Player";
 
 export interface Coach {
   id: number;
-  playerVote: Player | null;
-  goalKeeperVote: Player | null;
+  // playerVote: Player | null;
+  // goalKeeperVote: Player | null;
   license: string;
   teamId: number;
-  categoryId: number;
+  // categoryId: number;
   person: Person;
 }

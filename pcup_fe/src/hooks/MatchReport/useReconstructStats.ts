@@ -10,11 +10,18 @@ export const useReconstructStats = () => {
     setawayScore,
     setPlayers,
     players,
+    matchDetails,
   } = useMatchContext();
 
   const initializedRef = useRef(false);
 
   useEffect(() => {
+    if (!matchDetails) return;
+    if (matchDetails.state === "Done" && events.length === 0) {
+      sethomeScore(matchDetails.homeScore);
+      setawayScore(matchDetails.awayScore);
+      return;
+    }
     if (!events || events.length === 0) return;
     if (players.length === 0) return;
 
@@ -65,5 +72,5 @@ export const useReconstructStats = () => {
     setPlayers(Array.from(playersMap.values()));
     sethomeScore(homeScore);
     setawayScore(awayScore);
-  }, [events]);
+  }, [matchDetails, events, players]);
 };

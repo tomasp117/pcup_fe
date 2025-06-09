@@ -10,6 +10,22 @@ export const useReconstructedPlayers = (match: Match, events: Event[]) => {
     let homePlayers: Player[] = [];
     let awayPlayers: Player[] = [];
 
+    if (match.state === "Done" && events.length === 0) {
+      // použijeme přímo lineup (pokud existuje) nebo týmy
+      const source = match.lineups?.length
+        ? match.lineups.flatMap((l) => l.players.map((lp) => lp.player))
+        : [...match.homeTeam.players, ...match.awayTeam.players];
+
+      homePlayers = source
+        .filter((p) => p.teamId === match.homeTeam.id)
+        .map((p) => ({ ...p, goalCount: 0, sevenMeterGoalCount: 0 /* ... */ }));
+      awayPlayers = source
+        .filter((p) => p.teamId === match.awayTeam.id)
+        .map((p) => ({ ...p /* ... */ }));
+
+      return { homePlayers, awayPlayers };
+    }
+
     // pokud je zápas hotový a lineupy existují, ber hráče z nich
     if (match.state === "Done" && match.lineups && match.lineups.length > 0) {
       const homeLineup = match.lineups.find(

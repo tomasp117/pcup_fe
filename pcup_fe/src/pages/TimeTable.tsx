@@ -1,6 +1,7 @@
 import { CategorySelect } from "@/components/CategorySelect";
 import { MatchSlotRow } from "@/components/Timetable/MatchSlotRow";
 import { PlayoffBracketEditor } from "@/components/Timetable/PlayoffBracketEditor";
+import { SlotManager } from "@/components/Timetable/SlotManager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -17,6 +18,7 @@ import { Category } from "@/interfaces/CategorySelect/ICategory";
 import { GroupDetailDTO } from "@/interfaces/Timetable/GroupDetailDTO";
 import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { set } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -35,6 +37,7 @@ export const TimeTable = () => {
   const [unassignedMatches, setUnassignedMatches] = useState<UnassignedMatch[]>(
     []
   );
+  const courts = Array.from(new Set(matches.map((m) => m.playground)));
 
   const [filterCourt, setFilterCourt] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
@@ -443,8 +446,8 @@ export const TimeTable = () => {
             >
               Přiřadit všechny zápasy do slotů
             </Button>
-
-            <div className="flex flex-col">
+            <SlotManager edition={edition} courts={courts} />
+            {/* <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">Hřiště</label>
               <select
                 value={filterCourt ?? ""}
@@ -460,8 +463,22 @@ export const TimeTable = () => {
                   )
                 )}
               </select>
+            </div> */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">Hřiště</label>
+              <select
+                value={filterCourt ?? ""}
+                onChange={(e) => setFilterCourt(e.target.value || null)}
+                className="border rounded px-3 py-1 min-w-[180px]"
+              >
+                <option value="">Všechna hřiště</option>
+                {courts.map((court) => (
+                  <option key={court} value={court}>
+                    {court}
+                  </option>
+                ))}
+              </select>
             </div>
-
             <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">Kategorie</label>
               <select
@@ -491,49 +508,55 @@ export const TimeTable = () => {
             </div>
           </div>
         </div>
-        <Table>
-          <TableHeader className="bg-primary/10">
-            <TableRow>
-              <TableHead className="">Čas</TableHead>
-              <TableHead>Hřiště</TableHead>
-              <TableHead>Zápas</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading && (
+        <div
+          className="
+          overflow-y-auto max-h-[100vh] min-h-[300px] rounded-lg border border-gray-200 shadow-sm p-4 mb-4
+        "
+        >
+          <Table>
+            <TableHeader className="bg-primary/10">
               <TableRow>
-                <TableCell colSpan={3} className="text-center">
-                  Načítání slotů...
-                </TableCell>
+                <TableHead className="">Čas</TableHead>
+                <TableHead>Hřiště</TableHead>
+                <TableHead>Zápas</TableHead>
               </TableRow>
-            )}
-            {error && (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center text-red-500">
-                  {error}
-                </TableCell>
-              </TableRow>
-            )}
-            {!isLoading &&
-              filteredMatches
-                .slice()
-                .sort(
-                  (a, b) =>
-                    new Date(a.time).getTime() - new Date(b.time).getTime()
-                )
-                .map((match) => (
-                  <MatchSlotRow
-                    key={match.id}
-                    match={match}
-                    unassignedMatches={unassignedMatches}
-                    onAssign={handleAssignUnassignedMatch}
-                    category={
-                      categories.find((cat) => cat.id === categoryId)?.name
-                    }
-                  />
-                ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {isLoading && (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center">
+                    <Loader2 className="animate-spin h-6 w-6 text-gray-500" />
+                  </TableCell>
+                </TableRow>
+              )}
+              {error && (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center text-red-500">
+                    {error}
+                  </TableCell>
+                </TableRow>
+              )}
+              {!isLoading &&
+                filteredMatches
+                  .slice()
+                  .sort(
+                    (a, b) =>
+                      new Date(a.time).getTime() - new Date(b.time).getTime()
+                  )
+                  .map((match) => (
+                    <MatchSlotRow
+                      key={match.id}
+                      match={match}
+                      unassignedMatches={unassignedMatches}
+                      onAssign={handleAssignUnassignedMatch}
+                      category={
+                        categories.find((cat) => cat.id === categoryId)?.name
+                      }
+                    />
+                  ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <Button
         className="w-fit"

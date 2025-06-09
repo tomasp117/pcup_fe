@@ -183,70 +183,71 @@ export const ClubAdminPage = () => {
               <div>
                 <strong>Trenér:</strong>{" "}
                 {team.coach ? (
-                  <span>
-                    {team.coach.person.firstName} {team.coach.person.lastName}
-                  </span>
+                  <>
+                    <span>
+                      {team.coach.person.firstName} {team.coach.person.lastName}
+                    </span>
+                    {/* toggle details */}
+                    <Button
+                      size="sm"
+                      className="ml-4"
+                      onClick={() =>
+                        setVisibleCoachDetails((v) =>
+                          v === team.id ? null : team.id
+                        )
+                      }
+                    >
+                      {visibleCoachDetails === team.id
+                        ? "Skrýt detaily"
+                        : "Zobrazit detaily"}
+                    </Button>
+                    {/* delete */}
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="ml-2"
+                      onClick={() =>
+                        confirm(
+                          `Opravdu chceš odstranit trenéra ${team.coach?.person.firstName} ${team.coach?.person.lastName}?`
+                        ) && handleDeleteCoach(team.coach.id)
+                      }
+                    >
+                      Odstranit trenéra
+                    </Button>
+
+                    {visibleCoachDetails === team.id && (
+                      <div className="mt-2 space-y-1 text-sm">
+                        <div>
+                          <strong>Id:</strong> {team.coach.id}
+                        </div>
+                        <div>
+                          <strong>Email:</strong> {team.coach.person.email}
+                        </div>
+                        <div>
+                          <strong>Telefon:</strong>{" "}
+                          {team.coach.person.phoneNumber}
+                        </div>
+                        <div>
+                          <strong>Adresa:</strong> {team.coach.person.address}
+                        </div>
+                        <div>
+                          <strong>Datum narození:</strong>{" "}
+                          {format(
+                            new Date(team.coach.person.dateOfBirth),
+                            "dd.MM.yyyy"
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <Button
                     variant="default"
                     size="sm"
                     onClick={() => setSelectedTeamId(team.id)}
                   >
-                    <Plus className="w-4 h-4 mr-1" />
-                    Přidat trenéra
+                    <Plus className="w-4 h-4 mr-1" /> Přidat trenéra
                   </Button>
-                )}
-                {visibleCoachDetails === team.id ? (
-                  <div className="space-y-1 mt-2 text-sm">
-                    <div>
-                      <strong>Id:</strong> {team.coach.id}
-                    </div>
-                    <div>
-                      <strong>Email:</strong> {team.coach.person.email}
-                    </div>
-                    <div>
-                      <strong>Telefon:</strong> {team.coach.person.phoneNumber}
-                    </div>
-                    <div>
-                      <strong>Adresa:</strong> {team.coach.person.address}
-                    </div>
-                    <div>
-                      <strong>Datum narození:</strong>{" "}
-                      {format(
-                        new Date(team.coach.person.dateOfBirth),
-                        "dd.MM.yyyy"
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  team.coach && (
-                    <Button
-                      className="ml-4"
-                      size="sm"
-                      onClick={() => setVisibleCoachDetails(team.id)}
-                    >
-                      Zobrazit detaily
-                    </Button>
-                  )
-                )}
-                {team.coach && (
-                  <>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        if (
-                          confirm(
-                            `Opravdu chceš odstranit trenéra ${team.coach?.person.firstName} ${team.coach?.person.lastName}?`
-                          )
-                        ) {
-                          handleDeleteCoach(team.coach.id);
-                        }
-                      }}
-                    >
-                      Odstranit trenéra
-                    </Button>
-                  </>
                 )}
               </div>
               <div>

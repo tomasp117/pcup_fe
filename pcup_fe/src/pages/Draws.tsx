@@ -246,7 +246,11 @@ export const Draws = () => {
             <h2 className="text-xl font-bold">Rozdělování týmů do skupin</h2>
           </CardHeader>
           <CardContent className="flex gap-4 items-center">
-            <CategorySelect value={category} onChange={handleCategoryChange} />
+            <CategorySelect
+              value={category}
+              onChange={handleCategoryChange}
+              noMini41
+            />
           </CardContent>
         </Card>
         <div className="flex_col sm:flex gap-8">

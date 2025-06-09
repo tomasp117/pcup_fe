@@ -16,6 +16,8 @@ import {
   useDeleteLastEvent,
   useMatchEvents,
 } from "@/hooks/MatchReport/useEvent";
+import { useCreateLineups, useUpdateMatch } from "@/hooks/useMatches";
+import { toast } from "react-toastify";
 
 export const MatchLog = () => {
   const {
@@ -28,6 +30,9 @@ export const MatchLog = () => {
     updatePlayerStats,
     timerRunning,
     matchStarted,
+    setMatchState,
+    setMatchPhase,
+    setTimerRunning,
   } = useMatchContext();
 
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null); // Stav pro sledování hoveru na posledním eventu
@@ -40,9 +45,13 @@ export const MatchLog = () => {
 
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const createLineups = useCreateLineups();
+
   const { data: loadedEvents } = useMatchEvents(matchDetails.id);
 
   const deleteEventMutation = useDeleteLastEvent();
+
+  const updateMatch = useUpdateMatch();
 
   useEffect(() => {
     if (loadedEvents) {
@@ -119,6 +128,43 @@ export const MatchLog = () => {
     });
   };
 
+  // team = "L" pro domácí, "R" pro hosty – tento tým kontumuje
+  const handleForfeit = (team: "L" | "R") => {
+    if (!matchDetails) return;
+    // když domácí kontumují, domácí = 0, hosté = 10; a naopak
+    const homeScore = team === "L" ? 0 : 10;
+    const awayScore = team === "R" ? 0 : 10;
+
+    updateMatch.mutate(
+      {
+        id: matchDetails.id,
+        timePlayed: "00:00",
+        homeScore,
+        awayScore,
+        state: "Done",
+      },
+      {
+        onSuccess: () => {
+          setTimerRunning(false);
+
+          setMatchState("Done");
+          setMatchPhase("postMatchConfirm");
+          // synchronizace UI
+          sethomeScore(homeScore);
+          setawayScore(awayScore);
+          // pokud máte v kontextu metodu pro stav, zavolejte ji:
+
+          createLineups.mutate(matchDetails.id);
+
+          toast.success("Kontumace provedena");
+        },
+        onError: () => {
+          toast.error("Nepodařilo se provést kontumaci");
+        },
+      }
+    );
+  };
+
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">
       <Table className="min-w-full border border-gray-200 rounded-lg overflow-hidden table-fixed">
@@ -136,10 +182,23 @@ export const MatchLog = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {!matchStarted ? (
+          {!matchStarted && matchState !== "Done" ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center w-full">
-                <Button variant="goalInfo">Zápas nezačal</Button>
+              <TableCell className="text-center w-full">
+                <Button
+                  variant="destructive"
+                  onClick={() => handleForfeit("L")}
+                >
+                  Kontumace
+                </Button>
+              </TableCell>
+              <TableCell className="text-center w-full">
+                <Button variant="goalInfo" onClick={() => handleForfeit("R")}>
+                  Zápas nezačal
+                </Button>
+              </TableCell>
+              <TableCell className="text-center w-full">
+                <Button variant="destructive">Kontumace</Button>
               </TableCell>
             </TableRow>
           ) : (

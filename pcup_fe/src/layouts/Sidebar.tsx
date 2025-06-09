@@ -147,7 +147,7 @@ export const Sidebar = () => {
           </SheetTrigger>
           <SheetContentNoClose
             side="left"
-            className="w-64 bg-white p-4 flex flex-col h-screen"
+            className="w-64 bg-white p-4 flex flex-col"
           >
             {/* OPRAVA - Přidání SheetHeader s SheetTitle */}
             <SheetHeader>
