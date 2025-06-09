@@ -22,6 +22,7 @@ import {
   Workflow,
   Sliders,
   FolderPlus,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -303,7 +304,7 @@ export const Sidebar = () => {
                             {item.dynamicChildren ? (
                               isLoading ? (
                                 <div className="px-4 py-2 text-sm text-muted-foreground">
-                                  Načítám...
+                                  <Loader2 className="animate-spin w-4 h-4 mr-2 inline-block" />
                                 </div>
                               ) : (
                                 categories?.map((category: Category) => (

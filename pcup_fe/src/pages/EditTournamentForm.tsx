@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useTournament, useUpdateTournament } from "@/hooks/useTournaments";
+import { Loader2 } from "lucide-react";
 
 type FormValues = {
   name: string;
@@ -43,7 +44,10 @@ export const EditTournamentForm = () => {
     );
   };
 
-  if (isLoading) return <p>Načítám turnaj...</p>;
+  if (isLoading)
+    return (
+      <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
+    );
 
   return (
     <div className="max-w-md mx-auto space-y-6 mt-8">

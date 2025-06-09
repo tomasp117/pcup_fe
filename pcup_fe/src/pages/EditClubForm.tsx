@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useClubDetail, useUpdateClub } from "@/hooks/useClubs";
+import { Loader2 } from "lucide-react";
 
 type FormValues = {
   name: string;
@@ -54,7 +55,10 @@ export const EditClubForm = () => {
     );
   };
 
-  if (isLoading) return <p>Načítám klub...</p>;
+  if (isLoading)
+    return (
+      <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
+    );
 
   return (
     <div className="max-w-md mx-auto space-y-6 mt-8">

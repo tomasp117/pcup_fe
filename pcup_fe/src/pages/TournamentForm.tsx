@@ -7,7 +7,7 @@ import {
   useTournaments,
 } from "@/hooks/useTournaments";
 import { useNavigate } from "react-router-dom";
-import { Delete, Pencil, X } from "lucide-react";
+import { Delete, Loader2, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 
 type TournamentFormProps = {
@@ -68,7 +68,7 @@ export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
         <h3 className="font-semibold">Nebo vyber existující turnaj:</h3>
 
         {isLoading ? (
-          <p>Načítám...</p>
+          <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
         ) : (
           <div className="space-y-2">
             {tournaments?.map((tournament) => (

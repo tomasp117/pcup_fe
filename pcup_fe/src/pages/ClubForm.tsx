@@ -5,7 +5,7 @@ import Papa from "papaparse";
 import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { MoveRight, Pencil, X } from "lucide-react";
+import { Loader2, MoveRight, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useClubs, useCreateClub, useDeleteClub } from "@/hooks/useClubs";
 import { Club } from "@/interfaces/MatchReport/Club";
@@ -164,7 +164,7 @@ export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
         <h3 className="font-semibold">Existující kluby:</h3>
 
         {isLoading ? (
-          <p>Načítám...</p>
+          <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto" />
         ) : (
           <div className="space-y-2">
             {clubs?.map((club) => (
@@ -216,7 +216,7 @@ export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
             className="text-sm text-muted-foreground"
             onClick={() => onSkip?.()}
           >
-            Přeskočit krok kategorií <MoveRight size={16} className="ml-1" />
+            Přeskočit krok klubů <MoveRight size={16} className="ml-1" />
           </Button>
         </div>
       )}

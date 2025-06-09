@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useUser } from "@/Contexts/UserContext";
+import { Loader } from "lucide-react";
 
 export const MatchSelector = () => {
   const { data: matches, isLoading } = useMatches();
@@ -88,7 +89,7 @@ export const MatchSelector = () => {
       </Select>
 
       {isLoading ? (
-        <p>Načítám zápasy...</p>
+        <Loader className="animate-spin w-8 h-8 text-primary mx-auto" />
       ) : filteredMatches?.length ? (
         <div className="w-full border rounded-md overflow-hidden">
           {/* Header */}
@@ -99,6 +100,7 @@ export const MatchSelector = () => {
             <div className="flex-1 px-2">Hřiště</div>
             <div className="w-16 px-2">Čas</div>
             <div className="w-20 px-2">Stav</div>
+            <div className="w-20 px-2">Výsledek</div>
           </div>
 
           {/* Rows */}
@@ -137,6 +139,9 @@ export const MatchSelector = () => {
               </div>
               <div className="w-16 px-2 truncate">{formatTime(match.time)}</div>
               <div className="w-20 px-2 truncate">{match.state}</div>
+              <div className="w-20 px-2 truncate">
+                {match.homeScore} : {match.awayScore}
+              </div>
             </Button>
           ))}
         </div>

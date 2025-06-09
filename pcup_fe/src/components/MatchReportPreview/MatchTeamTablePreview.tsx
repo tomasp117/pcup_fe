@@ -33,9 +33,9 @@ export const MatchTeamTablePreview = ({
 
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">
-      <div className="flex items-center justify-between p-4 bg-gray-100">
-        <h2 className="text-lg font-semibold text-gray-800">
-          {isHomeTeam ? "Domácí" : "Hostující"}
+      <div className="flex items-center justify-between p-4 bg-primary/80 text-white">
+        <h2 className="text-lg font-semibold">
+          {isHomeTeam ? "Domácí" : "Hosté"}
         </h2>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium ">{team.name}</span>
@@ -59,7 +59,7 @@ export const MatchTeamTablePreview = ({
           {players.map((player, idx) => (
             <TableRow
               key={player.id}
-              className={idx % 2 === 0 ? "bg-gray-100" : "bg-white"}
+              className={idx % 2 === 0 ? "bg-primary/5" : "bg-primary/10"}
             >
               <TableCell className="font-medium">{player.number}</TableCell>
               <TableCell className="font-medium">

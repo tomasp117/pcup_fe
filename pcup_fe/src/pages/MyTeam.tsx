@@ -19,7 +19,7 @@ import {
   useRemoveFromTeam,
   useUpdatePlayer,
 } from "@/hooks/MyTeam/usePlayers";
-import { Trash2, Pencil, Save, X, Plus } from "lucide-react";
+import { Trash2, Pencil, Save, X, Plus, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 export const MyTeam = () => {
@@ -188,7 +188,10 @@ export const MyTeam = () => {
     );
   };
 
-  if (isLoading) return <p>Načítám tým…</p>;
+  if (isLoading)
+    return (
+      <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
+    );
 
   if (error) {
     return (

@@ -16,7 +16,15 @@ import {
   useDeleteCategory,
 } from "@/hooks/useCategories";
 import { useNavigate } from "react-router-dom";
-import { Link2, LucideLink, MoveRight, Pencil, Pointer, X } from "lucide-react";
+import {
+  Link2,
+  Loader2,
+  LucideLink,
+  MoveRight,
+  Pencil,
+  Pointer,
+  X,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 type FormValues = {
@@ -89,11 +97,11 @@ export const CategoryForm = ({
         )}
 
         <div className="flex gap-2">
-          {onBack && (
+          {/* {onBack && (
             <Button type="button" variant="default" onClick={onBack}>
               Zpět
             </Button>
-          )}
+          )} */}
           <Button type="submit" disabled={isPending}>
             {isPending ? "Ukládám..." : "Vytvořit kategorii"}
           </Button>
@@ -113,7 +121,7 @@ export const CategoryForm = ({
           <h3 className="font-semibold">Existující kategorie:</h3>
 
           {loadingCategories ? (
-            <p>Načítám kategorie...</p>
+            <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto" />
           ) : categories.length > 0 ? (
             <div className="space-y-2">
               {categories.map((category) => (

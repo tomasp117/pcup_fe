@@ -7,6 +7,7 @@ import {
   useTournamentInstance,
   useUpdateTournamentInstance,
 } from "@/hooks/useTournamentInstances";
+import { Loader2 } from "lucide-react";
 
 type FormValues = {
   editionNumber: number;
@@ -52,7 +53,10 @@ export const EditTournamentInstanceForm = () => {
     );
   };
 
-  if (isLoading) return <p>Načítám instanci...</p>;
+  if (isLoading)
+    return (
+      <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
+    );
 
   return (
     <div className="max-w-md mx-auto space-y-6 mt-8">

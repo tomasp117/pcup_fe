@@ -11,6 +11,7 @@ import { Groups } from "@/components/Category/Groups";
 import { Matches } from "@/components/Category/Matches";
 import { Standings } from "@/components/Category/Standings";
 import { parse } from "path";
+import { Loader2 } from "lucide-react";
 
 const tabs = ["Účastníci", "Skupiny", "Utkání", "Tabulky"];
 const API_URL = import.meta.env.VITE_API_URL;
@@ -71,7 +72,9 @@ export const CategoryPage = () => {
       </div>
 
       <div>
-        {isLoading && <p>Načítám kategorii...</p>}
+        {isLoading && (
+          <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto" />
+        )}
         {error && <p>Chyba při načítání kategorie.</p>}
 
         {category && activeTab === "Účastníci" && (

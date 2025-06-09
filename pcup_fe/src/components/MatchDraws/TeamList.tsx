@@ -10,6 +10,7 @@ import {
 import { DraggableTeam } from "./DraggableTeam";
 import { TeamDraw } from "@/interfaces/Draws/TeamDraw";
 import { GroupVariant } from "@/interfaces/Draws/GroupVariant";
+import { Loader2 } from "lucide-react";
 
 interface TeamListProps {
   teams: TeamDraw[];
@@ -70,7 +71,7 @@ export const TeamList = ({
       )}
 
       {isLoading ? (
-        <p>Načítání...</p>
+        <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto" />
       ) : (
         <Table>
           <TableHeader className="bg-primary/10">

@@ -58,7 +58,7 @@ export const Groups = ({ categoryId }: { categoryId: number }) => {
                   {group.teams.map((team, index) => (
                     <TableRow
                       key={team.id}
-                      className="even:bg-gray-200 odd:bg-white"
+                      className="even:bg-primary/10 odd:bg-primary/5"
                     >
                       <TableCell>{index + 1}.</TableCell>
                       <TableCell>

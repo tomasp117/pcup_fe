@@ -9,6 +9,7 @@ import {
 
 import { Category } from "@/interfaces/CategorySelect/ICategory";
 import { useCategories } from "@/hooks/useCategories";
+import { Loader2 } from "lucide-react";
 
 interface CategorySelectProps {
   value: number | null;
@@ -41,7 +42,8 @@ export const CategorySelect = ({
     }
   }, [isLoading, error, categories, value, noMini41, onChange]);
 
-  if (isLoading) return <p>Načítání kategorií...</p>;
+  if (isLoading)
+    return <Loader2 className="animate-spin w-8 h-8 text-primary" />;
   if (error)
     return <p className="text-red-500">Chyba při načítání kategorií.</p>;
 

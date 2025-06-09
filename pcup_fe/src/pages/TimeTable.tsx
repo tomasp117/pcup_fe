@@ -375,7 +375,9 @@ export const TimeTable = () => {
           />
         </CardContent>
       </Card>
-      {isLoading && <p>Načítání zápasů...</p>}
+      {isLoading && (
+        <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto" />
+      )}
       {error && <p className="text-red-500">{error}</p>}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {groups.length === 0 && !isLoading && (

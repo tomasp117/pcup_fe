@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Pencil, X } from "lucide-react";
+import { Loader2, Pencil, X } from "lucide-react";
 
 type FormValues = {
   tournamentId: string;
@@ -112,11 +112,11 @@ export const TournamentInstanceForm = ({
         )}
 
         <div className="flex gap-2">
-          {onBack && (
+          {/* {onBack && (
             <Button type="button" variant="default" onClick={onBack}>
               Zpět
             </Button>
-          )}
+          )} */}
           <Button type="submit" disabled={isPending}>
             {isPending ? "Ukládám..." : "Vytvořit instanci"}
           </Button>
@@ -131,7 +131,7 @@ export const TournamentInstanceForm = ({
           <h3 className="font-semibold">Nebo vyber existující edici:</h3>
 
           {loadingInstances ? (
-            <p>Načítám edice...</p>
+            <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
           ) : instances.length > 0 ? (
             <div className="space-y-2">
               {instances.map((instance) => (

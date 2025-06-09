@@ -72,5 +72,5 @@ export const useReconstructStats = () => {
     setPlayers(Array.from(playersMap.values()));
     sethomeScore(homeScore);
     setawayScore(awayScore);
-  }, [matchDetails, events, players]);
+  }, [matchDetails, events]);
 };

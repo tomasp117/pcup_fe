@@ -8,6 +8,7 @@ import { MatchLogPreview } from "@/components/MatchReportPreview/MatchLogPreview
 import { useMatchPreview } from "@/hooks/useMatches";
 import { useReconstructedPlayers } from "@/hooks/usePlayers";
 import { useMatchEventsPreview } from "@/hooks/MatchReport/useEvent";
+import { Loader2 } from "lucide-react";
 
 export const MatchPreviewPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,10 @@ export const MatchPreviewPage = () => {
     match!,
     events ?? []
   );
-  if (isLoading || !match) return <div>Načítání...</div>;
+  if (isLoading || !match)
+    return (
+      <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
+    );
   console.log("MatchPreviewPage", match);
   return (
     <div className="flex flex-col gap-8">

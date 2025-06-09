@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, X } from "lucide-react";
+import { Loader2, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useClubs } from "@/hooks/useClubs";
 import { useCategories } from "@/hooks/useCategories";
@@ -208,7 +208,7 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
       <div className="border-t pt-6 mt-6 space-y-4">
         <h3 className="font-semibold">Existující týmy:</h3>
         {isLoading ? (
-          <p>Načítám...</p>
+          <Loader2 className="animate-spin w-8 h-8 text-primary mx-auto mt-8" />
         ) : (
           <div
             className="space-y-2 max-h-[60vh]
