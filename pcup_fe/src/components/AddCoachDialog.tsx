@@ -67,7 +67,6 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
       firstName &&
       lastName &&
       username &&
-      email &&
       password.length >= 7 &&
       /[A-Z]/.test(password) &&
       /[a-z]/.test(password) &&
@@ -77,14 +76,7 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
   };
 
   const handleSubmit = () => {
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !username ||
-      !password ||
-      !dateOfBirth
-    ) {
+    if (!firstName || !lastName || !username || !password || !dateOfBirth) {
       toast.error("Prosím vyplňte všechna povinná pole.");
       return;
     }
