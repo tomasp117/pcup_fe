@@ -139,85 +139,120 @@ export const Sidebar = () => {
   return (
     <div className="flex">
       {/* Mobilní Sidebar */}
-      {isMobile && (
-        <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
-          <SheetTrigger asChild>
-            <button className="fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-md md:hidden">
-              <Menu size={24} />
-            </button>
-          </SheetTrigger>
-          <SheetContentNoClose
-            side="left"
-            className="w-64 bg-white p-4 flex flex-col"
-          >
-            {/* OPRAVA - Přidání SheetHeader s SheetTitle */}
-            <SheetHeader>
-              <SheetTitle>
-                <div className="flex items-center justify-center">
-                  <img src={polankaLogo} alt="HandballApp" className="h-12" />
-                </div>
-              </SheetTitle>
-            </SheetHeader>
-
-            <button
-              onClick={() => setIsMobileOpen(false)}
-              className="absolute top-4 right-4"
+      <TooltipProvider>
+        {isMobile && (
+          <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+            <SheetTrigger asChild>
+              <button className="fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-md md:hidden">
+                <Menu size={24} />
+              </button>
+            </SheetTrigger>
+            <SheetContentNoClose
+              side="left"
+              className="w-64 bg-white p-4 flex flex-col"
             >
-              <X size={24} />
-            </button>
-
-            <div className="flex-1 overflow-auto">
-              <ul className="mt-6 flex flex-col space-y-2">
-                {menuItems
-                  .filter((item) => {
-                    if (!item.roles) return true;
-                    return user && item.roles.includes(user.role);
-                  })
-                  .map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path || "#"}
-                      className={cn(
-                        "flex items-center px-4 py-2 rounded-lg transition-all",
-                        isActive(item)
-                          ? "bg-primary text-white"
-                          : " hover:bg-primary/10"
-                      )}
-                      onClick={() => setIsMobileOpen(false)}
-                    >
-                      {item.icon}
-                      <span className="ml-3">{item.name}</span>
-                    </Link>
-                  ))}
-              </ul>
-            </div>
-
-            {/* Login Button ZAROVNANÝ DOLŮ */}
-            <div className="p-4 border-t flex items-center justify-center">
-              {user ? (
-                <div className="flex flex-col items-center space-y-2 w-full">
-                  <div className="flex items-center space-x-2">
-                    <UserCircle size={36} />
-                    <div>
-                      <p className="font-semibold">{user.username}</p>
-                      <p className="text-sm text-gray-500">{user.role}</p>
-                    </div>
+              {/* OPRAVA - Přidání SheetHeader s SheetTitle */}
+              <SheetHeader>
+                <SheetTitle>
+                  <div className="flex items-center justify-center">
+                    <img src={polankaLogo} alt="HandballApp" className="h-12" />
                   </div>
-                  <button
+                </SheetTitle>
+              </SheetHeader>
+
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="absolute top-4 right-4"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="flex-1 overflow-auto">
+                <ul className="mt-6 flex flex-col space-y-2">
+                  {menuItems
+                    .filter((item) => {
+                      if (!item.roles) return true;
+                      return user && item.roles.includes(user.role);
+                    })
+                    .map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.path || "#"}
+                        className={cn(
+                          "flex items-center px-4 py-2 rounded-lg transition-all",
+                          isActive(item)
+                            ? "bg-primary text-white"
+                            : " hover:bg-primary/10"
+                        )}
+                        onClick={() => setIsMobileOpen(false)}
+                      >
+                        {item.icon}
+                        <span className="ml-3">{item.name}</span>
+                      </Link>
+                    ))}
+                </ul>
+              </div>
+
+              {/* Login Button ZAROVNANÝ DOLŮ */}
+              <div className="p-4 border-t flex items-center justify-center">
+                {user ? (
+                  <div className="flex flex-col items-center space-y-2 w-full">
+                    <div className="flex items-center space-x-2">
+                      <UserCircle size={36} />
+                      <div>
+                        <p className="font-semibold">{user.username}</p>
+                        <p className="text-sm text-gray-500">{user.role}</p>
+                      </div>
+                    </div>
+                    {/* <button
                     onClick={logout}
                     className="text-red-500 w-full text-center py-2 rounded-md hover:bg-red-100"
                   >
                     Odhlásit se
-                  </button>
-                </div>
-              ) : (
-                <LoginDialog isCollapsed={false} />
-              )}
-            </div>
-          </SheetContentNoClose>
-        </Sheet>
-      )}
-      <TooltipProvider>
+                  </button> */}
+                    <div className="flex space-x-4 mt-2">
+                      {user.role === "Coach" && (
+                        <Link to="/my-team" className="sidebar-item-hover">
+                          <Link
+                            to="/my-team"
+                            className="w-full"
+                            onClick={() => setIsMobileOpen(false)}
+                          >
+                            <Button className="w-full justify-start">
+                              <Users className="mr-2" size={20} />
+                              Můj tým
+                            </Button>
+                          </Link>
+                        </Link>
+                      )}
+                      {user.role === "ClubAdmin" && (
+                        <Link
+                          to="/my-club"
+                          className="w-full"
+                          onClick={() => setIsMobileOpen(false)}
+                        >
+                          <Button className="w-full justify-start">
+                            <Users className="mr-2" size={20} />
+                            Můj klub
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                    <button
+                      onClick={logout}
+                      className="text-red-500 w-full text-center py-2 rounded-md hover:bg-red-100 mt-2"
+                    >
+                      Odhlásit se
+                    </button>
+                  </div>
+                ) : (
+                  <LoginDialog isCollapsed={false} />
+                )}
+              </div>
+            </SheetContentNoClose>
+          </Sheet>
+        )}
+
         {/* Desktop Sidebar */}
         {!isMobile && (
           <div
@@ -381,15 +416,15 @@ export const Sidebar = () => {
             <div className="border-t flex flex-col items-center p-4 space-y-2">
               {user ? (
                 <>
-                  <div className="flex items-center space-x-2">
-                    {!isCollapsed && (
+                  {!isCollapsed && (
+                    <div className="flex items-center space-x-2">
+                      <UserCircle size={32} />
                       <div>
-                        <UserCircle size={32} />
                         <p className="font-semibold">{user.username}</p>
                         <p className="text-sm text-gray-500">{user.role}</p>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Sekce tlačítek */}
                   {isCollapsed ? (
