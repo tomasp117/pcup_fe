@@ -61,7 +61,7 @@ export const GroupList = ({
       <div className="flex justify-between items-center">
         <Button
           onClick={() => onUpdateCount(groups.length - 1)}
-          disabled={groups.length <= 1}
+          disabled={groups.length <= 2}
           className="p-2"
         >
           <Minus />

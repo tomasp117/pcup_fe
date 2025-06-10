@@ -184,7 +184,7 @@ export const Draws = () => {
     }
 
     const newGroups = Array.from({ length: newCount }, (_, index) => ({
-      id: groups[index]?.id,
+      id: index + 1,
       name: `${String.fromCharCode(65 + index)}`,
       teams: groups[index]?.teams || [],
     }));
