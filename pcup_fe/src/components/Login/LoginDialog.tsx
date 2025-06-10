@@ -51,8 +51,13 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
-      const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
-      setUser({ username: decodedToken.unique_name, role: decodedToken.role });
+      const base64Url = data.token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const binary = atob(base64);
+      const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+      const decodedPayload = new TextDecoder().decode(bytes);
+      const payload = JSON.parse(decodedPayload);
+      setUser({ username: payload.unique_name, role: payload.role });
 
       setIsOpen(false);
     } catch (error) {
