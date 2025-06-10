@@ -90,7 +90,12 @@ export const router = createBrowserRouter([
       {
         path: "match-report/:id",
         loader: async ({ params }) => {
-          const res = await fetch(`${API_URL}/matches/${params.id}`);
+          const res = await fetch(`${API_URL}/matches/${params.id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
           if (!res.ok) throw new Response("Match not found", { status: 404 });
           return res.json();
         },
