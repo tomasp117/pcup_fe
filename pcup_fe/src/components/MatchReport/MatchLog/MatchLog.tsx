@@ -19,6 +19,7 @@ import {
 import { useCreateLineups, useUpdateMatch } from "@/hooks/useMatches";
 import { toast } from "react-toastify";
 import { set } from "date-fns";
+import { usePenaltyTimer } from "@/hooks/MatchReport/usePenaltyTimer";
 
 export const MatchLog = () => {
   const {
@@ -34,7 +35,10 @@ export const MatchLog = () => {
     setMatchState,
     setMatchPhase,
     setTimerRunning,
+    clearPenalty,
   } = useMatchContext();
+
+  //const { clearPenalty } = usePenaltyTimer(timerRunning, matchState === "None");
 
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null); // Stav pro sledování hoveru na posledním eventu
 
@@ -121,6 +125,10 @@ export const MatchLog = () => {
               ) {
                 updatedPlayer.redCardCount = 0;
               }
+              clearPenalty(updatedPlayer.id);
+              console.log(
+                `Two-minute penalty cleared for player ${updatedPlayer.id}`
+              );
             }
 
             if (type === "Y") updatedPlayer.yellowCardCount = 0;

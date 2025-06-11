@@ -32,6 +32,8 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
     matchState,
     getPlayersForTeam,
     timerRunning,
+    getPenaltyLeft,
+    addPenalty,
   } = useMatchContext();
 
   const { addGoal, GoalType } = GoalHandlers();
@@ -47,10 +49,10 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
 
   const isCounting = timerRunning;
   // will clear all when matchState flips to "None"
-  const { addPenalty, getPenaltyLeft } = usePenaltyTimer(
-    isCounting,
-    matchState === "None"
-  );
+  // const { addPenalty, getPenaltyLeft } = usePenaltyTimer(
+  //   isCounting,
+  //   matchState === "None"
+  // );
 
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">

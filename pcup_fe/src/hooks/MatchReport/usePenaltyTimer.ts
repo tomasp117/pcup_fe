@@ -54,6 +54,15 @@ export function usePenaltyTimer(isCounting: boolean, shouldReset: boolean) {
     }));
   }
 
+  function clearPenalty(playerId: number) {
+    setExpiries((prev) => {
+      const { [playerId]: _, ...rest } = prev;
+      return rest;
+    });
+
+    console.log(`Penalty cleared for player ${playerId}`);
+  }
+
   function getPenaltyLeft(playerId: number): number | null {
     const exp = expiries[playerId];
     if (!exp) return null;
@@ -61,5 +70,5 @@ export function usePenaltyTimer(isCounting: boolean, shouldReset: boolean) {
     return left > 0 ? left : null;
   }
 
-  return { addPenalty, getPenaltyLeft };
+  return { addPenalty, getPenaltyLeft, clearPenalty };
 }

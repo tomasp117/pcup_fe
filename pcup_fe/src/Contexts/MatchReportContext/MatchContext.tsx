@@ -3,6 +3,7 @@ import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 import { Team } from "@/interfaces/MatchReport/Team";
 import { Event } from "@/interfaces/MatchReport/Event";
 import React, { createContext, useState, ReactNode, useEffect } from "react";
+import { usePenaltyTimer } from "@/hooks/MatchReport/usePenaltyTimer";
 
 type MatchState = "None" | "Generated" | "Pending" | "Done";
 type MatchPhase =
@@ -44,6 +45,9 @@ interface MatchContextProps {
   setMatchStarted: React.Dispatch<React.SetStateAction<boolean>>;
   resetMatch: () => void;
   getPlayersForTeam: (team: Team) => Player[];
+  addPenalty: (...args: any[]) => void;
+  clearPenalty: (...args: any[]) => void;
+  getPenaltyLeft: (...args: any[]) => any;
 }
 
 const MatchContext = createContext<MatchContextProps | undefined>(undefined);
@@ -65,6 +69,8 @@ export const MatchProvider: React.FC<{
   const [matchStarted, setMatchStarted] = useState<boolean>(false);
 
   const [matchPhase, setMatchPhase] = useState<MatchPhase>("firstHalf");
+
+  const penalty = usePenaltyTimer(timerRunning, matchState === "None");
 
   const addEvent = (event: Event) => {
     setEvents((prevEvents) => [...prevEvents, event]);
@@ -225,6 +231,9 @@ export const MatchProvider: React.FC<{
         setMatchStarted,
         resetMatch,
         getPlayersForTeam,
+        addPenalty: penalty.addPenalty,
+        clearPenalty: penalty.clearPenalty,
+        getPenaltyLeft: penalty.getPenaltyLeft,
       }}
     >
       {children}
