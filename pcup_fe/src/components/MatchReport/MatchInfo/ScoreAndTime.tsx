@@ -100,7 +100,9 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
             <Button
               variant={"secondaryOutline"}
               onClick={subtractThirtySeconds}
-              disabled={!navigator.onLine && matchPhase === "finished"}
+              disabled={
+                !navigator.onLine && matchPhase === "finished" && !timerRunning
+              }
               className=""
             >
               <Minus className="" />
@@ -109,7 +111,9 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
             <Button
               variant={"secondaryOutline"}
               onClick={addThirtySeconds}
-              disabled={!navigator.onLine && matchPhase === "finished"}
+              disabled={
+                !navigator.onLine && matchPhase === "finished" && !timerRunning
+              }
               className=""
             >
               <Plus className="" />

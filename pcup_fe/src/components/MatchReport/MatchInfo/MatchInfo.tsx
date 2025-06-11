@@ -27,7 +27,7 @@ export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
     (cat) => cat.id === teamHome.categoryId || cat.id === teamAway.categoryId
   );
 
-  const halftime = customHalftimes[category?.name ?? ""] ?? 15 * 60;
+  const halftime = customHalftimes[category?.name ?? ""] ?? 60;
   return (
     <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">
       {/* Header - Kategorie */}
