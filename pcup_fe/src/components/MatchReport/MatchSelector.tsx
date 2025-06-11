@@ -14,7 +14,7 @@ import { Loader } from "lucide-react";
 
 export const MatchSelector = () => {
   const { data: matches, isLoading } = useMatches();
-  const [searchId, setSearchId] = useState("");
+  const [searchSeq, setSearchSeq] = useState("");
   const [playgroundFilter, setPlaygroundFilter] = useState("");
   const { user } = useUser();
 
@@ -26,8 +26,8 @@ export const MatchSelector = () => {
 
   const filteredMatches = matches
     ?.filter((match) => {
-      const matchesSearch = searchId
-        ? match.id.toString().startsWith(searchId)
+      const matchesSearch = searchSeq
+        ? match.sequenceNumber?.toString().startsWith(searchSeq)
         : true;
       const matchesPlaygroundFilter = playgroundFilter
         ? match.playground === playgroundFilter
@@ -63,9 +63,9 @@ export const MatchSelector = () => {
   return (
     <div className="flex flex-col gap-4">
       <Input
-        placeholder="Vyhledat ID (začátek)..."
-        value={searchId}
-        onChange={(e) => setSearchId(e.target.value)}
+        placeholder="Vyhledat pořadové číslo..."
+        value={searchSeq}
+        onChange={(e) => setSearchSeq(e.target.value)}
         className="w-full"
       />
 
@@ -113,7 +113,7 @@ export const MatchSelector = () => {
                 index % 2 === 0 ? "bg-white" : "bg-gray-50"
               } hover:bg-primary/5`}
             >
-              <div className="w-12 truncate">{match.id}</div>
+              <div className="w-12 truncate">{match.sequenceNumber}</div>
               <div className="flex-1 px-2 truncate">{match.homeTeam?.name}</div>
               <div className="flex-1 px-2 truncate">{match.awayTeam?.name}</div>
               <div className="flex-1 px-2 truncate">
