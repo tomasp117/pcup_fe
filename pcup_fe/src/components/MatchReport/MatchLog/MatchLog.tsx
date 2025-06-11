@@ -201,12 +201,15 @@ export const MatchLog = () => {
                 </Button>
               </TableCell>
               <TableCell className="text-center w-full">
-                <Button variant="goalInfo" onClick={() => handleForfeit("R")}>
-                  Zápas nezačal
-                </Button>
+                <Button variant="goalInfo">Zápas nezačal</Button>
               </TableCell>
               <TableCell className="text-center w-full">
-                <Button variant="destructive">Kontumace</Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleForfeit("R")}
+                >
+                  Kontumace
+                </Button>
               </TableCell>
             </TableRow>
           ) : (
