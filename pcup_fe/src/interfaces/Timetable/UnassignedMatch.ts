@@ -5,4 +5,5 @@ export interface UnassignedMatch {
   awayTeamName: string;
   groupId: number;
   groupName: string;
+  squenceNumber?: number;
 }

@@ -20,4 +20,5 @@ export interface Match {
   referees: Referee[];
   category: Category;
   lineups?: Lineup[];
+  sequenceNumber?: number;
 }

@@ -10,6 +10,7 @@ import { use, useEffect } from "react";
 import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 import React from "react";
+import { Input } from "../ui/input";
 
 interface MatchSlotRowProps {
   match: MatchDTO;
@@ -21,6 +22,7 @@ interface MatchSlotRowProps {
     groupName: string,
     groupId: number
   ) => void;
+  onSequenceChange: (matchId: number, sequenceNumber: number | null) => void;
   style?: React.CSSProperties;
   onSwap: (matchId: number) => void;
   className?: string;
@@ -33,6 +35,7 @@ export const MatchSlotRow = React.memo<MatchSlotRowProps>(
     unassignedMatches,
     onAssign,
     onSwap,
+    onSequenceChange,
     category,
     style,
     className,
@@ -44,6 +47,19 @@ export const MatchSlotRow = React.memo<MatchSlotRowProps>(
     const isUn = !match.homeTeam || !match.awayTeam;
     return (
       <TableRow style={style} className={className}>
+        {/* 1) Pořadové číslo */}
+        <TableCell className="w-[60px] text-center">
+          <Input
+            type="number"
+            value={match.sequenceNumber ?? ""}
+            onChange={(e) => {
+              const num =
+                e.target.value === "" ? null : parseInt(e.target.value, 10);
+              onSequenceChange(match.id, num);
+            }}
+            className="w-full text-center"
+          />
+        </TableCell>
         <TableCell className="w-[120px]">
           {new Date(match.time).toLocaleString("cs-CZ", {
             weekday: "short",

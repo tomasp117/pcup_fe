@@ -205,7 +205,10 @@ export const TimeTable = () => {
       homeTeamId: m.homeTeam!.id,
       awayTeamId: m.awayTeam!.id,
       groupId: m.group!.id,
+      sequenceNumber: m.sequenceNumber,
     }));
+
+    console.log("Saving assignments:", body);
 
     const res = await fetch(`${API_URL}/matches/update-batch`, {
       method: "PUT",
@@ -403,6 +406,19 @@ export const TimeTable = () => {
     overscan: 5,
   });
 
+  const handleSequenceChange = useCallback(
+    (matchId: number, seq: number | null) => {
+      setMatches((prev) =>
+        prev.map((m) =>
+          m.id === matchId
+            ? { ...m, sequenceNumber: seq === null ? undefined : seq }
+            : m
+        )
+      );
+    },
+    []
+  );
+
   return (
     <div className="gap-8 flex-col flex">
       <Card className="">
@@ -430,7 +446,7 @@ export const TimeTable = () => {
             <CardHeader className="py-2  ">
               <h2 className="text-lg font-bold text-primary">{group.name}</h2>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className="px-4">
               {group.teams && group.teams.length > 0 ? (
                 <TableRounded className="text-sm ">
                   <TableHeader className="bg-primary/10">
@@ -603,12 +619,14 @@ export const TimeTable = () => {
           </Table> */}
           <Table className="table-fixed w-full">
             <colgroup>
+              <col style={{ width: "60px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "200px" }} />
               <col style={{ width: "auto" }} />
             </colgroup>
             <TableHeader className="bg-primary/10">
               <TableRow>
+                <TableHead className="text-center">#</TableHead>
                 <TableHead>Čas</TableHead>
                 <TableHead>Hřiště</TableHead>
                 <TableHead>Zápas</TableHead>
@@ -623,6 +641,7 @@ export const TimeTable = () => {
           >
             <Table className="table-fixed w-full">
               <colgroup>
+                <col style={{ width: "60px" }} />
                 <col style={{ width: "120px" }} />
                 <col style={{ width: "200px" }} />
                 <col style={{ width: "auto" }} />
@@ -649,6 +668,7 @@ export const TimeTable = () => {
                       match={match}
                       unassignedMatches={unassignedMatches}
                       onAssign={handleAssignUnassignedMatch}
+                      onSequenceChange={handleSequenceChange}
                       onSwap={handleSwapTeams}
                       category={
                         categories.find((c) => c.id === categoryId)?.name

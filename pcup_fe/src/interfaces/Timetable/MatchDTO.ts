@@ -13,4 +13,5 @@ export interface MatchDTO {
   homeTeam: TeamDTO | null;
   awayTeam: TeamDTO | null;
   group: GroupDTO;
+  sequenceNumber?: number;
 }
