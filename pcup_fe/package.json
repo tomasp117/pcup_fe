@@ -24,7 +24,7 @@
     "@shadcn/ui": "^0.0.4",
     "@tanstack/react-query": "^5.74.4",
     "@tanstack/react-query-devtools": "^5.74.6",
-    "@tanstack/react-virtual": "^3.13.6",
+    "@tanstack/react-virtual": "^3.13.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^2.30.0",

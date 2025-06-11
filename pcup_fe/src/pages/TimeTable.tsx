@@ -19,9 +19,12 @@ import { GroupDetailDTO } from "@/interfaces/Timetable/GroupDetailDTO";
 import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { set } from "react-hook-form";
 import { toast } from "react-toastify";
+
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRef } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -37,7 +40,7 @@ export const TimeTable = () => {
   const [unassignedMatches, setUnassignedMatches] = useState<UnassignedMatch[]>(
     []
   );
-  const courts = Array.from(new Set(matches.map((m) => m.playground)));
+  //const courts = Array.from(new Set(matches.map((m) => m.playground)));
 
   const [filterCourt, setFilterCourt] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
@@ -346,20 +349,59 @@ export const TimeTable = () => {
   };
 
   const [showUnassigned, setShowUnassigned] = useState(true);
-  const filteredMatches = matches
-    .filter((m) => !filterCourt || m.playground === filterCourt)
-    .filter((m) => {
-      const isUnassigned = m.homeTeam === null && m.awayTeam === null;
-      if (isUnassigned) {
-        return showUnassigned;
-      }
 
-      return (
-        !filterCategory ||
-        m.group?.categoryName === filterCategory ||
-        (m.group === null && showUnassigned)
-      );
-    });
+  const courts = useMemo(
+    () => Array.from(new Set(matches.map((m) => m.playground))),
+    [matches]
+  );
+
+  const filteredMatches = useMemo(() => {
+    return matches
+      .filter((m) => !filterCourt || m.playground === filterCourt)
+      .filter((m) => {
+        const isUn = !m.homeTeam && !m.awayTeam;
+        if (isUn) return showUnassigned;
+        return !filterCategory || m.group?.categoryName === filterCategory;
+      })
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+  }, [matches, filterCourt, filterCategory, showUnassigned]);
+
+  // const filteredMatches = matches
+  //   .filter((m) => !filterCourt || m.playground === filterCourt)
+  //   .filter((m) => {
+  //     const isUnassigned = m.homeTeam === null && m.awayTeam === null;
+  //     if (isUnassigned) {
+  //       return showUnassigned;
+  //     }
+
+  //     return (
+  //       !filterCategory ||
+  //       m.group?.categoryName === filterCategory ||
+  //       (m.group === null && showUnassigned)
+  //     );
+  //   });
+
+  const handleSwapTeams = useCallback((matchId: number) => {
+    setMatches((prev) =>
+      prev.map((m) => {
+        if (m.id !== matchId || !m.homeTeam || !m.awayTeam) return m;
+        return {
+          ...m,
+          homeTeam: m.awayTeam,
+          awayTeam: m.homeTeam,
+        };
+      })
+    );
+  }, []);
+
+  const parentRef = useRef<HTMLTableSectionElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: filteredMatches.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => 56, // nebo jaká je vaše výška řádku
+    overscan: 5,
+  });
 
   return (
     <div className="gap-8 flex-col flex">
@@ -515,7 +557,7 @@ export const TimeTable = () => {
           overflow-y-auto max-h-[100vh] min-h-[300px] rounded-lg border border-gray-200 shadow-sm p-4 mb-4
         "
         >
-          <Table>
+          {/* <Table>
             <TableHeader className="bg-primary/10">
               <TableRow>
                 <TableHead className="">Čas</TableHead>
@@ -554,10 +596,75 @@ export const TimeTable = () => {
                       category={
                         categories.find((cat) => cat.id === categoryId)?.name
                       }
+                      onSwap={handleSwapTeams}
                     />
                   ))}
             </TableBody>
+          </Table> */}
+          <Table className="table-fixed w-full">
+            <colgroup>
+              <col style={{ width: "120px" }} />
+              <col style={{ width: "200px" }} />
+              <col style={{ width: "auto" }} />
+            </colgroup>
+            <TableHeader className="bg-primary/10">
+              <TableRow>
+                <TableHead>Čas</TableHead>
+                <TableHead>Hřiště</TableHead>
+                <TableHead>Zápas</TableHead>
+              </TableRow>
+            </TableHeader>
           </Table>
+
+          {/* SCROLLOVATELNÁ ČÁST */}
+          <div
+            ref={scrollRef}
+            className="overflow-y-auto max-h-[70vh] rounded-lg border border-gray-200 shadow-sm"
+          >
+            <Table className="table-fixed w-full">
+              <colgroup>
+                <col style={{ width: "120px" }} />
+                <col style={{ width: "200px" }} />
+                <col style={{ width: "auto" }} />
+              </colgroup>
+              <TableBody
+                style={{
+                  position: "relative",
+                  height: rowVirtualizer.getTotalSize(),
+                }}
+              >
+                {/* spacer, díky němu scrollbar ví, jak dlouhý je obsah */}
+                <TableRow
+                  style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+                >
+                  <TableCell colSpan={3} style={{ padding: 0, border: 0 }} />
+                </TableRow>
+
+                {/* virtuální řádky */}
+                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                  const match = filteredMatches[virtualRow.index];
+                  return (
+                    <MatchSlotRow
+                      key={match.id}
+                      match={match}
+                      unassignedMatches={unassignedMatches}
+                      onAssign={handleAssignUnassignedMatch}
+                      onSwap={handleSwapTeams}
+                      category={
+                        categories.find((c) => c.id === categoryId)?.name
+                      }
+                      style={{
+                        position: "absolute",
+                        top: virtualRow.start,
+                        left: 0,
+                        width: "100%",
+                      }}
+                    />
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
       <Button
