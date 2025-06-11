@@ -16,12 +16,18 @@ export interface MatchInfoProps {
   teamAway: Team;
 }
 
+const customHalftimes: Record<string, number> = {
+  "Mini 6+1": 30,
+};
+
 export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
   const { data: categories } = useCategories();
 
   const category = categories?.find(
     (cat) => cat.id === teamHome.categoryId || cat.id === teamAway.categoryId
   );
+
+  const halftime = customHalftimes[category?.name ?? ""] ?? 15 * 60;
   return (
     <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">
       {/* Header - Kategorie */}
@@ -32,12 +38,12 @@ export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
       </CardMatchReportHeader>
 
       {/* Flexbox pro layout */}
-      <CardContent className="flex flex-col sm:flex-row justify-between gap-4 w-full overflow-hidden p-4">
+      <CardContent className="flex sm:flex-row justify-between gap-4 w-full overflow-hidden p-4">
         {/* 🔹 Domácí tým */}
         <MatchTeamCard team={teamHome} side="home" />
 
         {/* 🔹 Skóre a časomíra */}
-        <ScoreAndTime />
+        <ScoreAndTime halftime={halftime} />
 
         {/* 🔹 Hostující tým */}
         <MatchTeamCard team={teamAway} side="away" />

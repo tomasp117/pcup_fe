@@ -5,10 +5,10 @@ import { useCreateLineups, useUpdateMatch } from "../useMatches";
 import { toast } from "react-toastify";
 import { useApplyMatchStats, useRevertMatchStats } from "../MyTeam/usePlayers";
 
-const HALFTIME = 20;
-const SEND_INTERVAL = 10;
+//const HALFTIME = 60;
+const SEND_INTERVAL = 5;
 
-export const useMatchTimer = () => {
+export const useMatchTimer = (HALFTIME: number = 60) => {
   const {
     timerRunning,
     setTimerRunning,
@@ -419,6 +419,47 @@ export const useMatchTimer = () => {
     };
   }, []);
 
+  const addThirtySeconds = () => {
+    if (matchPhase !== "firstHalf" && matchPhase !== "secondHalf") return;
+
+    // 1) spočti nový čas bez „růžolícího“ zaokrouhlování:
+    const rawNew = totalSeconds + 30;
+    // 2) pokud chceš, dej horní mez na konec poločasu:
+    const newTotal = Math.min(rawNew, HALFTIME);
+
+    // 3) synchronizuj offset i lastStartTime
+    elapsedBeforePause.current = newTotal * 1000;
+    lastStartTime.current = Date.now() - elapsedBeforePause.current;
+
+    // 4) updatuj UI a kontext
+    setTotalSeconds(newTotal);
+    setMatchDetails((prev) => ({
+      ...prev,
+      timePlayed: formatTime(newTotal),
+    }));
+  };
+
+  const subtractThirtySeconds = () => {
+    // jen během 1. nebo 2. poločasu
+    if (matchPhase !== "firstHalf" && matchPhase !== "secondHalf") return;
+
+    // 1) spočti nový čas
+    const rawNew = totalSeconds - 30;
+    // 2) dolní mez na 0
+    const newTotal = Math.max(rawNew, 0);
+
+    // 3) synchronizuj offset i lastStartTime
+    elapsedBeforePause.current = newTotal * 1000;
+    lastStartTime.current = Date.now() - elapsedBeforePause.current;
+
+    // 4) updatuj UI a kontext
+    setTotalSeconds(newTotal);
+    setMatchDetails((prev) => ({
+      ...prev,
+      timePlayed: formatTime(newTotal),
+    }));
+  };
+
   return {
     homeScore,
     awayScore,
@@ -443,5 +484,7 @@ export const useMatchTimer = () => {
 
       deleteEventsMutation.mutate(matchDetails.id);
     },
+    addThirtySeconds,
+    subtractThirtySeconds,
   };
 };

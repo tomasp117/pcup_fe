@@ -18,6 +18,7 @@ import {
 } from "@/hooks/MatchReport/useEvent";
 import { useCreateLineups, useUpdateMatch } from "@/hooks/useMatches";
 import { toast } from "react-toastify";
+import { set } from "date-fns";
 
 export const MatchLog = () => {
   const {
@@ -56,6 +57,13 @@ export const MatchLog = () => {
   useEffect(() => {
     if (loadedEvents) {
       setEvents(loadedEvents);
+      console.log("Loaded events:", loadedEvents);
+      loadedEvents.forEach((event) => {
+        if (event.message.includes("Začátek 2. poločasu")) {
+          console.log("Začátek 2. poločasu event found:", event);
+          setMatchPhase("secondHalf");
+        }
+      });
     }
   }, [loadedEvents]);
 

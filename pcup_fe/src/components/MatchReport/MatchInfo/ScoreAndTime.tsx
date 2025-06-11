@@ -14,10 +14,14 @@ import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useMatchTimer } from "@/hooks/MatchReport/useMatchTimer";
 import { useUpdateMatch } from "@/hooks/useMatches";
 
-import { Play, Pause } from "lucide-react";
+import { Play, Pause, Plus, Minus } from "lucide-react";
 import { toast } from "react-toastify";
 
-export default function ScoreAndTime() {
+interface ScoreAndTimeProps {
+  halftime: number;
+}
+
+export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
   const {
     homeScore,
     awayScore,
@@ -29,7 +33,9 @@ export default function ScoreAndTime() {
     initialCheckCompleted,
     startButtonClicked,
     resetMatch,
-  } = useMatchTimer();
+    addThirtySeconds,
+    subtractThirtySeconds,
+  } = useMatchTimer(halftime);
 
   const updateMatchMutation = useUpdateMatch();
 
@@ -90,17 +96,36 @@ export default function ScoreAndTime() {
 
       <CardMatchReport className="w-full flex justify-center h-[70%] sm:p-4 p-2 flex-1">
         <CardContent className="flex flex-col items-center w-full p-0  gap-4">
-          <h1 className="text-md sm:text-4xl font-bold">{timePlayed}</h1>
+          <div className="flex items-center">
+            <Button
+              variant={"secondaryOutline"}
+              onClick={subtractThirtySeconds}
+              disabled={!navigator.onLine && matchPhase === "finished"}
+              className=""
+            >
+              <Minus className="" />
+            </Button>
+            <h1 className="text-md sm:text-4xl font-bold">{timePlayed}</h1>
+            <Button
+              variant={"secondaryOutline"}
+              onClick={addThirtySeconds}
+              disabled={!navigator.onLine && matchPhase === "finished"}
+              className=""
+            >
+              <Plus className="" />
+            </Button>
+          </div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span>
                   <Button
-                    className="flex items-center gap-2 text-xs sm:text-sm xl:text-xl p-2 sm:p-4 xl:p-6 w-full"
+                    className="flex items-center gap-2 text-xs sm:text-sm xl:text-xl p-2 sm:p-4 xl:p-6 w-full whitespace-normal"
                     onClick={handleControl}
                     disabled={!navigator.onLine && matchPhase === "finished"}
                   >
-                    {getButtonIcon()} {getButtonText()}
+                    {getButtonIcon()}{" "}
+                    <span className="block sm:inline">{getButtonText()}</span>
                   </Button>
                 </span>
               </TooltipTrigger>
@@ -118,6 +143,7 @@ export default function ScoreAndTime() {
                   {matchState === "Done" ? (
                     <Button
                       variant="destructive"
+                      className="whitespace-normal"
                       onClick={async () => {
                         // zde si můžeš udělat případně confirm dialog
                         await updateMatchMutation.mutateAsync({
@@ -132,11 +158,12 @@ export default function ScoreAndTime() {
                         // můžeš případně refetchnout zápas
                       }}
                     >
-                      Editovat zápis
+                      <span className="block sm:inline">Editovat zápis</span>
                     </Button>
                   ) : (
                     <Button
                       variant="destructive"
+                      className="whitespace-normal"
                       onClick={() => {
                         if (confirm("Opravdu chceš celý zápas resetovat?")) {
                           resetMatch();
@@ -144,7 +171,7 @@ export default function ScoreAndTime() {
                       }}
                       disabled={!navigator.onLine}
                     >
-                      Reset zápasu
+                      <span className="block sm:inline">Reset zápasu</span>
                     </Button>
                   )}
                 </span>
