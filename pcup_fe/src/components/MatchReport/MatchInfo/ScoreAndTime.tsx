@@ -13,8 +13,10 @@ import {
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useMatchTimer } from "@/hooks/MatchReport/useMatchTimer";
 import { useUpdateMatch } from "@/hooks/useMatches";
+import { useUpdatePlayerNumber } from "@/hooks/usePlayers";
 
 import { Play, Pause, Plus, Minus } from "lucide-react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 
 interface ScoreAndTimeProps {
@@ -39,7 +41,9 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
 
   const updateMatchMutation = useUpdateMatch();
 
-  const { matchState, matchDetails } = useMatchContext();
+  const { matchState, matchDetails, players, matchStarted } = useMatchContext();
+
+  const updateNumber = useUpdatePlayerNumber();
 
   function getButtonIcon() {
     if (matchPhase === "finished" || matchPhase === "postMatchConfirm")
@@ -56,6 +60,13 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
     }
     return null;
   }
+
+  useEffect(() => {
+    if (!matchStarted) return;
+    players.forEach((p) => {
+      updateNumber.mutate({ id: p.id, newNumber: p.number });
+    });
+  }, [matchStarted]);
 
   function getButtonText(): string {
     if (!initialCheckCompleted) return "Kontrola";

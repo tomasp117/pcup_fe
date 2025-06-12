@@ -2,6 +2,9 @@ import { useMemo } from "react";
 import { Match } from "@/interfaces/MatchReport/Match";
 import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 import { Event } from "@/interfaces/MatchReport/Event";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const useReconstructedPlayers = (match: Match, events: Event[]) => {
   return useMemo(() => {
@@ -122,4 +125,26 @@ export const useReconstructedPlayers = (match: Match, events: Event[]) => {
       awayPlayers: awayPlayers.map((p) => playerMap.get(p.id)!),
     };
   }, [match, events]);
+};
+
+export const useUpdatePlayerNumber = () => {
+  const qc = useQueryClient();
+
+  return useMutation<void, Error, { id: number; newNumber: number }>({
+    mutationFn: ({ id, newNumber }) =>
+      fetch(`${API_URL}/players/${id}/update-number`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(newNumber),
+      }).then((res) => {
+        if (!res.ok) throw new Error("Chyba při updatu čísla hráče");
+      }),
+
+    onSuccess: (_, { id }) => {
+      qc.invalidateQueries({ queryKey: ["players", id] });
+    },
+  });
 };

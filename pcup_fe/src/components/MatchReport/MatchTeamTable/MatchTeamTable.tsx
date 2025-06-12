@@ -18,6 +18,7 @@ import { RedCardHandlers } from "./TableHandlers/RedCardHandlers";
 import { Team } from "@/interfaces/MatchReport/Team";
 import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 import { usePenaltyTimer } from "@/hooks/MatchReport/usePenaltyTimer";
+import { Input } from "@/components/ui/input";
 
 interface MatchTeamTableProps {
   team: Team;
@@ -77,7 +78,31 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
                 key={player.id}
                 className={idx % 2 === 0 ? "bg-gray-100" : "bg-white"}
               >
-                <TableCell className="font-medium">{player.number}</TableCell>
+                {/* <TableCell className="font-medium">{player.number}</TableCell> */}
+                <TableCell className="font-medium">
+                  {isLocked || matchStarted ? (
+                    <span>{player.number}</span>
+                  ) : (
+                    <Input
+                      type="number"
+                      value={player.number}
+                      onChange={(e) => {
+                        const newNumber = parseInt(e.target.value, 10);
+                        if (!isNaN(newNumber)) {
+                          setPlayers((prevPlayers) =>
+                            prevPlayers.map((p) =>
+                              p.id === player.id
+                                ? { ...p, number: newNumber }
+                                : p
+                            )
+                          );
+                        }
+                      }}
+                      className="w-16 text-center"
+                      disabled={isLocked || matchStarted}
+                    />
+                  )}
+                </TableCell>
                 <TableCell className="font-medium">
                   {player.person.firstName} {player.person.lastName}
                 </TableCell>

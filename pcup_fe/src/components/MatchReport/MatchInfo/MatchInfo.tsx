@@ -17,7 +17,7 @@ export interface MatchInfoProps {
 }
 
 const customHalftimes: Record<string, number> = {
-  "Mini 6+1": 30,
+  "Mini 6+1": 12.5 * 60, // 12.5 minutes in seconds
 };
 
 export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
@@ -27,7 +27,7 @@ export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
     (cat) => cat.id === teamHome.categoryId || cat.id === teamAway.categoryId
   );
 
-  const halftime = customHalftimes[category?.name ?? ""] ?? 60;
+  const halftime = customHalftimes[category?.name ?? ""] ?? 15 * 60;
   return (
     <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">
       {/* Header - Kategorie */}

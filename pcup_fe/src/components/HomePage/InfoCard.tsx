@@ -102,23 +102,23 @@ export const InfoCard = () => {
       </Card>
 
       {/* Rozlosování */}
-      {/* <Card>
+      <Card>
         <CardHeader>
-          <CardTitle>Rozlosování</CardTitle>
+          <CardTitle>Rozlosování 4+1</CardTitle>
         </CardHeader>
         <CardContent>
           <a
-            href="https://www.polankacup.cz/2024/files/rozlosovani-41.2024.pdf"
+            href="https://www.polankacup.cz/files/rozlosovani-41.2025.pdf"
             target="_blank"
             rel="noopener noreferrer"
           >
             <Button className="w-full  flex items-center gap-2">
               <FileText className="w-4 h-4" />
-              <span>Rozlosování turnaje</span>
+              <span>Rozlosování turnaje 4+1</span>
             </Button>
           </a>
         </CardContent>
-      </Card> */}
+      </Card>
     </div>
   );
 };

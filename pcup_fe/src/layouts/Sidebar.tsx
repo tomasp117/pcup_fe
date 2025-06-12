@@ -61,6 +61,14 @@ export const Sidebar = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  if (isLoading || !categories) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="animate-spin w-8 h-8 text-primary" />
+      </div>
+    );
+  }
+  const reversedCategories = categories.slice().reverse();
 
   type MenuItem = {
     name: string;
@@ -77,7 +85,7 @@ export const Sidebar = () => {
     { name: "Domů", path: `/${edition}`, icon: <Home /> },
     {
       name: "Kategorie",
-      path: `/${edition}/kategorie/${categories?.[0]?.id}`,
+      path: `/${edition}/kategorie/${reversedCategories[0]?.id}`,
       icon: <Trophy />,
       dynamicChildren: true,
     },
