@@ -46,7 +46,9 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
 
   const isHomeTeam = team === matchDetails.homeTeam;
 
-  const teamPlayers = getPlayersForTeam(team);
+  const teamPlayers = getPlayersForTeam(team)
+    .slice()
+    .sort((a, b) => a.number - b.number);
 
   const isCounting = timerRunning;
   // will clear all when matchState flips to "None"
