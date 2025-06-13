@@ -36,6 +36,7 @@ export const MatchLog = () => {
     setMatchPhase,
     setTimerRunning,
     clearPenalty,
+    swapped,
   } = useMatchContext();
 
   //const { clearPenalty } = usePenaltyTimer(timerRunning, matchState === "None");
@@ -62,10 +63,19 @@ export const MatchLog = () => {
     if (loadedEvents) {
       setEvents(loadedEvents);
       console.log("Loaded events:", loadedEvents);
+
       loadedEvents.forEach((event) => {
         if (event.message.includes("Začátek 2. poločasu")) {
           console.log("Začátek 2. poločasu event found:", event);
           setMatchPhase("secondHalf");
+        }
+        if (event.message.includes("Konec zápasu")) {
+          if (matchState === "Pending") {
+            setMatchPhase("finished");
+            return;
+          }
+          console.log("Konec zápasu event found:", event);
+          setMatchPhase("postMatchConfirm");
         }
       });
     }
@@ -187,13 +197,21 @@ export const MatchLog = () => {
         <TableHeader className="bg-primary/10">
           <TableRow>
             <TableHead className="text-primary text-center w-[40%]">
-              {matchDetails?.homeTeam?.name ?? "Domácí"}
+              {swapped
+                ? matchDetails?.awayTeam?.name ?? "Hosté"
+                : matchDetails?.homeTeam?.name ?? "Domácí"}
+
+              {/* {matchDetails?.homeTeam?.name ?? "Domácí"} */}
             </TableHead>
             <TableHead className="text-primary text-center w-[20%]">
               Čas
             </TableHead>
             <TableHead className="text-primary text-center w-[40%]">
-              {matchDetails?.awayTeam?.name ?? "Hosté"}
+              {swapped
+                ? matchDetails?.homeTeam?.name ?? "Domácí"
+                : matchDetails?.awayTeam?.name ?? "Hosté"}
+
+              {/* {matchDetails?.awayTeam?.name ?? "Hosté"} */}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -203,7 +221,9 @@ export const MatchLog = () => {
               <TableCell className="text-center w-full">
                 <Button
                   variant="destructive"
-                  onClick={() => handleForfeit("L")}
+                  onClick={() =>
+                    !swapped ? handleForfeit("L") : handleForfeit("R")
+                  }
                 >
                   Kontumace
                 </Button>
@@ -214,7 +234,9 @@ export const MatchLog = () => {
               <TableCell className="text-center w-full">
                 <Button
                   variant="destructive"
-                  onClick={() => handleForfeit("R")}
+                  onClick={() =>
+                    !swapped ? handleForfeit("R") : handleForfeit("L")
+                  }
                 >
                   Kontumace
                 </Button>
@@ -251,14 +273,17 @@ export const MatchLog = () => {
                     <>
                       {/* Levá strana (domácí tým) */}
                       <TableCell className="text-center w-[40%] whitespace-normal break-words">
-                        {event.team === "L" && (
-                          <Button
-                            variant={buttonVariant}
-                            className="whitespace-normal break-words h-full"
-                          >
-                            {event.message}
-                          </Button>
-                        )}
+                        {swapped
+                          ? event.team === "R" && (
+                              <Button variant={buttonVariant}>
+                                {event.message}
+                              </Button>
+                            )
+                          : event.team === "L" && (
+                              <Button variant={buttonVariant}>
+                                {event.message}
+                              </Button>
+                            )}
                       </TableCell>
 
                       {/* Střední část (čas + mazání posledního eventu) */}
@@ -290,14 +315,17 @@ export const MatchLog = () => {
 
                       {/* Pravá strana (hostující tým) */}
                       <TableCell className="text-center w-[40%] whitespace-normal break-words">
-                        {event.team === "R" && (
-                          <Button
-                            variant={buttonVariant}
-                            className="whitespace-normal break-words h-full"
-                          >
-                            {event.message}
-                          </Button>
-                        )}
+                        {swapped
+                          ? event.team === "L" && (
+                              <Button variant={buttonVariant}>
+                                {event.message}
+                              </Button>
+                            )
+                          : event.team === "R" && (
+                              <Button variant={buttonVariant}>
+                                {event.message}
+                              </Button>
+                            )}
                       </TableCell>
                     </>
                   )}

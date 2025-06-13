@@ -3,6 +3,7 @@ import { Team } from "./Team";
 import { Event } from "./Event";
 import { Category } from "./Category";
 import { Lineup } from "./Lineup";
+import { Club } from "./Club";
 
 export interface Match {
   id: number;
@@ -15,6 +16,7 @@ export interface Match {
   // awayScore: number;
   awayScore: number;
   homeScore: number;
+  club: Club;
   state: "None" | "Generated" | "Pending" | "Done";
   events: Event[];
   referees: Referee[];

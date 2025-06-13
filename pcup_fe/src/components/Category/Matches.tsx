@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -23,11 +23,34 @@ import { Label } from "../ui/label";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Matches = ({ categoryId }: { categoryId: number }) => {
+  // 1) HOOKY vždy na začátku
   const { data: matches, isLoading, error } = useMatchesByCategory(categoryId);
-  const [playgroundFilter, setPlaygroundFilter] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const [playgroundFilter, setPlaygroundFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+
+  // 2) Seřaď podle času, potom filtruj
+  const sortedMatches = [...(matches ?? [])].sort((a, b) => {
+    const timeA = a.time ? new Date(a.time).getTime() : 0;
+    const timeB = b.time ? new Date(b.time).getTime() : 0;
+    return timeA - timeB;
+  });
+  const filteredMatches = sortedMatches.filter((match) => {
+    const byPlayground =
+      playgroundFilter === "all" || match.playground === playgroundFilter;
+    const bySearch =
+      searchTerm === "" ||
+      match.homeTeam?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      match.awayTeam?.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return byPlayground && bySearch;
+  });
+
+  // 3) Debug/logging hook taky bude vždy zavolán
+  useEffect(() => {
+    console.log("Filtered matches:", filteredMatches);
+  }, [filteredMatches]);
+
+  // 4) Teprve teď rozhodni, co renderovat
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -44,25 +67,13 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
     );
   }
 
-  if (!matches || matches.length === 0) {
+  if (filteredMatches.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-6">
         V této kategorii nejsou žádné zápasy.
       </div>
     );
   }
-
-  const filteredMatches = matches.filter((match) => {
-    const matchesPlayground =
-      playgroundFilter === "all" || match.playground === playgroundFilter;
-
-    const matchesSearch =
-      searchTerm.trim() === "" ||
-      match.homeTeam?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      match.awayTeam?.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesPlayground && matchesSearch;
-  });
 
   return (
     <Card>
@@ -82,11 +93,13 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Všechna hřiště</SelectItem>
-                {[...new Set(matches.map((m) => m.playground))].map((pg) => (
-                  <SelectItem key={pg} value={pg}>
-                    {pg}
-                  </SelectItem>
-                ))}
+                {[...new Set(filteredMatches.map((m) => m.playground))].map(
+                  (pg) => (
+                    <SelectItem key={pg} value={pg}>
+                      {pg}
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -109,16 +122,32 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
               <TableHead className="font-bold">Hřiště</TableHead>
               <TableHead className="font-bold">Domácí</TableHead>
               <TableHead className="font-bold">Hosté</TableHead>
+              <TableHead className="font-bold text-center">Výsledek</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredMatches.map((match) => (
               <TableRow
                 key={match.id}
-                className="even:bg-primary/10 hover:bg-primary/20 cursor-pointer "
-                onClick={() => navigate(`/match-preview/${match.id}`)}
+                className="even:bg-primary/10 hover:bg-primary/20 relative group cursor-pointer"
+                onClick={(e) => {
+                  // levé tlačítko
+                  if (e.ctrlKey || e.metaKey) {
+                    // Ctrl nebo Cmd + klik
+                    window.open(`/match-preview/${match.id}`, "_blank");
+                  } else {
+                    // normální klik
+                    navigate(`/match-preview/${match.id}`);
+                  }
+                }}
+                onAuxClick={(e) => {
+                  if (e.button === 1) {
+                    // prostřední tlačítko
+                    window.open(`/match-preview/${match.id}`, "_blank");
+                  }
+                }}
               >
-                <TableCell>
+                <TableCell className="z-10">
                   {match.time
                     ? new Date(match.time).toLocaleTimeString("cs-CZ", {
                         weekday: "short",
@@ -127,22 +156,42 @@ export const Matches = ({ categoryId }: { categoryId: number }) => {
                       })
                     : "-"}
                 </TableCell>
-                <TableCell>{match.playground ?? "-"}</TableCell>
-                <TableCell className="font-medium text-primary ">
+                <TableCell className="z-10">
+                  {match.playground ?? "-"}
+                </TableCell>
+                <TableCell className="font-medium text-primary z-10">
                   <Link
                     to={`/teams/${match.homeTeam.id}`}
-                    className="hover:text-blue-500 hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                    onAuxClick={(e) => {
+                      e.stopPropagation();
+                      // necháme browser otevřít novou záložku s odkazem
+                    }}
+                    className="hover:text-blue-500 hover:underline relative z-20"
                   >
                     {match.homeTeam?.name ?? "-"}
                   </Link>
                 </TableCell>
-                <TableCell className="font-medium text-primary">
+                <TableCell className="font-medium text-primary z-10">
                   <Link
                     to={`/teams/${match.awayTeam.id}`}
-                    className="text-blue-500 underline"
+                    onClick={(e) => e.stopPropagation()}
+                    onAuxClick={(e) => {
+                      e.stopPropagation();
+                      // necháme browser otevřít novou záložku s odkazem
+                    }}
+                    className="hover:text-blue-500 hover:underline relative z-20"
                   >
                     {match.awayTeam?.name ?? "-"}
                   </Link>
+                </TableCell>
+                <TableCell className="font-semibold text-center z-10 ">
+                  {match.homeScore != null && match.awayScore != null
+                    ? `${match.homeScore} : ${match.awayScore}`
+                    : "- : -"}
+                  {match.state === "Pending" ? (
+                    <span className=" pl-1 absolute text-red-500">Live</span>
+                  ) : null}
                 </TableCell>
               </TableRow>
             ))}

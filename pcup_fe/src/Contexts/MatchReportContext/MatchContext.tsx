@@ -27,6 +27,7 @@ interface MatchContextProps {
   events: Event[];
   matchPhase: MatchPhase;
   matchStarted: boolean;
+  swapped: boolean;
   setMatchDetails: React.Dispatch<React.SetStateAction<Match>>;
   setTeamHome: React.Dispatch<React.SetStateAction<Team>>;
   setTeamAway: React.Dispatch<React.SetStateAction<Team>>;
@@ -48,6 +49,7 @@ interface MatchContextProps {
   addPenalty: (...args: any[]) => void;
   clearPenalty: (...args: any[]) => void;
   getPenaltyLeft: (...args: any[]) => any;
+  setSwapped: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MatchContext = createContext<MatchContextProps | undefined>(undefined);
@@ -67,6 +69,7 @@ export const MatchProvider: React.FC<{
   const [awayScore, setawayScore] = useState<number>(0);
   const [events, setEvents] = useState<Event[]>([]);
   const [matchStarted, setMatchStarted] = useState<boolean>(false);
+  const [swapped, setSwapped] = useState<boolean>(false);
 
   const [matchPhase, setMatchPhase] = useState<MatchPhase>("firstHalf");
 
@@ -216,6 +219,7 @@ export const MatchProvider: React.FC<{
         events,
         matchPhase,
         matchStarted,
+        swapped,
         setMatchDetails,
         setTeamHome,
         setTeamAway,
@@ -234,6 +238,7 @@ export const MatchProvider: React.FC<{
         addPenalty: penalty.addPenalty,
         clearPenalty: penalty.clearPenalty,
         getPenaltyLeft: penalty.getPenaltyLeft,
+        setSwapped,
       }}
     >
       {children}

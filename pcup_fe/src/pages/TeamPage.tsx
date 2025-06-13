@@ -50,6 +50,12 @@ export const TeamPage = () => {
     return `${API_URL_IMAGES}/default-logo.png`; // fallback logo
   };
 
+  const sortedMatches = [...(matches ?? [])].sort((a, b) => {
+    const timeA = a.time ? new Date(a.time).getTime() : 0;
+    const timeB = b.time ? new Date(b.time).getTime() : 0;
+    return timeA - timeB;
+  });
+
   const logo = findLogo();
 
   if (teamLoading)
@@ -99,7 +105,7 @@ export const TeamPage = () => {
         <CardContent>
           {matchesLoading ? (
             <Loader2 className="animate-spin w-5 h-5 mx-auto" />
-          ) : matches && matches.length > 0 ? (
+          ) : sortedMatches && sortedMatches.length > 0 ? (
             <Table>
               <TableHeader className="bg-primary/10">
                 <TableRow>
@@ -110,14 +116,18 @@ export const TeamPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {matches.map((match: any) => {
+                {sortedMatches.map((match: any) => {
                   const isHome = match.homeTeam.id === Number(id);
                   const opponent = isHome
                     ? match.awayTeam.name
                     : match.homeTeam.name;
-                  const score = `${match.homeScore ?? "-"} : ${
-                    match.awayScore ?? "-"
-                  }`;
+                  const score = isHome
+                    ? `${match.homeScore ?? "-"} : ${match.awayScore ?? "-"}`
+                    : `${match.awayScore ?? "-"} : ${match.homeScore ?? "-"}`;
+                  // const score = `${match.homeScore ?? "-"} : ${
+                  //   match.awayScore ?? "-"
+                  // }`;
+
                   return (
                     <TableRow key={match.id}>
                       <TableCell>{opponent}</TableCell>

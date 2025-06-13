@@ -6,6 +6,7 @@ import zubri from "@/assets/zubri.png";
 import praha from "@/assets/praha.png";
 import { Team } from "@/interfaces/MatchReport/Team";
 import { useClubs } from "@/hooks/useClubs";
+import { useEffect } from "react";
 
 interface MatchTeamCardProps {
   team: Team;
@@ -27,6 +28,11 @@ export const MatchTeamCard = ({ team, side }: MatchTeamCardProps) => {
   const logo = team.club?.logo
     ? `${API_URL_IMAGES}/${team.club.logo}`
     : `${API_URL_IMAGES}/default-logo.png`;
+
+  useEffect(() => {
+    console.log("Team logo URL:", logo);
+    console.log("Team data:", team);
+  }, []);
 
   // const findLogo = () => {
   //   const teamName = team.name.toLowerCase();

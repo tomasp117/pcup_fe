@@ -7,13 +7,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface ScoreAndTimePreviewProps {
   match: Match;
+  halftime: boolean;
 }
 
-export const ScoreAndTimePreview = ({ match }: ScoreAndTimePreviewProps) => {
+export const ScoreAndTimePreview = ({
+  match,
+  halftime,
+}: ScoreAndTimePreviewProps) => {
   const [isMobile, setIsMoile] = useState(false);
 
   const handleResize = () => {
@@ -21,7 +25,11 @@ export const ScoreAndTimePreview = ({ match }: ScoreAndTimePreviewProps) => {
   };
 
   // Add event listener for window resize
-  window.addEventListener("resize", handleResize);
+  useEffect(() => {
+    handleResize(); // nastaví počáteční hodnotu
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-between flex-1 min-w-0 max-w-[20%] sm:max-w-[20%] gap-4">
@@ -65,7 +73,10 @@ export const ScoreAndTimePreview = ({ match }: ScoreAndTimePreviewProps) => {
 
       <CardMatchReport className="w-full flex justify-center h-[70%] sm:p-4 p-2 flex-1">
         <CardContent className="flex flex-col items-center w-full p-0  gap-4">
-          <h1 className="text-sm sm:text-4xl font-bold">{match.timePlayed}</h1>
+          <h1 className="text-sm sm:text-4xl font-bold flex flex-col text-center">
+            <span className="text-sm">{halftime ? "2." : "1."} poločas</span>
+            <span>{match.timePlayed}</span>
+          </h1>
         </CardContent>
       </CardMatchReport>
     </div>

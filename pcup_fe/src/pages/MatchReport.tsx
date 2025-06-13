@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 
 export const MatchReport = () => {
-  const { matchDetails, teamAway, teamHome } = useMatchContext();
+  const { matchDetails, teamAway, teamHome, swapped } = useMatchContext();
 
   useReconstructStats();
   useOfflineProtection();
@@ -22,8 +22,17 @@ export const MatchReport = () => {
       <>
         <MatchInfo teamHome={teamHome} teamAway={teamAway} />
         <div className="flex w-full gap-8 max-w-[calc(100vw-32px)]">
-          <MatchTeamTable team={teamHome} />
-          <MatchTeamTable team={teamAway} />
+          {!swapped ? (
+            <>
+              <MatchTeamTable team={teamHome} />
+              <MatchTeamTable team={teamAway} />
+            </>
+          ) : (
+            <>
+              <MatchTeamTable team={teamAway} />
+              <MatchTeamTable team={teamHome} />
+            </>
+          )}
         </div>
         <MatchLog />
       </>

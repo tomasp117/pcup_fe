@@ -14,6 +14,7 @@ import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useMatchTimer } from "@/hooks/MatchReport/useMatchTimer";
 import { useUpdateMatch } from "@/hooks/useMatches";
 import { useUpdatePlayerNumber } from "@/hooks/usePlayers";
+import { match } from "assert";
 
 import { Play, Pause, Plus, Minus } from "lucide-react";
 import { useEffect } from "react";
@@ -41,7 +42,15 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
 
   const updateMatchMutation = useUpdateMatch();
 
-  const { matchState, matchDetails, players, matchStarted } = useMatchContext();
+  const {
+    matchState,
+    matchDetails,
+    players,
+    matchStarted,
+    swapped,
+    setMatchState,
+    setTimerRunning,
+  } = useMatchContext();
 
   const updateNumber = useUpdatePlayerNumber();
 
@@ -51,7 +60,8 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
     if (
       initialCheckCompleted &&
       startButtonClicked &&
-      (!timerRunning || timerPaused)
+      (!timerRunning || timerPaused) &&
+      matchState !== "Done"
     ) {
       return <Play className="w-6 h-6" fill="white" />;
     }
@@ -74,7 +84,7 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
     if (matchPhase === "halftime" && !timerRunning && timerPaused)
       return "Start 2. poločasu";
     if (matchPhase === "finished") {
-      return "Ptrvrdit zápis";
+      return "Potvrdit zápis";
     }
     if (matchPhase === "postMatchConfirm") {
       return "Zápis potvrzen";
@@ -92,17 +102,33 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
       )}
 
       <div className="flex justify-between gap-2 sm:gap-4 w-full h-[30%]">
-        <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
-          <CardContentNoPadding className="flex items-center justify-center w-full">
-            <h2 className="text-md sm:text-2xl font-bold">{homeScore}</h2>
-          </CardContentNoPadding>
-        </CardMatchReport>
-
-        <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
-          <CardContentNoPadding className="flex items-center justify-center w-full">
-            <h2 className="text-md sm:text-2xl font-bold">{awayScore}</h2>
-          </CardContentNoPadding>
-        </CardMatchReport>
+        {swapped ? (
+          <>
+            <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
+              <CardContentNoPadding className="flex items-center justify-center w-full">
+                <h2 className="text-md sm:text-2xl font-bold">{awayScore}</h2>
+              </CardContentNoPadding>
+            </CardMatchReport>
+            <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
+              <CardContentNoPadding className="flex items-center justify-center w-full">
+                <h2 className="text-md sm:text-2xl font-bold">{homeScore}</h2>
+              </CardContentNoPadding>
+            </CardMatchReport>
+          </>
+        ) : (
+          <>
+            <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
+              <CardContentNoPadding className="flex items-center justify-center w-full">
+                <h2 className="text-md sm:text-2xl font-bold">{homeScore}</h2>
+              </CardContentNoPadding>
+            </CardMatchReport>
+            <CardMatchReport className="flex-1 w-full sm:p-4 p-2 justify-center">
+              <CardContentNoPadding className="flex items-center justify-center w-full">
+                <h2 className="text-md sm:text-2xl font-bold">{awayScore}</h2>
+              </CardContentNoPadding>
+            </CardMatchReport>
+          </>
+        )}
       </div>
 
       <CardMatchReport className="w-full flex justify-center h-[70%] sm:p-4 p-2 flex-1">
@@ -169,7 +195,9 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
                           state: "Pending",
                         });
                         toast.success("Zápas je znovu otevřen k editaci.");
+
                         window.location.reload();
+
                         // můžeš případně refetchnout zápas
                       }}
                     >

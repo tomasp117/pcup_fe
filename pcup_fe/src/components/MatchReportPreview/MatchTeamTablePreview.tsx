@@ -31,6 +31,8 @@ export const MatchTeamTablePreview = ({
     team.players.some((tp) => tp.id === p.id)
   );
 
+  const sortedPlayers = players.sort((a, b) => a.number - b.number);
+
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">
       <div className="flex items-center justify-between p-4 bg-primary/80 text-white">
@@ -56,7 +58,7 @@ export const MatchTeamTablePreview = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {players.map((player, idx) => (
+          {sortedPlayers.map((player, idx) => (
             <TableRow
               key={player.id}
               className={idx % 2 === 0 ? "bg-primary/5" : "bg-primary/10"}
