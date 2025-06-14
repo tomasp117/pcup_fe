@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
@@ -33,6 +33,8 @@ export const TeamPage = () => {
   const { id } = useParams<{ id: string }>();
 
   const teamId = Number(id);
+
+  const navigate = useNavigate();
 
   const { data: team, isLoading: teamLoading } = useTeamById(teamId);
   const { data: matches, isLoading: matchesLoading } = useMatchesByTeam(teamId);
@@ -129,7 +131,26 @@ export const TeamPage = () => {
                   // }`;
 
                   return (
-                    <TableRow key={match.id}>
+                    <TableRow
+                      key={match.id}
+                      className="cursor-pointer hover:bg-primary/10"
+                      onClick={(e) => {
+                        // levé tlačítko
+                        if (e.ctrlKey || e.metaKey) {
+                          // Ctrl nebo Cmd + klik
+                          window.open(`/match-preview/${match.id}`, "_blank");
+                        } else {
+                          // normální klik
+                          navigate(`/match-preview/${match.id}`);
+                        }
+                      }}
+                      onAuxClick={(e) => {
+                        if (e.button === 1) {
+                          // prostřední tlačítko
+                          window.open(`/match-preview/${match.id}`, "_blank");
+                        }
+                      }}
+                    >
                       <TableCell>{opponent}</TableCell>
                       <TableCell>{score}</TableCell>
                       <TableCell>{match.playground}</TableCell>
