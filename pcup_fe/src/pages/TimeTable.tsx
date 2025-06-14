@@ -303,7 +303,7 @@ export const TimeTable = () => {
   const fetchMatches = async () => {
     //if (matches.length > 0) return;
     try {
-      const res = await fetch(`${API_URL}/matches`);
+      const res = await fetch(`${API_URL}/matches/timetable`);
       if (!res.ok) throw new Error("Chyba při načítání zápasů");
       const data: MatchDTO[] = await res.json();
       setMatches(data);
