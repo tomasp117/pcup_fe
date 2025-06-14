@@ -1,4 +1,8 @@
-import { useMatches, useSelectMatch } from "@/hooks/useMatches";
+import {
+  useMatches,
+  useMatchesForReport,
+  useSelectMatch,
+} from "@/hooks/useMatches";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -13,7 +17,7 @@ import { useUser } from "@/Contexts/UserContext";
 import { Loader } from "lucide-react";
 
 export const MatchSelector = () => {
-  const { data: matches, isLoading } = useMatches();
+  const { data: matches, isLoading } = useMatchesForReport();
   const [searchSeq, setSearchSeq] = useState("");
   const [playgroundFilter, setPlaygroundFilter] = useState("");
   const { user } = useUser();

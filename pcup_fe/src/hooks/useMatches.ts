@@ -11,6 +11,26 @@ export const useMatches = () => {
   return useQuery<Match[]>({
     queryKey: ["matches"],
     queryFn: async () => {
+      const res = await fetch(`${API_URL}/matches`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst zápasy.");
+      }
+      console.log("Response:", res);
+      return res.json();
+    },
+  });
+};
+
+// Fetch all matches
+export const useMatchesForReport = () => {
+  return useQuery<Match[]>({
+    queryKey: ["matches"],
+    queryFn: async () => {
       const res = await fetch(`${API_URL}/matches/simple`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
