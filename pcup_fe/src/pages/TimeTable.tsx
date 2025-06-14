@@ -198,7 +198,9 @@ export const TimeTable = () => {
   };
 
   const handleSaveAssignments = async () => {
-    const assigned = matches.filter((m) => m.homeTeam && m.awayTeam);
+    const assigned = matches.filter(
+      (m) => m.homeTeam && m.awayTeam && m.state === "Generated"
+    );
 
     const body = assigned.map((m) => ({
       matchId: m.id,
