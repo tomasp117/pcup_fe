@@ -11,7 +11,7 @@ export const useMatches = () => {
   return useQuery<Match[]>({
     queryKey: ["matches"],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/matches`, {
+      const res = await fetch(`${API_URL}/matches/simple`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
