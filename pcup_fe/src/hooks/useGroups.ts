@@ -4,6 +4,7 @@ import {
 } from "@/components/Timetable/PlayoffBracketEditorPlaceholder";
 import { BracketRow } from "@/interfaces/BracketEditor/IBracketRow";
 import { Group } from "@/interfaces/BracketEditor/IGroup";
+import { FinalsStandingsTeam } from "@/interfaces/CategoryData/FinalsStandingsTeam";
 
 import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -117,6 +118,22 @@ export const useGroupsWithPlaceholders = (categoryId: number) => {
       );
       if (!res.ok) {
         throw new Error("Nepodařilo se načíst skupiny s placeholdery.");
+      }
+      return res.json();
+    },
+    enabled: !!categoryId,
+  });
+};
+
+export const useFinalStandingsByCategory = (categoryId: number) => {
+  return useQuery<FinalsStandingsTeam[]>({
+    queryKey: ["finalStandings", categoryId],
+    queryFn: async () => {
+      const res = await fetch(
+        `${API_URL}/groups/final-standings?categoryId=${categoryId}`
+      );
+      if (!res.ok) {
+        throw new Error("Nepodařilo se načíst konečné pořadí.");
       }
       return res.json();
     },

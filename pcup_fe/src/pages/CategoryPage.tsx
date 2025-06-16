@@ -12,8 +12,9 @@ import { Matches } from "@/components/Category/Matches";
 import { Standings } from "@/components/Category/Standings";
 import { parse } from "path";
 import { Loader2 } from "lucide-react";
+import { FinalStandings } from "@/components/Category/FinalStandings";
 
-const tabs = ["Účastníci", "Skupiny", "Utkání", "Tabulky"];
+const tabs = ["Účastníci", "Skupiny", "Utkání", "Tabulky", "Konečné pořadí"];
 const API_URL = import.meta.env.VITE_API_URL;
 export const CategoryPage = () => {
   const { id } = useParams();
@@ -88,6 +89,9 @@ export const CategoryPage = () => {
         )}
         {category && activeTab === "Tabulky" && (
           <Standings categoryId={selectedCategoryId} />
+        )}
+        {category && activeTab === "Konečné pořadí" && (
+          <FinalStandings categoryId={selectedCategoryId} />
         )}
       </div>
     </div>

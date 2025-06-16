@@ -55,6 +55,8 @@ export const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const { data: categories, isLoading } = useCategories();
+  const edition = useEdition();
+  const { user, logout } = useUser();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -78,8 +80,6 @@ export const Sidebar = () => {
     dynamicChildren?: boolean;
     roles?: string[];
   };
-
-  const edition = useEdition();
 
   const menuItems: MenuItem[] = [
     { name: "Domů", path: `/${edition}`, icon: <Home /> },
@@ -119,8 +119,6 @@ export const Sidebar = () => {
       roles: ["Admin"],
     },
   ];
-
-  const { user, logout } = useUser();
 
   const defaultEdition = 2025;
 
