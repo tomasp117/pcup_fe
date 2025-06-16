@@ -31,7 +31,7 @@ export const useMatchesForReport = () => {
   return useQuery<Match[]>({
     queryKey: ["matches"],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/matches/simple`, {
+      const res = await fetch(`${API_URL}/matches/match-report`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
