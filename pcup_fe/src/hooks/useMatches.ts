@@ -3,6 +3,7 @@ import { Match } from "@/interfaces/MatchReport/Match";
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -194,3 +195,13 @@ export const useCreateLineups = () => {
     },
   });
 };
+
+// export const useMatchesForTimetable = () =>
+//   useQuery<MatchDTO[]>({
+//     queryKey: ["matches", "timetable"],
+//     queryFn: async () => {
+//       const res = await fetch(`${API_URL}/matches/timetable`);
+//       if (!res.ok) throw new Error("Chyba při načítání zápasů");
+//       return res.json();
+//     },
+//   });

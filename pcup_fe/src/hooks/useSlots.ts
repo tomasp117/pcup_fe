@@ -38,6 +38,7 @@ export const useAddSlot = (edition: number) => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["slots", edition] });
+      //qc.invalidateQueries({ queryKey: ["matches", "timetable"] });
     },
   });
 };
@@ -55,6 +56,7 @@ export const useDeleteSlot = () => {
     onSuccess: (_data, slotId, context) => {
       // Jestli chcete, znovu načíst sloty
       qc.invalidateQueries({ queryKey: ["slots"] });
+      //qc.invalidateQueries({ queryKey: ["matches", "timetable"] });
     },
   });
 };

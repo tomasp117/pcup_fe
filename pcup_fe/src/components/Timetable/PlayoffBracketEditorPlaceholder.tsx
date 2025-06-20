@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -43,12 +43,14 @@ export type PlaceholderTeamDTO = {
 export type PlaceholderGroup = {
   name: string;
   phase: string;
+  finalGroup?: number;
   teams: PlaceholderTeam[];
 };
 
 export type PlaceholderGroupDTO = {
   name: string;
   phase: string;
+  finalGroup?: number;
   teams: PlaceholderTeamDTO[];
 };
 
@@ -117,6 +119,7 @@ export const PlayoffBracketEditorPlaceholder = ({
                 {
                   name: `Skupina ${row.groups.length + 1}`,
                   phase: row.name,
+                  finalPlace: undefined,
                   teams: [],
                 },
               ],
@@ -237,7 +240,8 @@ export const PlayoffBracketEditorPlaceholder = ({
     const payload = rows.flatMap((r) =>
       r.groups.map((g) => ({
         name: g.name,
-        phase: r.name, // nebo g.phase — obojí je stejné
+        phase: r.name,
+        finalGroup: g.finalGroup,
         teams: g.teams.map((t) =>
           t.type === "placeholder"
             ? { name: `${t.position}.${t.group}` }
@@ -405,6 +409,21 @@ export const PlayoffBracketEditorPlaceholder = ({
     );
   };
 
+  const removeRow = (rowIndex: number) => {
+    setRows((prev) => prev.filter((_, i) => i !== rowIndex));
+  };
+
+  // Delete a single group
+  const removeGroup = (rowIndex: number, groupIndex: number) => {
+    setRows((prev) =>
+      prev.map((row, i) =>
+        i === rowIndex
+          ? { ...row, groups: row.groups.filter((_, j) => j !== groupIndex) }
+          : row
+      )
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {placeholderGroups && placeholderGroups.length > 0 && (
@@ -449,6 +468,14 @@ export const PlayoffBracketEditorPlaceholder = ({
             >
               Přiřadit reálné týmy
             </Button>
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={() => removeRow(rowIndex)}
+              title="Odstranit fázi"
+            >
+              <Trash2 size={16} />
+            </Button>
           </div>
           <div className="flex flex-wrap gap-4">
             {Array.isArray(row.groups) &&
@@ -457,7 +484,7 @@ export const PlayoffBracketEditorPlaceholder = ({
                   key={groupIndex}
                   className="w-full sm:w-64 border border-primary shadow-sm"
                 >
-                  <CardHeader className="p-0">
+                  <CardHeader className="p-0 flex items-center justify-between">
                     <Input
                       value={group.name}
                       onChange={(e) =>
@@ -465,6 +492,45 @@ export const PlayoffBracketEditorPlaceholder = ({
                       }
                       className="text-lg font-semibold p-4 border-0"
                     />
+                    {/* Nové pole pro finální umístění */}
+                    <div className="flex items-center gap-2 pr-4">
+                      <Label
+                        htmlFor={`final-${rowIndex}-${groupIndex}`}
+                        className="text-sm"
+                      >
+                        o místo
+                      </Label>
+                      <Input
+                        id={`final-${rowIndex}-${groupIndex}`}
+                        type="number"
+                        min={1}
+                        placeholder="–"
+                        value={group.finalGroup ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setRows((prev) =>
+                            prev.map((r, ri) =>
+                              ri !== rowIndex
+                                ? r
+                                : {
+                                    ...r,
+                                    groups: r.groups.map((g, gi) =>
+                                      gi !== groupIndex
+                                        ? g
+                                        : {
+                                            ...g,
+                                            finalGroup: val
+                                              ? parseInt(val, 10)
+                                              : undefined,
+                                          }
+                                    ),
+                                  }
+                            )
+                          );
+                        }}
+                        className="w-12"
+                      />
+                    </div>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-2">
                     {Array.isArray(group.teams) &&
@@ -553,12 +619,23 @@ export const PlayoffBracketEditorPlaceholder = ({
                           )}
                         </div>
                       ))}
-                    <Button
-                      onClick={() => addTeamToGroup(rowIndex, groupIndex)}
-                      className="mt-2 text-xs w-fit"
-                    >
-                      Přidat tým <Plus />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => addTeamToGroup(rowIndex, groupIndex)}
+                        className="mt-2 text-xs w-fit"
+                      >
+                        Přidat tým <Plus />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => removeGroup(rowIndex, groupIndex)}
+                        title="Odstranit skupinu"
+                        className="mt-2"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

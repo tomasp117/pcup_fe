@@ -464,7 +464,7 @@ export const Sidebar = () => {
                               </Button>
                             </Link>
                           </TooltipTrigger>
-                          <TooltipContent side="right">My Club</TooltipContent>
+                          <TooltipContent side="right">Můj Klub</TooltipContent>
                         </Tooltip>
                       )}
                       <Tooltip>
@@ -486,9 +486,12 @@ export const Sidebar = () => {
                   ) : (
                     <div className="flex flex-col space-y-2 items-center">
                       <Link to="/my-team">
-                        <Button className="w-full">
-                          <Users className="mr-2" size={18} /> Můj tým
-                        </Button>
+                        {user.role === "ClubAdmin" ? (
+                          <Button className="w-full">
+                            <Users className="mr-2" size={18} /> Můj{" "}
+                            {user.role === "ClubAdmin" ? "klub" : "tým"}
+                          </Button>
+                        ) : null}
                       </Link>
                       <Button
                         variant="ghost"

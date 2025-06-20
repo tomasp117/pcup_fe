@@ -40,6 +40,7 @@ export const TimeTable = () => {
   const [unassignedMatches, setUnassignedMatches] = useState<UnassignedMatch[]>(
     []
   );
+
   //const courts = Array.from(new Set(matches.map((m) => m.playground)));
 
   const [filterCourt, setFilterCourt] = useState<string | null>(null);
@@ -355,9 +356,22 @@ export const TimeTable = () => {
 
   const [showUnassigned, setShowUnassigned] = useState(true);
 
+  // const courts = useMemo(
+  //   () => Array.from(new Set(matches.map((m) => m.playground))),
+  //   [matches]
+  // );
+
   const courts = useMemo(
-    () => Array.from(new Set(matches.map((m) => m.playground))),
-    [matches]
+    () => [
+      "Hala",
+      "Hřiště 1 Tartan",
+      "Hřiště 2 Tartan",
+      "Hřiště 3 Umělá tráva",
+      "Hřiště 4 Umělá tráva",
+      "Hřiště 5 Tartan Dělnický dům",
+      "Hřiště 6 Beton Dělnický dům",
+    ],
+    []
   );
 
   const filteredMatches = useMemo(() => {
@@ -404,7 +418,7 @@ export const TimeTable = () => {
   const rowVirtualizer = useVirtualizer({
     count: filteredMatches.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 56, // nebo jaká je vaše výška řádku
+    estimateSize: () => 56,
     overscan: 5,
   });
 
