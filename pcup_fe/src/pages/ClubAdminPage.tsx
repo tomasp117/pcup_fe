@@ -64,7 +64,7 @@ export const ClubAdminPage = () => {
       queryClient.invalidateQueries({ queryKey: ["my-club"] });
       setSelectedTeamId(null);
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(`Chyba: ${err.message}`);
     },
   });
@@ -132,8 +132,6 @@ export const ClubAdminPage = () => {
       toast.error("Chyba při nahrávání loga");
       return;
     }
-
-    const newPath = await res.text();
     toast.success("Logo nahráno");
     queryClient.invalidateQueries({ queryKey: ["my-club"] });
   };

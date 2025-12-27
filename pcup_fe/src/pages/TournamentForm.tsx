@@ -7,7 +7,7 @@ import {
   useTournaments,
 } from "@/hooks/useTournaments";
 import { useNavigate } from "react-router-dom";
-import { Delete, Loader2, Pencil, X } from "lucide-react";
+import { Loader2, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 
 type TournamentFormProps = {
@@ -20,16 +20,10 @@ export const TournamentForm = ({ onSuccess }: TournamentFormProps) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<{ name: string }>();
 
-  const {
-    mutate,
-    isSuccess,
-    isError,
-    error: mutationError,
-  } = useCreateTournament();
+  const { mutate, isError, error: mutationError } = useCreateTournament();
 
   const { data: tournaments, isLoading } = useTournaments();
 

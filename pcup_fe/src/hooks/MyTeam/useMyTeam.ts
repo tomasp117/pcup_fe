@@ -1,6 +1,5 @@
-import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 import { TeamDetailDTO } from "@/interfaces/MyTeam/TeamDetailDTO";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

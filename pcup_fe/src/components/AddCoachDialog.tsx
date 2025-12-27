@@ -8,15 +8,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { cs } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "react-toastify";
-import { Label } from "@radix-ui/react-label";
 
 interface Props {
   open: boolean;
@@ -60,7 +52,6 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [emailError, setEmailError] = useState("");
-  const [phoneNumberError, setPhoneNumberError] = useState("");
 
   const isValid = () => {
     return (
@@ -167,7 +158,9 @@ export const AddCoachDialog = ({ open, onClose, onSave, teamId }: Props) => {
             <Calendar
               mode="single"
               selected={dateOfBirth}
-              onSelect={(date: Date | undefined) => setDateOfBirth(date || undefined)}
+              onSelect={(date: Date | undefined) =>
+                setDateOfBirth(date || undefined)
+              }
               fromYear={1950}
               toYear={new Date().getFullYear()}
               captionLayout="dropdown"

@@ -27,7 +27,7 @@ export const PlayoffBracketEditor = ({
 }: PlayoffBracketEditorProps) => {
   const [bracket, setBracket] = useState<BracketRow[]>([]);
 
-  const { data: teams, isLoading } = useTeamsByCategory(categoryId || 0);
+  const { data: teams } = useTeamsByCategory(categoryId || 0);
 
   const { mutate: saveBracket, isPending: isSaving } = useSaveBracket(
     categoryId || 0

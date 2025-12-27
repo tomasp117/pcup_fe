@@ -1,12 +1,8 @@
-import {
-  PlaceholderGroup,
-  PlaceholderGroupDTO,
-} from "@/components/Timetable/PlayoffBracketEditorPlaceholder";
-import { BracketRow } from "@/interfaces/BracketEditor/IBracketRow";
+import { PlaceholderGroupDTO } from "@/components/Timetable/PlayoffBracketEditorPlaceholder";
 import { Group } from "@/interfaces/BracketEditor/IGroup";
 import { FinalsStandingsTeam } from "@/interfaces/CategoryData/FinalsStandingsTeam";
 
-import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;

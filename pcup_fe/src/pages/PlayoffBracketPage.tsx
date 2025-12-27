@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { useBracketByCategory } from "@/hooks/useGroups";
 import { PlayoffVisualizer } from "./PlayoffVisualizer";
 import { Loader2 } from "lucide-react";

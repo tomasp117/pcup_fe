@@ -1,19 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 
 export const useReconstructStats = () => {
   const {
     events,
-    updatePlayerStats,
     sethomeScore,
     setawayScore,
     setPlayers,
     players,
     matchDetails,
   } = useMatchContext();
-
-  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (!matchDetails) return;
@@ -42,7 +39,7 @@ export const useReconstructStats = () => {
     let awayScore = 0;
 
     for (const event of events) {
-      const { type, authorId, team, message } = event;
+      const { type, authorId, team } = event;
       if (authorId === null) continue;
 
       const player = playersMap.get(authorId);

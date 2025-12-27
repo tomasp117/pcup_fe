@@ -7,10 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useMatchEvents,
-  useMatchEventsPreview,
-} from "@/hooks/MatchReport/useEvent";
+import { useMatchEventsPreview } from "@/hooks/MatchReport/useEvent";
 import { Match } from "@/interfaces/MatchReport/Match";
 
 interface MatchLogPreviewProps {

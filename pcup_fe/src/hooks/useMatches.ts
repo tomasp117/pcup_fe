@@ -1,9 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Match } from "@/interfaces/MatchReport/Match";
-import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -189,7 +187,7 @@ export const useCreateLineups = () => {
       toast.success("Soupisky byly úspěšně uloženy.");
     },
     onError: (err) => {
-      toast.error("Chyba při ukládání soupisky.");
+      toast.error(`Chyba při ukládání soupisky: ${err.message}`);
     },
   });
 };

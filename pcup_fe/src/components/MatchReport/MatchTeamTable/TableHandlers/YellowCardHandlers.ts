@@ -21,8 +21,8 @@ function YellowCardHandlers() {
 
     const isHome = matchDetails.homeTeam.players.some((p) => p.id === playerId);
 
-    let toastMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-    let eventMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    const toastMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    const eventMessage = `🟨 Žlutá karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
 
     updatePlayerStats(playerId, (player) => {
       if (player.redCardCount > 0 || player.yellowCardCount > 0) return player;

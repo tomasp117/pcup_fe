@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -232,7 +232,7 @@ export const Draws = () => {
       setSelectedVariant(null);
       setGroupVariants([]);
     } catch (error) {
-      toast.error("Chyba při ukládání skupin.");
+      toast.error(`Chyba při ukládání skupin: ${(error as Error).message}`);
     }
   };
   return (

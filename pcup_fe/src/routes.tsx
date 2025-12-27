@@ -16,7 +16,6 @@ import { EditTournamentInstanceForm } from "./pages/EditTournamentInstanceForm";
 import { EditCategoryForm } from "./pages/EditCategoryForm";
 import { EditClubForm } from "./pages/EditClubForm";
 import { MatchPreviewPage } from "./pages/MatchPreviewPage";
-import { fetchMatch } from "./hooks/useMatches";
 
 import { PlayoffBracketPage } from "./pages/PlayoffBracketPage";
 import { ClubAdminPage } from "./pages/ClubAdminPage";

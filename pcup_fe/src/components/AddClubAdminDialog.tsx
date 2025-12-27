@@ -1,22 +1,10 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, Eye, EyeOff } from "lucide-react";
-import { cs } from "date-fns/locale";
+
+import { Eye, EyeOff } from "lucide-react";
+
 import { toast } from "react-toastify";
 import { useCreateClubAdmin } from "@/hooks/useClubs";
 
@@ -37,12 +25,7 @@ interface Props {
   clubId: number;
 }
 
-export const AddClubAdminDialog = ({
-  open,
-  onClose,
-  onSave,
-  clubId,
-}: Props) => {
+export const AddClubAdminDialog = ({ onClose, onSave, clubId }: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -67,7 +50,7 @@ export const AddClubAdminDialog = ({
     );
   };
 
-  const { mutate, isPending, isError, error } = useCreateClubAdmin();
+  const { mutate } = useCreateClubAdmin();
 
   const handleSubmit = () => {
     if (!isValid()) return;
@@ -89,9 +72,11 @@ export const AddClubAdminDialog = ({
           toast.success("Administrátor byl úspěšně přidán.");
           onClose();
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
+          const error = err as { response?: { data?: { message?: string } } };
           toast.error(
-            err.response?.data?.message || "Chyba při přidávání administrátora."
+            error.response?.data?.message ||
+              "Chyba při přidávání administrátora."
           );
         },
       }
@@ -152,7 +137,9 @@ export const AddClubAdminDialog = ({
           <Calendar
             mode="single"
             selected={dateOfBirth}
-            onSelect={(date: Date | undefined) => setDateOfBirth(date || undefined)}
+            onSelect={(date: Date | undefined) =>
+              setDateOfBirth(date || undefined)
+            }
             fromYear={1950}
             toYear={new Date().getFullYear()}
             captionLayout="dropdown"

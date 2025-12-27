@@ -27,8 +27,8 @@ function TwoMinuteHandlers() {
 
     const isHome = matchDetails.homeTeam.players.some((p) => p.id === playerId);
 
-    let toastMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
-    let eventMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    const toastMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
+    const eventMessage = `🕑 2 minuty - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
     const redEventMessage = `🟥 Červená karta - ${player.person.firstName} ${player.person.lastName} #${player.number}`;
     //let willGetRedCard = false;
 

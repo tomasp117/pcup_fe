@@ -2,9 +2,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Mail, Phone, FileText, Download } from "lucide-react";
 
-const plakatUrl = "../../assets/plakat.2025.pdf";
-const pozvankaUrl = "../../assets/pozvanka.2025.pdf";
-
 export const InfoCard = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

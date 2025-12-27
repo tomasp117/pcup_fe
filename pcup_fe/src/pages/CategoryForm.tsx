@@ -1,36 +1,15 @@
 import { useForm } from "react-hook-form";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useTournamentInstances } from "@/hooks/useTournamentInstances";
 import {
   useCategoriesByInstance,
   useCreateCategory,
   useDeleteCategory,
 } from "@/hooks/useCategories";
 import { useNavigate } from "react-router-dom";
-import {
-  Link2,
-  Loader2,
-  LucideLink,
-  MoveRight,
-  Pencil,
-  Pointer,
-  X,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Loader2, MoveRight, Pencil, X } from "lucide-react";
 
-type FormValues = {
-  name: string;
-  tournamentInstanceId: string;
-};
 type CategoryFormProps = {
   instanceId: number;
   onSuccess?: () => void;
@@ -41,7 +20,6 @@ type CategoryFormProps = {
 export const CategoryForm = ({
   instanceId,
   onSuccess,
-  onBack,
   onSkip,
 }: CategoryFormProps) => {
   const {

@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { EventDto } from "../../interfaces/MatchReport/EventDto";
 import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
 import { Event } from "@/interfaces/MatchReport/Event";
 import { useEffect } from "react";
@@ -106,8 +105,8 @@ export const useReliableAddEvent = (matchId: number) => {
           }
         } catch (err) {
           console.warn(
-            "[offline retry] Síťová chyba při odesílání události:",
-            e
+            `[offline retry] Síťová chyba při odesílání události:`,
+            err
           );
         }
 

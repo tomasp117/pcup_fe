@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -7,8 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { Check, X } from "lucide-react";
 
 import { Team } from "@/interfaces/MatchReport/Team";
 import { Match } from "@/interfaces/MatchReport/Match";
@@ -26,10 +23,6 @@ export const MatchTeamTablePreview = ({
   players,
 }: MatchTeamTablePreviewProps) => {
   const isHomeTeam = team === match.homeTeam;
-
-  const filteredPlayers = team.players.filter((p) =>
-    team.players.some((tp) => tp.id === p.id)
-  );
 
   const sortedPlayers = players.sort((a, b) => a.number - b.number);
 

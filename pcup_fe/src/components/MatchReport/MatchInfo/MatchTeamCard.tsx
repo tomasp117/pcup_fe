@@ -1,38 +1,17 @@
 import { CardContent, CardMatchReport } from "@/components/ui/card";
-import polanka from "@/assets/polanka.gif";
-import ostrava from "@/assets/ostrava.gif";
-import frydek from "@/assets/frydek.png";
-import zubri from "@/assets/zubri.png";
-import praha from "@/assets/praha.png";
 import { Team } from "@/interfaces/MatchReport/Team";
-import { useClubs } from "@/hooks/useClubs";
-import { useEffect } from "react";
 
 interface MatchTeamCardProps {
   team: Team;
   side: "home" | "away";
 }
-//const API_URL = "http://localhost:5056";
 
 const API_URL_IMAGES = import.meta.env.VITE_API_URL_IMAGES;
-
-// const teamLogos: Record<string, string> = {
-//   Polanka: `${API_URL_IMAGES}/polanka.gif`,
-//   Ostrava: `${API_URL_IMAGES}/ostrava.gif`,
-//   "Frýdek-Místek": `${API_URL_IMAGES}/frydek.png`,
-//   Zubří: `${API_URL_IMAGES}/zubri.png`,
-//   Praha: `${API_URL_IMAGES}/praha.png`,
-// };
 
 export const MatchTeamCard = ({ team, side }: MatchTeamCardProps) => {
   const logo = team.club?.logo
     ? `${API_URL_IMAGES}/${team.club.logo}`
     : `${API_URL_IMAGES}/default-logo.png`;
-
-  useEffect(() => {
-    console.log("Team logo URL:", logo);
-    console.log("Team data:", team);
-  }, []);
 
   // const findLogo = () => {
   //   const teamName = team.name.toLowerCase();

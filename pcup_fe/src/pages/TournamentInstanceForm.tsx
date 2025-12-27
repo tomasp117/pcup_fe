@@ -4,14 +4,6 @@ import {
   useDeleteTournamentInstance,
   useTournamentInstancesByTournamentId,
 } from "@/hooks/useTournamentInstances";
-import { useTournaments } from "@/hooks/useTournaments";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +25,6 @@ type TournamentInstanceFormProps = {
 export const TournamentInstanceForm = ({
   tournamentId,
   onSuccess,
-  onBack,
 }: TournamentInstanceFormProps) => {
   const { mutate, isPending, isError, error } = useCreateTournamentInstance();
   const navigate = useNavigate();

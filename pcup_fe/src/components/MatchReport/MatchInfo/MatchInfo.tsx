@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { MatchTeamCard } from "./MatchTeamCard";
 import { Team } from "@/interfaces/MatchReport/Team";
 import { useCategories } from "@/hooks/useCategories";
-import { useEffect, useState } from "react";
 import { Repeat } from "lucide-react";
 import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 
@@ -25,9 +24,7 @@ const customHalftimes: Record<string, number> = {
 export const MatchInfo = ({ teamHome, teamAway }: MatchInfoProps) => {
   const { data: categories } = useCategories();
 
-  const { matchDetails, setSwapped, swapped } = useMatchContext();
-
-  const [swapOrder, setSwapOrder] = useState(false);
+  const { setSwapped, swapped } = useMatchContext();
 
   const category = categories?.find(
     (cat) => cat.id === teamHome.categoryId || cat.id === teamAway.categoryId

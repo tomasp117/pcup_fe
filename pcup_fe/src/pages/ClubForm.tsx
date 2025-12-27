@@ -27,7 +27,7 @@ interface ClubFormProps {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ClubForm = ({ onBack, onSkip }: ClubFormProps) => {
+export const ClubForm = ({ onSkip }: ClubFormProps) => {
   const navigate = useNavigate();
 
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);

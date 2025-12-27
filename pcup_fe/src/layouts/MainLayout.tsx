@@ -1,12 +1,6 @@
-import { use, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Sidebar } from "@/layouts/Sidebar";
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "./Footer";
 import {
   EditionProvider,
@@ -14,7 +8,6 @@ import {
 } from "@/Contexts/TournamentEditionContext";
 
 export const MainLayout = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
 
   const { edition } = useParams();

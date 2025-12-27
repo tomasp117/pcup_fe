@@ -1,5 +1,4 @@
 import { Person } from "../Person";
-import { Player } from "./Player";
 
 export interface Coach {
   id: number;

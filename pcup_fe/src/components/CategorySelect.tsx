@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -7,7 +7,6 @@ import {
   SelectValue,
 } from "./ui/select";
 
-import { Category } from "@/interfaces/CategorySelect/ICategory";
 import { useCategories } from "@/hooks/useCategories";
 import { Loader2 } from "lucide-react";
 
@@ -16,8 +15,6 @@ interface CategorySelectProps {
   onChange: (categoryId: number) => void;
   noMini41?: boolean;
 }
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 export const CategorySelect = ({
   value,

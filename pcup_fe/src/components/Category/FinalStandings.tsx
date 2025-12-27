@@ -1,5 +1,4 @@
 import { Loader2 } from "lucide-react";
-import { useTeamsByCategory } from "@/hooks/useTeams";
 import { Link } from "react-router-dom";
 import { useFinalStandingsByCategory } from "@/hooks/useGroups";
 

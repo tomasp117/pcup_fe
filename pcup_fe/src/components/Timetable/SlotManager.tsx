@@ -22,23 +22,14 @@ import {
   TableCell,
   TableHead,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
 import { useAddSlot, useDeleteSlot, useSlots } from "@/hooks/useSlots";
-import { Loader2, Trash, Trash2 } from "lucide-react";
-
-interface Slot {
-  id: number;
-  time: string;
-  playground: string;
-}
+import { Loader2, Trash2 } from "lucide-react";
 
 interface SlotManagerProps {
   edition: number;
   courts: string[];
 }
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 export const SlotManager = ({ edition, courts }: SlotManagerProps) => {
   const [open, setOpen] = useState(false);

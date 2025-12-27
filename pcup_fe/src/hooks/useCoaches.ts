@@ -23,7 +23,7 @@ export const useDeleteCoach = () => {
       toast.success("Trenér byl úspěšně smazán");
       queryClient.invalidateQueries({ queryKey: ["my-club"] });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(`Chyba: ${err.message}`);
     },
   });

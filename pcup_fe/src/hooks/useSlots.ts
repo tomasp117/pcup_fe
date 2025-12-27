@@ -53,7 +53,7 @@ export const useDeleteSlot = () => {
       });
       if (!res.ok) throw new Error("Mazání selhalo");
     },
-    onSuccess: (_data, slotId, context) => {
+    onSuccess: () => {
       // Jestli chcete, znovu načíst sloty
       qc.invalidateQueries({ queryKey: ["slots"] });
       //qc.invalidateQueries({ queryKey: ["matches", "timetable"] });

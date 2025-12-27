@@ -24,12 +24,7 @@ export const EditTournamentInstanceForm = () => {
   const { mutate, isPending, isSuccess, isError, error } =
     useUpdateTournamentInstance();
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormValues>();
+  const { register, handleSubmit, setValue } = useForm<FormValues>();
 
   useEffect(() => {
     if (data) {

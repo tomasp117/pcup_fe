@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCategoryDetail } from "@/hooks/useCategories";
 import { Participants } from "@/components/Category/Participants";
 import { CategorySelect } from "@/components/CategorySelect";
-import { useCategoryData } from "@/hooks/Draws/useCategoryData";
 import { Groups } from "@/components/Category/Groups";
 import { Matches } from "@/components/Category/Matches";
 import { Standings } from "@/components/Category/Standings";
-import { parse } from "path";
 import { Loader2 } from "lucide-react";
 import { FinalStandings } from "@/components/Category/FinalStandings";
 
 const tabs = ["Účastníci", "Skupiny", "Utkání", "Tabulky", "Konečné pořadí"];
-const API_URL = import.meta.env.VITE_API_URL;
 export const CategoryPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();

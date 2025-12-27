@@ -10,14 +10,10 @@ import {
 import { useMatchContext } from "../../../Contexts/MatchReportContext/MatchContext";
 import { Check, X } from "lucide-react";
 import GoalHandlers from "./TableHandlers/GoalHandlers";
-import { match } from "assert";
-import { useEffect } from "react";
 import TwoMinuteHandlers from "./TableHandlers/TwoMinuteHandlers";
 import YellowCardHandlers from "./TableHandlers/YellowCardHandlers";
 import { RedCardHandlers } from "./TableHandlers/RedCardHandlers";
 import { Team } from "@/interfaces/MatchReport/Team";
-import { Player } from "@/interfaces/MatchReport/Person/Roles/Player";
-import { usePenaltyTimer } from "@/hooks/MatchReport/usePenaltyTimer";
 import { Input } from "@/components/ui/input";
 
 interface MatchTeamTableProps {
@@ -27,12 +23,10 @@ interface MatchTeamTableProps {
 export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
   const {
     matchDetails,
-    players,
     setPlayers,
     matchStarted,
     matchState,
     getPlayersForTeam,
-    timerRunning,
     getPenaltyLeft,
     addPenalty,
   } = useMatchContext();
@@ -49,13 +43,6 @@ export const MatchTeamTable = ({ team }: MatchTeamTableProps) => {
   const teamPlayers = getPlayersForTeam(team)
     .slice()
     .sort((a, b) => a.number - b.number);
-
-  const isCounting = timerRunning;
-  // will clear all when matchState flips to "None"
-  // const { addPenalty, getPenaltyLeft } = usePenaltyTimer(
-  //   isCounting,
-  //   matchState === "None"
-  // );
 
   return (
     <div className="overflow-x-auto rounded-lg shadow-lg flex-1">

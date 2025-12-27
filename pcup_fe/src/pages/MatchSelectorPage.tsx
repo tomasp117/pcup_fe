@@ -1,7 +1,4 @@
 import { MatchSelector } from "@/components/MatchReport/MatchSelector";
-import { MatchProvider } from "@/Contexts/MatchReportContext/MatchContext";
-import { Match } from "@/interfaces/MatchReport/Match";
-import { useLoaderData } from "react-router-dom";
 
 export const MatchSelectorPage = () => {
   return (

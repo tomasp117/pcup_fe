@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -61,7 +61,7 @@ export const LoginDialog = ({ isCollapsed }: { isCollapsed: boolean }) => {
 
       setIsOpen(false);
     } catch (error) {
-      setError("Chyba při připojení k serveru.");
+      setError(`Chyba při připojení k serveru. ${error}`);
     } finally {
       setIsLoading(false);
     }

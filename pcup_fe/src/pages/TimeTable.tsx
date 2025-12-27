@@ -20,7 +20,6 @@ import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { set } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -56,7 +55,7 @@ export const TimeTable = () => {
       const data = await res.json();
       setCategories(data);
     } catch (err) {
-      setError("Chyba při načítání kategorií.");
+      setError(`Chyba při načítání kategorií. ${err}`);
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +74,7 @@ export const TimeTable = () => {
       const data: GroupDetailDTO[] = await res.json();
       setGroups(data);
     } catch (err) {
-      setError("Chyba při načítání skupin");
+      setError(`Chyba při načítání skupin. ${err}`);
       setGroups([]);
     } finally {
       setIsLoading(false);
@@ -260,7 +259,7 @@ export const TimeTable = () => {
 
       toast.success("Zápasy úspěšně přiřazeny");
     } catch (err) {
-      toast.error("Nepodařilo se přiřadit zápasy");
+      toast.error(`Nepodařilo se přiřadit zápasy: ${err}`);
     } finally {
       setIsLoading(false);
       await fetchMatches();
@@ -293,7 +292,7 @@ export const TimeTable = () => {
 
       toast.success("Všechny zápasy úspěšně přiřazeny");
     } catch (err) {
-      toast.error("Nepodařilo se přiřadit zápasy");
+      toast.error(`Nepodařilo se přiřadit zápasy: ${err}`);
     } finally {
       setIsLoading(false);
       await fetchMatches();
@@ -317,7 +316,7 @@ export const TimeTable = () => {
       }));
       setSlots(convertedSlots); */
     } catch (err) {
-      setError("Chyba při načítání zápasů");
+      setError(`Chyba při načítání zápasů: ${err}`);
     }
   };
 
@@ -350,7 +349,7 @@ export const TimeTable = () => {
       const data: UnassignedMatch[] = await res.json();
       setUnassignedMatches(data);
     } catch (err) {
-      setError("Nepodařilo se načíst nepřiřazené zápasy");
+      setError(`Nepodařilo se načíst nepřiřazené zápasy: ${err}`);
     }
   };
 
@@ -413,7 +412,6 @@ export const TimeTable = () => {
     );
   }, []);
 
-  const parentRef = useRef<HTMLTableSectionElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({
     count: filteredMatches.length,

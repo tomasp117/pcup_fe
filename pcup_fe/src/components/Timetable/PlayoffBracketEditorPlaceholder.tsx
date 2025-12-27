@@ -17,7 +17,6 @@ import {
   useGroupsWithPlaceholders,
   useSaveBracketPlaceholder,
 } from "@/hooks/useGroups";
-import { set } from "react-hook-form";
 
 import { Group } from "@/interfaces/BracketEditor/IGroup";
 import { useTeamsByCategory } from "@/hooks/useTeams";
@@ -68,24 +67,15 @@ export const PlayoffBracketEditorPlaceholder = ({
 }: PlayoffBracketEditorPlaceholderProps) => {
   const [rows, setRows] = useState<PlaceholderRow[]>([]);
 
-  if (!categoryId) {
-    return (
-      <div className="text-red-500">
-        K editaci pavouka je potřeba vybrat kategorii.
-      </div>
-    );
-  }
-  const { data: groups, isLoading } = useGroupsByCategory(categoryId);
-  const { mutate: saveBracket, isPending } =
-    useSaveBracketPlaceholder(categoryId);
+  const { data: groups } = useGroupsByCategory(categoryId || 0);
+  const { mutate: saveBracket, isPending } = useSaveBracketPlaceholder(
+    categoryId || 0
+  );
 
-  const { data: allTeams } = useTeamsByCategory(categoryId);
-
-  if (allTeams == null) {
-    return <div className="text-red-500">Týmy nejsou načteny.</div>;
-  }
-
-  const { data: placeholderGroups } = useGroupsWithPlaceholders(categoryId);
+  const { data: allTeams } = useTeamsByCategory(categoryId || 0);
+  const { data: placeholderGroups } = useGroupsWithPlaceholders(
+    categoryId || 0
+  );
 
   const BACKEND_GROUPS =
     groups
@@ -423,6 +413,18 @@ export const PlayoffBracketEditorPlaceholder = ({
       )
     );
   };
+
+  if (!categoryId) {
+    return (
+      <div className="text-red-500">
+        K editaci pavouka je potřeba vybrat kategorii.
+      </div>
+    );
+  }
+
+  if (allTeams == null) {
+    return <div className="text-red-500">Týmy nejsou načteny.</div>;
+  }
 
   return (
     <div className="flex flex-col gap-6">

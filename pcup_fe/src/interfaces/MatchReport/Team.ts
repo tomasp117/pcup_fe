@@ -1,4 +1,3 @@
-import { Category } from "./Category";
 import { Club } from "./Club";
 import { Match } from "./Match";
 import { Coach } from "./Person/Roles/Coach";

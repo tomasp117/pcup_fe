@@ -1,12 +1,6 @@
 import { Match } from "@/interfaces/MatchReport/Match";
-import { Button } from "../ui/button";
 import { CardContent, CardContentNoPadding, CardMatchReport } from "../ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+
 import { useEffect, useState } from "react";
 
 export interface ScoreAndTimePreviewProps {

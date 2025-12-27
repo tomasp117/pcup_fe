@@ -14,7 +14,6 @@ import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { useMatchTimer } from "@/hooks/MatchReport/useMatchTimer";
 import { useUpdateMatch } from "@/hooks/useMatches";
 import { useUpdatePlayerNumber } from "@/hooks/usePlayers";
-import { match } from "assert";
 
 import { Play, Pause, Plus, Minus } from "lucide-react";
 import { useEffect } from "react";
@@ -42,15 +41,8 @@ export default function ScoreAndTime({ halftime }: ScoreAndTimeProps) {
 
   const updateMatchMutation = useUpdateMatch();
 
-  const {
-    matchState,
-    matchDetails,
-    players,
-    matchStarted,
-    swapped,
-    setMatchState,
-    setTimerRunning,
-  } = useMatchContext();
+  const { matchState, matchDetails, players, matchStarted, swapped } =
+    useMatchContext();
 
   const updateNumber = useUpdatePlayerNumber();
 

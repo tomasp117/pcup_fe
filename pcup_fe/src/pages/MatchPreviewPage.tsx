@@ -1,7 +1,4 @@
-import { useLoaderData, useParams } from "react-router-dom";
-import { Match } from "@/interfaces/MatchReport/Match";
-import { MatchProvider } from "@/Contexts/MatchReportContext/MatchContext";
-import { MatchReport } from "./MatchReport";
+import { useParams } from "react-router-dom";
 import { MatchInfoPreview } from "../components/MatchReportPreview/MatchInfoPreview";
 import { MatchTeamTablePreview } from "@/components/MatchReportPreview/MatchTeamTablePreview";
 import { MatchLogPreview } from "@/components/MatchReportPreview/MatchLogPreview";

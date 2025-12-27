@@ -1,17 +1,14 @@
 import { useCategories } from "@/hooks/useCategories";
-import { Team } from "@/interfaces/MatchReport/Team";
 import {
   CardContent,
   CardMatchReport,
   CardMatchReportHeader,
 } from "../ui/card";
 import { MatchTeamCard } from "../MatchReport/MatchInfo/MatchTeamCard";
-import ScoreAndTime from "../MatchReport/MatchInfo/ScoreAndTime";
 import { Match } from "@/interfaces/MatchReport/Match";
 import { ScoreAndTimePreview } from "./ScoreAndTimePreview";
 import { Event } from "@/interfaces/MatchReport/Event";
 import { useEffect, useState } from "react";
-import { set } from "date-fns";
 
 export interface MatchInfoPreviewProps {
   match: Match;
@@ -29,6 +26,16 @@ export const MatchInfoPreview = ({ match, events }: MatchInfoPreviewProps) => {
 
   const [halftime, setHalftime] = useState(false);
 
+  useEffect(() => {
+    if (events) {
+      events.forEach((event) => {
+        if (event.message.includes("Začátek 2. poločasu")) {
+          setHalftime(true);
+        }
+      });
+    }
+  }, [events]);
+
   if (events === undefined) {
     return (
       <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">
@@ -38,14 +45,6 @@ export const MatchInfoPreview = ({ match, events }: MatchInfoPreviewProps) => {
       </CardMatchReport>
     );
   }
-
-  useEffect(() => {
-    events.forEach((event) => {
-      if (event.message.includes("Začátek 2. poločasu")) {
-        setHalftime(true);
-      }
-    });
-  }, [events]);
 
   return (
     <CardMatchReport className="max-w-[calc(100vw-32px)] h-min shadow-lg overflow-hidden">

@@ -2,8 +2,6 @@ import { useMatchContext } from "../../../../Contexts/MatchReportContext/MatchCo
 import { useState } from "react";
 import { showToast } from "../../../ui/showToast";
 
-import { useQueryClient } from "@tanstack/react-query";
-
 import { Event } from "@/interfaces/MatchReport/Event";
 import { useReliableAddEvent } from "@/hooks/MatchReport/useEvent";
 
@@ -48,8 +46,6 @@ function GoalHandlers() {
   } = useMatchContext();
   const [canAddGoal, setCanAddGoal] = useState<boolean>(true);
   const addEventMutation = useReliableAddEvent(matchDetails.id);
-
-  const queryClient = useQueryClient();
 
   function addGoal(playerId: number, goalType: GoalType): void {
     if (!canAddGoal) return;

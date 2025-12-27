@@ -1,14 +1,9 @@
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import image1 from "../../assets/praha.png";
-import image2 from "../../assets/frydek.png";
-import image3 from "../../assets/ostrava.gif";
-import image4 from "../../assets/polanka.gif";
-import image5 from "../../assets/zubri.png";
 import image6 from "../../assets/gallery/test.jpg";
 import Masonry from "react-masonry-css";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogContentImage } from "../ui/dialog";
-import { DialogClose } from "@radix-ui/react-dialog";
+import { Dialog, DialogContentImage } from "../ui/dialog";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const images = [

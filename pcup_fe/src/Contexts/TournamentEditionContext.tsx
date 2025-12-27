@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { createContext, useContext } from "react";
 
 const DEFAULT_EDITION = 2025;
@@ -15,9 +14,6 @@ export const EditionProvider = ({
   value: number;
   children: React.ReactNode;
 }) => {
-  const { edition } = useParams();
-  const editionNumber = edition ? parseInt(edition) : DEFAULT_EDITION;
-
   return (
     <EditionContext.Provider value={value}>{children}</EditionContext.Provider>
   );

@@ -146,7 +146,6 @@ export const MyTeam = () => {
     setNewPlayer({ firstName: "", lastName: "", number: 0 });
   };
 
-  const [selectingExisting, setSelectingExisting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleCancelAdd = () => {
@@ -171,8 +170,7 @@ export const MyTeam = () => {
     return fullName.includes(searchTerm.toLowerCase());
   });
 
-  const { mutate: assignToTeam, isPending: isAssigning } =
-    useAssignPlayerToTeam();
+  const { mutate: assignToTeam } = useAssignPlayerToTeam();
 
   const handleAssignExisting = (playerId: number) => {
     if (!team) return;

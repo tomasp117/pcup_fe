@@ -21,11 +21,9 @@ export const useMatchTimer = (HALFTIME: number = 60) => {
     setMatchStarted,
     setMatchDetails,
     setMatchPhase,
-    sethomeScore,
-    setawayScore,
     addEvent,
     resetMatch,
-    events
+    events,
   } = useMatchContext();
 
   const deleteEventsMutation = useDeleteEventsByMatchId();
@@ -36,7 +34,6 @@ export const useMatchTimer = (HALFTIME: number = 60) => {
   const [totalSeconds, setTotalSeconds] = useState(0);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const syncIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   //const scoreRef = useRef(`${homeScore}:${awayScore}`);
   const timeRef = useRef("00:00");
@@ -179,7 +176,6 @@ export const useMatchTimer = (HALFTIME: number = 60) => {
       lastSyncedSecond.current = totalSeconds;
 
       const time = formatTime(totalSeconds);
-      const score = `${homeScore}:${awayScore}`;
       const state = matchState;
 
       console.log("SYNC", homeScore, awayScore, state);
@@ -258,8 +254,6 @@ export const useMatchTimer = (HALFTIME: number = 60) => {
     }
   }, [totalSeconds, timerRunning, matchPhase]);
 
-  const [blanket, setBlanket] = useState<String>();
-
   const handleControl = () => {
     if (matchPhase === "postMatchConfirm") {
       alert("Zápis byl potvrzen. Není možné pokračovat.");
@@ -317,16 +311,14 @@ export const useMatchTimer = (HALFTIME: number = 60) => {
 
     // Potvrzení zápisu (po skončení zápasu)
     if (matchPhase === "finished") {
-
-      
       setMatchPhase("postMatchConfirm");
       setMatchState("Done");
 
-      if (events.some(e => e.type === "I" && e.message === "Konec zápasu")) {
-    toast.error("Zápis již byl potvrzen.");
-    return;
-  }
-      
+      if (events.some((e) => e.type === "I" && e.message === "Konec zápasu")) {
+        toast.error("Zápis již byl potvrzen.");
+        return;
+      }
+
       const newEvent = {
         type: "I",
         team: null,

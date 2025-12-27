@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
@@ -22,6 +21,13 @@ type TeamFormValues = {
   tournamentInstanceId?: number;
 };
 
+type CsvRow = {
+  Caption?: string;
+  Ext?: string;
+  Category?: string;
+  Club?: string;
+};
+
 interface TeamFormProps {
   instanceId: number | null;
 }
@@ -32,7 +38,6 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<TeamFormValues>({
     defaultValues: {
@@ -40,33 +45,35 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
     },
   });
 
+  const { mutate, isPending, data: createdTeam } = useCreateTeam();
+
+  // All hooks must be called before any conditional returns
+  const { data: teams, isLoading } = useTeams(instanceId ?? 0);
+  const { mutate: deleteTeam, isPending: isDeleting } = useDeleteTeam();
+  const { data: clubs } = useClubs();
+  const { data: categories } = useCategories();
+
   const {
-    mutate,
-    isPending,
+    mutate: importTeams,
+    isPending: isCsvPending,
     isSuccess,
     isError,
     error,
-    data: createdTeam,
-  } = useCreateTeam();
+  } = useImportTeamsCsv();
+
+  // Early return after all hooks
   if (instanceId === null) {
     return <p className="text-red-600">Instance ID is required.</p>;
   }
-  const { data: teams, isLoading } = useTeams(instanceId);
-  const { mutate: deleteTeam, isPending: isDeleting } = useDeleteTeam();
-
-  const { data: clubs } = useClubs();
-  const { data: categories } = useCategories();
 
   const onSubmit = (data: TeamFormValues) => {
     mutate(
       { ...data, tournamentInstanceId: instanceId },
       {
-        onSuccess: () => reset(),
+        onSuccess: () => {},
       }
     );
   };
-
-  const [csvMessage, setCsvMessage] = useState("");
 
   // Mapping pro kategorie (případně si rozšiř dál)
   const categoryMap: Record<string, string> = {
@@ -76,14 +83,6 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
     D: "Mini 6+1",
     E: "Mini 4+1",
   };
-
-  const {
-    mutate: importTeams,
-    isPending: isCsvPending,
-    isSuccess: isCsvSuccess,
-    isError: isCsvError,
-    error: csvError,
-  } = useImportTeamsCsv();
 
   const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -98,16 +97,16 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const parsed = results.data as any[];
+          const parsed = results.data as CsvRow[];
           const payload = parsed
             .filter((row) => row.Caption?.trim())
             .map((row) => {
-              let name = row.Caption.trim(); // Extenze za captionem
+              let name = row.Caption?.trim() || ""; // Extenze za captionem
               if (row.Ext?.trim()) {
                 name += " " + row.Ext.trim();
               }
               const categoryName =
-                categoryMap[row.Category?.trim()] || row.Category?.trim();
+                categoryMap[row.Category?.trim() || ""] || row.Category?.trim();
               const clubNameRaw = row.Club?.trim() || "";
               return {
                 name,
@@ -191,15 +190,15 @@ export const TeamForm = ({ instanceId }: TeamFormProps) => {
           className="cursor-pointer :hover:bg-primary/10"
         />
         {isCsvPending && <p className="text-sm">Importuji CSV...</p>}
-        {isCsvSuccess && (
+        {isSuccess && (
           <p className="text-green-600 text-sm">
             ✅ Týmy z CSV byly úspěšně importovány.
           </p>
         )}
-        {isCsvError && (
+        {isError && (
           <p className="text-red-600 text-sm">
             ❌ Chyba při importu CSV:{" "}
-            {csvError instanceof Error ? csvError.message : "Chyba"}
+            {error instanceof Error ? error.message : "Chyba"}
           </p>
         )}
       </div>

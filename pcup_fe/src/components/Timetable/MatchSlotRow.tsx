@@ -6,7 +6,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { use, useEffect } from "react";
 import { MatchDTO } from "@/interfaces/Timetable/MatchDTO";
 import { UnassignedMatch } from "@/interfaces/Timetable/UnassignedMatch";
 import React from "react";
@@ -44,7 +43,6 @@ export const MatchSlotRow = React.memo<MatchSlotRowProps>(
     const selectedValue = isUnassigned
       ? "__placeholder__"
       : `${match.homeTeam?.id ?? 0}-${match.awayTeam?.id ?? 0}`;
-    const isUn = !match.homeTeam || !match.awayTeam;
     return (
       <TableRow style={style} className={className}>
         {/* 1) Pořadové číslo */}

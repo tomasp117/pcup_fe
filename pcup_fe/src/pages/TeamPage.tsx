@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import {
@@ -25,9 +24,6 @@ const teamLogos: Record<string, string> = {
   Zubří: `${API_URL_IMAGES}/zubri.png`,
   Praha: `${API_URL_IMAGES}/praha.png`,
 };
-
-// API endpoint
-const API_URL = import.meta.env.VITE_API_URL;
 
 export const TeamPage = () => {
   const { id } = useParams<{ id: string }>();

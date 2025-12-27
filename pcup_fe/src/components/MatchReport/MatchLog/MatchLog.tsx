@@ -11,15 +11,12 @@ import { useMatchContext } from "@/Contexts/MatchReportContext/MatchContext";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Event } from "@/interfaces/MatchReport/Event";
 import {
   useDeleteLastEvent,
   useMatchEvents,
 } from "@/hooks/MatchReport/useEvent";
 import { useCreateLineups, useUpdateMatch } from "@/hooks/useMatches";
 import { toast } from "react-toastify";
-import { set } from "date-fns";
-import { usePenaltyTimer } from "@/hooks/MatchReport/usePenaltyTimer";
 
 export const MatchLog = () => {
   const {
@@ -30,7 +27,6 @@ export const MatchLog = () => {
     sethomeScore,
     setawayScore,
     updatePlayerStats,
-    timerRunning,
     matchStarted,
     setMatchState,
     setMatchPhase,
@@ -42,10 +38,6 @@ export const MatchLog = () => {
   //const { clearPenalty } = usePenaltyTimer(timerRunning, matchState === "None");
 
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null); // Stav pro sledování hoveru na posledním eventu
-
-  const [pendingPlayerUpdate, setPendingPlayerUpdate] = useState<Event | null>(
-    null
-  );
 
   const isLocked = matchState === "Done";
 
@@ -95,7 +87,7 @@ export const MatchLog = () => {
 
         if (authorId !== null) {
           updatePlayerStats(authorId, (player) => {
-            let updatedPlayer = { ...player };
+            const updatedPlayer = { ...player };
 
             if (type === "G") {
               const isHomeTeam = team === "L";

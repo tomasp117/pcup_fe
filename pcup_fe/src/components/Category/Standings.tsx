@@ -1,14 +1,5 @@
-import { useGroupsByCategory, useGroupStandings } from "@/hooks/useGroups";
+import { useGroupsByCategory } from "@/hooks/useGroups";
 
-import { Card, CardHeader, CardContent } from "../ui/card";
-import {
-  Table,
-  TableHeader,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
-} from "../ui/table";
 import { Loader2 } from "lucide-react";
 import { GroupStandingsCard } from "./GroupStandingsCard";
 
