@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "./App.css";
-import { BrowserRouter as Router, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 
 import { UserProvider } from "./Contexts/UserContext";
 
@@ -24,7 +24,20 @@ function isTokenExpired(token: string): boolean {
   }
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60, // 1 minute - data considered fresh for this duration
+      gcTime: 1000 * 60 * 5, // 5 minutes - cache garbage collection time
+      retry: 1, // Retry failed requests once
+      refetchOnWindowFocus: false, // Prevent refetch on tab switch
+    },
+    mutations: {
+      retry: 0, // Don't retry failed mutations by default
+    },
+  },
+});
+
 function App() {
   useEffect(() => {
     const token = localStorage.getItem("token");

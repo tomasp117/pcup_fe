@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Fetch all matches
 export const useMatches = () => {
   return useQuery<Match[]>({
-    queryKey: ["matches"],
+    queryKey: ["matches", "all"],
     queryFn: async () => {
       const res = await fetch(`${API_URL}/matches`, {
         headers: {
@@ -21,16 +21,15 @@ export const useMatches = () => {
       if (!res.ok) {
         throw new Error("Nepodařilo se načíst zápasy.");
       }
-      console.log("Response:", res);
       return res.json();
     },
   });
 };
 
-// Fetch all matches
+// Fetch matches for match report
 export const useMatchesForReport = () => {
   return useQuery<Match[]>({
-    queryKey: ["matches"],
+    queryKey: ["matches", "report"],
     queryFn: async () => {
       const res = await fetch(`${API_URL}/matches/match-report`, {
         headers: {
@@ -41,7 +40,6 @@ export const useMatchesForReport = () => {
       if (!res.ok) {
         throw new Error("Nepodařilo se načíst zápasy.");
       }
-      console.log("Response:", res);
       return res.json();
     },
   });

@@ -47,7 +47,7 @@ export const useTeamById = (teamId: number) => {
 
 export const useTeams = (instanceId: number) => {
   return useQuery<Team[]>({
-    queryKey: ["teams"],
+    queryKey: ["teams", "instance", instanceId],
     queryFn: async () => {
       const res = await fetch(`${API_URL}/${instanceId}/teams`, {
         headers: {
@@ -61,13 +61,19 @@ export const useTeams = (instanceId: number) => {
 
       return res.json();
     },
+    enabled: !!instanceId,
   });
+};
+
+type TeamCreateInput = Partial<Omit<Team, "id" | "matches" | "players" | "coach">> & {
+  tournamentInstanceId?: number;
+  name: string;
 };
 
 export const useCreateTeam = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (team: any) => {
+    mutationFn: async (team: TeamCreateInput) => {
       const res = await fetch(`${API_URL}/teams`, {
         method: "POST",
         headers: {
@@ -80,6 +86,7 @@ export const useCreateTeam = () => {
       return res.json();
     },
     onSuccess: () => {
+      // Invalidate all team-related queries
       queryClient.invalidateQueries({ queryKey: ["teams"] });
     },
   });
@@ -108,7 +115,7 @@ export const useImportTeamsCsv = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: any[]) => {
+    mutationFn: async (payload: Partial<Team>[]) => {
       const res = await fetch(`${API_URL}/teams/import-csv`, {
         method: "POST",
         headers: {
@@ -121,6 +128,7 @@ export const useImportTeamsCsv = () => {
       return res.json();
     },
     onSuccess: () => {
+      // Invalidate all team-related queries
       queryClient.invalidateQueries({ queryKey: ["teams"] });
     },
   });

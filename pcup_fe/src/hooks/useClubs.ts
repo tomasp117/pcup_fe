@@ -163,11 +163,23 @@ export const useClubAdmin = (clubId?: number) => {
   });
 };
 
+type ClubAdminCreateInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  dateOfBirth: string;
+  username: string;
+  password: string;
+  clubId: number;
+};
+
 export const useCreateClubAdmin = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: ClubAdminCreateInput) => {
       const res = await fetch(`${API_URL}/club-admin`, {
         method: "POST",
         headers: {
@@ -183,7 +195,7 @@ export const useCreateClubAdmin = () => {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clubAdmin"] });
+      queryClient.invalidateQueries({ queryKey: ["club-admin"] });
     },
   });
 };

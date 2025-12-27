@@ -150,10 +150,9 @@ export const AddClubAdminDialog = ({
         <div>
           <label className="text-sm font-medium">Datum narození</label>
           <Calendar
-            locale={cs}
             mode="single"
             selected={dateOfBirth}
-            onSelect={(date) => setDateOfBirth(date || undefined)}
+            onSelect={(date: Date | undefined) => setDateOfBirth(date || undefined)}
             fromYear={1950}
             toYear={new Date().getFullYear()}
             captionLayout="dropdown"
